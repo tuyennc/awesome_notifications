@@ -62,6 +62,11 @@ public class NotificationCalendarModel : NotificationScheduleModel {
         if (self.weekOfMonth ?? 0) < 0 { self.weekOfMonth = nil }
         if (self.weekOfYear ?? 0) < 0 { self.weekOfYear = nil }
         
+        // https://github.com/rafaelsetragni/awesome_notifications/issues/153#issuecomment-830732722
+        if(self.weekday != nil){
+            self.weekday = self.weekday == 7 ? 1 : (self.weekday! + 1)
+        }
+        
         return self
     }
     
@@ -76,7 +81,7 @@ public class NotificationCalendarModel : NotificationScheduleModel {
         if(minute != nil) {mapData["minute"]  = self.minute}
         if(second != nil) {mapData["second"]  = self.second}
         if(millisecond != nil) {mapData["millisecond"]  = self.millisecond}
-        if(weekday != nil) {mapData["weekday"]  = self.weekday}
+        if(weekday != nil) {mapData["weekday"]  = self.weekday == 1 ? 7 : (self.weekday! - 1)}
         if(weekOfMonth != nil) {mapData["weekOfMonth"]  = self.weekOfMonth}
         if(weekOfYear != nil) {mapData["weekOfYear"]  = self.weekOfYear}
         if(repeats != nil) {mapData["repeats"]  = self.repeats}
@@ -118,24 +123,31 @@ public class NotificationCalendarModel : NotificationScheduleModel {
         }
     }
     
+    public func toDateComponents() -> DateComponents {
+        return DateComponents(
+            era: era,
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            second: second,
+            nanosecond: millisecond == nil ? nil : millisecond! * 1000,
+            weekday: weekday,
+            weekOfMonth: weekOfMonth,
+            weekOfYear: weekOfYear
+        );
+    }
+    
     public func getUNNotificationTrigger() -> UNNotificationTrigger? {
         
         do {
             try validate();
             
-            let trigger = UNCalendarNotificationTrigger( dateMatching: DateComponents(
-                era: era,
-                year: year,
-                month: month,
-                day: day,
-                hour: hour,
-                minute: minute,
-                second: second,
-                nanosecond: millisecond == nil ? nil : millisecond! * 1000,
-                weekday: weekday,
-                weekOfMonth: weekOfMonth,
-                weekOfYear: weekOfYear
-            ), repeats: repeats! )
+            let trigger = UNCalendarNotificationTrigger(
+                dateMatching: toDateComponents(),
+                repeats: repeats!
+            )
             
             return trigger
             

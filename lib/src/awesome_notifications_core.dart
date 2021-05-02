@@ -24,8 +24,9 @@ class AwesomeNotifications {
   /// STREAM CREATION METHODS *********************************************
 
   // Streams are created so that app can respond to notification-related events since the plugin is initialised in the `main` function
-  // final StreamController<String> _tokenStreamController =
-  //   StreamController<String>();
+  final StreamController<String>
+      // ignore: close_sinks
+      _tokenStreamController = StreamController<String>();
 
   final StreamController<ReceivedNotification>
       // ignore: close_sinks
@@ -46,9 +47,9 @@ class AwesomeNotifications {
   /// STREAM METHODS *********************************************
 
   /// Stream to capture all FCM token updates. Could be changed at any time.
-  // Stream<String> get fcmTokenStream {
-  //   return _tokenStreamController.stream;
-  // }
+  Stream<String> get fcmTokenStream {
+    return _tokenStreamController.stream;
+  }
 
   /// Stream to capture all created notifications
   Stream<ReceivedNotification> get createdStream {
@@ -73,9 +74,9 @@ class AwesomeNotifications {
   /// SINK METHODS *********************************************
 
   /// Sink to dispose the stream, if you don't need it anymore.
-  // Sink get fcmTokenSink {
-  //   return _tokenStreamController.sink;
-  // }
+  Sink get fcmTokenSink {
+    return _tokenStreamController.sink;
+  }
 
   /// Sink to dispose the stream, if you don't need it anymore.
   Sink get createdSink {
@@ -101,7 +102,7 @@ class AwesomeNotifications {
 
   /// Closes definitely all the streams.
   dispose() {
-    //_tokenStreamController.close();
+    _tokenStreamController.close();
     _createdSubject.close();
     _displayedSubject.close();
     _dismissedSubject.close();
@@ -120,6 +121,9 @@ class AwesomeNotifications {
   static final AwesomeNotifications _instance =
       AwesomeNotifications.private(const MethodChannel(CHANNEL_FLUTTER_PLUGIN));
 
+  static bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
+
   /// INITIALIZING METHODS *********************************************
 
   /// Initializes the plugin, creating a default icon and the initial channels. Only needs
@@ -128,6 +132,8 @@ class AwesomeNotifications {
   /// OBS 2: [channels] are updated if they already exists
   Future<bool> initialize(
       String? defaultIcon, List<NotificationChannel> channels) async {
+
+    if(_isInitialized){ return true; }
     WidgetsFlutterBinding.ensureInitialized();
 
     _channel.setMethodCallHandler(_handleMethod);
@@ -150,6 +156,8 @@ class AwesomeNotifications {
       INITIALIZE_CHANNELS: serializedChannels
     });
 
+    _isInitialized = result;
+
     return result;
   }
 
@@ -169,10 +177,10 @@ class AwesomeNotifications {
     Map<String, dynamic> arguments = Map<String, dynamic>.from(call.arguments);
 
     switch (call.method) {
-      // case CHANNEL_METHOD_NEW_FCM_TOKEN:
-      //   final String token = call.arguments;
-      //   _tokenStreamController.add(token);
-      //   return;
+      case CHANNEL_METHOD_NEW_FCM_TOKEN:
+         final String token = call.arguments;
+         _tokenStreamController.add(token);
+         return;
 
       case CHANNEL_METHOD_NOTIFICATION_CREATED:
         _createdSubject.sink.add(ReceivedNotification().fromMap(arguments));
@@ -208,6 +216,21 @@ class AwesomeNotifications {
     }
   }
 
+  /// FIREBASE METHODS *********************************************
+  /// Gets the firebase cloud messaging token
+  Future<String> get firebaseAppToken async {
+    final String token =
+    await _channel.invokeMethod(CHANNEL_METHOD_GET_FCM_TOKEN);
+    return token;
+  }
+
+  /// Check if firebase is fully available on the project
+  Future<bool> get isFirebaseAvailable async {
+    final bool isAvailable =
+    await _channel.invokeMethod(CHANNEL_METHOD_IS_FCM_AVAILABLE);
+    return isAvailable;
+  }
+
   /// LOCAL NOTIFICATION METHODS *********************************************
 
   /// Creates a new notification.
@@ -221,7 +244,7 @@ class AwesomeNotifications {
     _validateId(content.id!);
 
     try {
-      final bool wasCreated = await _channel.invokeMethod(
+      final bool? wasCreated = await _channel.invokeMethod(
           CHANNEL_METHOD_CREATE_NOTIFICATION,
           PushNotification(
                   content: content,
@@ -229,7 +252,7 @@ class AwesomeNotifications {
                   actionButtons: actionButtons)
               .toMap());
 
-      return wasCreated;
+      return wasCreated ?? false;
     } on PlatformException catch (error) {
       print(error);
     }

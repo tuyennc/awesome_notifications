@@ -9,21 +9,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e193cc25-4aee-4ee7-85e6-38b386ea7f1b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationSender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/PushNotification.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/PushNotification.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Podfile" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Podfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Podfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Podfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Runner/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Runner/Info.plist" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/utils/notification_util.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/utils/notification_util.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/test/widget_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/test/widget_test.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/awesome_notifications_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/test/awesome_notifications_test.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/pages/notification_details_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/pages/notification_details_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/pages/notification_examples_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/pages/notification_examples_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/SwiftAwesomeNotificationsPlugin.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/SwiftAwesomeNotificationsPlugin.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/NotificationBuilder.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/NotificationBuilder.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationCalendarModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationCalendarModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/awesome_notifications.podspec" beforeDir="false" afterPath="$PROJECT_DIR$/ios/awesome_notifications.podspec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/awesome_notifications_core.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/awesome_notifications_core.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[Pixel_XL]" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -142,37 +149,49 @@
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state width="714" height="438" key="DebuggerActiveHint/0.0.2560.1040@0.0.2560.1040" timestamp="1619311006208" />
-    <state width="1425" height="231" key="GridCell.Tab.0.bottom" timestamp="1619481922359">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state width="1878" height="308" key="GridCell.Tab.0.bottom" timestamp="1619927064718">
+      <screen x="0" y="25" width="1920" height="950" />
     </state>
     <state width="2517" height="221" key="GridCell.Tab.0.bottom/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
     <state width="1425" height="231" key="GridCell.Tab.0.bottom/0.0.2560.1040@0.0.2560.1040" timestamp="1619481922359" />
+    <state width="1236" height="308" key="GridCell.Tab.0.bottom/0.25.1278.943@0.25.1278.943" timestamp="1619715473518" />
     <state width="1840" height="252" key="GridCell.Tab.0.bottom/0.25.1280.943@0.25.1280.943" timestamp="1615310363198" />
     <state width="1510" height="251" key="GridCell.Tab.0.bottom/0.25.1552.943@0.25.1552.943" timestamp="1615333823121" />
+    <state width="1878" height="308" key="GridCell.Tab.0.bottom/0.25.1920.943@0.25.1920.943" timestamp="1619814524435" />
+    <state width="1878" height="308" key="GridCell.Tab.0.bottom/0.25.1920.950@0.25.1920.950" timestamp="1619927064718" />
     <state width="1840" height="252" key="GridCell.Tab.0.bottom/0.25.1920.959@0.25.1920.959" timestamp="1615307684400" />
-    <state width="1425" height="231" key="GridCell.Tab.0.center" timestamp="1619481922358">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state width="1878" height="308" key="GridCell.Tab.0.center" timestamp="1619927064717">
+      <screen x="0" y="25" width="1920" height="950" />
     </state>
     <state width="2517" height="221" key="GridCell.Tab.0.center/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
     <state width="1425" height="231" key="GridCell.Tab.0.center/0.0.2560.1040@0.0.2560.1040" timestamp="1619481922358" />
+    <state width="1236" height="308" key="GridCell.Tab.0.center/0.25.1278.943@0.25.1278.943" timestamp="1619715473517" />
     <state width="1840" height="252" key="GridCell.Tab.0.center/0.25.1280.943@0.25.1280.943" timestamp="1615310363195" />
     <state width="1510" height="251" key="GridCell.Tab.0.center/0.25.1552.943@0.25.1552.943" timestamp="1615333823115" />
+    <state width="1878" height="308" key="GridCell.Tab.0.center/0.25.1920.943@0.25.1920.943" timestamp="1619814524434" />
+    <state width="1878" height="308" key="GridCell.Tab.0.center/0.25.1920.950@0.25.1920.950" timestamp="1619927064717" />
     <state width="1840" height="252" key="GridCell.Tab.0.center/0.25.1920.959@0.25.1920.959" timestamp="1615307684399" />
-    <state width="1425" height="231" key="GridCell.Tab.0.left" timestamp="1619481922358">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state width="1878" height="308" key="GridCell.Tab.0.left" timestamp="1619927064717">
+      <screen x="0" y="25" width="1920" height="950" />
     </state>
     <state width="2517" height="221" key="GridCell.Tab.0.left/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
     <state width="1425" height="231" key="GridCell.Tab.0.left/0.0.2560.1040@0.0.2560.1040" timestamp="1619481922358" />
+    <state width="1236" height="308" key="GridCell.Tab.0.left/0.25.1278.943@0.25.1278.943" timestamp="1619715473517" />
     <state width="1840" height="252" key="GridCell.Tab.0.left/0.25.1280.943@0.25.1280.943" timestamp="1615310363192" />
     <state width="1510" height="251" key="GridCell.Tab.0.left/0.25.1552.943@0.25.1552.943" timestamp="1615333823114" />
+    <state width="1878" height="308" key="GridCell.Tab.0.left/0.25.1920.943@0.25.1920.943" timestamp="1619814524433" />
+    <state width="1878" height="308" key="GridCell.Tab.0.left/0.25.1920.950@0.25.1920.950" timestamp="1619927064717" />
     <state width="1840" height="252" key="GridCell.Tab.0.left/0.25.1920.959@0.25.1920.959" timestamp="1615307684398" />
-    <state width="1425" height="231" key="GridCell.Tab.0.right" timestamp="1619481922359">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state width="1878" height="308" key="GridCell.Tab.0.right" timestamp="1619927064718">
+      <screen x="0" y="25" width="1920" height="950" />
     </state>
     <state width="2517" height="221" key="GridCell.Tab.0.right/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
     <state width="1425" height="231" key="GridCell.Tab.0.right/0.0.2560.1040@0.0.2560.1040" timestamp="1619481922359" />
+    <state width="1236" height="308" key="GridCell.Tab.0.right/0.25.1278.943@0.25.1278.943" timestamp="1619715473518" />
     <state width="1840" height="252" key="GridCell.Tab.0.right/0.25.1280.943@0.25.1280.943" timestamp="1615310363196" />
     <state width="1510" height="251" key="GridCell.Tab.0.right/0.25.1552.943@0.25.1552.943" timestamp="1615333823115" />
+    <state width="1878" height="308" key="GridCell.Tab.0.right/0.25.1920.943@0.25.1920.943" timestamp="1619814524435" />
+    <state width="1878" height="308" key="GridCell.Tab.0.right/0.25.1920.950@0.25.1920.950" timestamp="1619927064718" />
     <state width="1840" height="252" key="GridCell.Tab.0.right/0.25.1920.959@0.25.1920.959" timestamp="1615307684400" />
     <state x="454" y="226" key="RollbackChangesDialog" timestamp="1619348513196">
       <screen x="0" y="0" width="2560" height="1040" />
@@ -182,12 +201,12 @@
       <screen x="0" y="25" width="1552" height="943" />
     </state>
     <state x="233" y="208" width="1097" height="647" key="dock-window-1/0.25.1552.943@0.25.1552.943" timestamp="1615329722992" />
-    <state x="1286" y="174" width="964" height="606" key="find.popup" timestamp="1619478409050">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state x="661" y="301" width="723" height="550" key="find.popup" timestamp="1619721518927">
+      <screen x="0" y="25" width="1920" height="943" />
     </state>
     <state x="881" y="304" width="964" height="606" key="find.popup/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1615522635501" />
     <state x="1286" y="174" width="964" height="606" key="find.popup/0.0.2560.1040@0.0.2560.1040" timestamp="1619478409050" />
-    <state x="661" y="301" width="723" height="550" key="find.popup/0.25.1920.943@0.25.1920.943" timestamp="1614978540238" />
+    <state x="661" y="301" width="723" height="550" key="find.popup/0.25.1920.943@0.25.1920.943" timestamp="1619721518927" />
     <state x="661" y="306" width="1078" height="560" key="find.popup/0.25.1920.959@0.25.1920.959" timestamp="1615153580889" />
     <state x="936" y="172" width="672" height="676" key="search.everywhere.popup" timestamp="1619366376321">
       <screen x="0" y="0" width="2560" height="1040" />

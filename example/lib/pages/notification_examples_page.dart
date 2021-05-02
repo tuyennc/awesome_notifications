@@ -1,9 +1,7 @@
 import 'dart:math';
 
 import 'package:awesome_notifications_example/common_widgets/led_light.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart' hide DateUtils;
-//import 'package:flutter/material.dart' as Material show DateUtils;
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -28,8 +26,6 @@ class NotificationExamplesPage extends StatefulWidget {
 }
 
 class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
-  String _firebaseAppToken = '';
-  //String _oneSignalToken = '';
 
   bool delayLEDTests = false;
   DateTime? _pickedDate;
@@ -106,9 +102,6 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
   void initState() {
     super.initState();
 
-    // Uncomment those lines after activate google services inside example/android/build.gradle
-    // initializeFirebaseService();
-
     // this is not part of notification system, but media player simulator instead
     MediaPlayerCentral.mediaStream.listen((media) {
       switch (MediaPlayerCentral.mediaLifeCycle) {
@@ -125,10 +118,6 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
           break;
       }
     });
-
-    // If you pretend to use the firebase service, you need to initialize it
-    // getting a valid token
-    // initializeFirebaseService();
 
     AwesomeNotifications().createdStream.listen((receivedNotification) {
       String? createdSourceText =
@@ -290,67 +279,6 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
     super.dispose();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initializeFirebaseService() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    String firebaseAppToken = await messaging.getToken(
-          // https://stackoverflow.com/questions/54996206/firebase-cloud-messaging-where-to-find-public-vapid-key
-          vapidKey: '',
-        ) ??
-        '';
-
-    if (StringUtils.isNullOrEmpty(firebaseAppToken,
-        considerWhiteSpaceAsEmpty: true)) return;
-
-    if (!mounted) {
-      _firebaseAppToken = firebaseAppToken;
-    } else {
-      setState(() {
-        _firebaseAppToken = firebaseAppToken;
-      });
-    }
-
-    print('Firebase token: $firebaseAppToken');
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-
-      if (
-          // This step (if condition) is only necessary if you pretend to use the
-          // test page inside console.firebase.google.com
-          !StringUtils.isNullOrEmpty(message.notification?.title,
-                  considerWhiteSpaceAsEmpty: true) ||
-              !StringUtils.isNullOrEmpty(message.notification?.body,
-                  considerWhiteSpaceAsEmpty: true)) {
-        print('Message also contained a notification: ${message.notification}');
-
-        String? imageUrl;
-        imageUrl ??= message.notification!.android?.imageUrl;
-        imageUrl ??= message.notification!.apple?.imageUrl;
-
-        // https://pub.dev/packages/awesome_notifications#notification-types-values-and-defaults
-        Map<String, dynamic> notificationAdapter = {
-          PUSH_NOTIFICATION_CONTENT: {
-            NOTIFICATION_ID: Random().nextInt(2147483647),
-            NOTIFICATION_CHANNEL_KEY: 'basic_channel',
-            NOTIFICATION_TITLE: message.notification!.title,
-            NOTIFICATION_BODY: message.notification!.body,
-            NOTIFICATION_LAYOUT:
-                StringUtils.isNullOrEmpty(imageUrl) ? 'Default' : 'BigPicture',
-            NOTIFICATION_BIG_PICTURE: imageUrl
-          }
-        };
-
-        AwesomeNotifications()
-            .createNotificationFromJsonData(notificationAdapter);
-      } else {
-        AwesomeNotifications().createNotificationFromJsonData(message.data);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
@@ -384,10 +312,10 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 ServiceControlPanel('Firebase',
-                    !StringUtils.isNullOrEmpty(_firebaseAppToken), themeData,
+                    !StringUtils.isNullOrEmpty(App.firebaseAppToken), themeData,
                     onPressed: () => Navigator.pushNamed(
                         context, PAGE_FIREBASE_TESTS,
-                        arguments: _firebaseAppToken)),
+                        arguments: App.firebaseAppToken)),
                 /*
               /// TODO MISSING IMPLEMENTATION FOR ONE SIGNAL
               ServiceControlPanel(
@@ -759,16 +687,17 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
             TextNote('A simple and fast notification to fresh start.\n\n'
                 'Tap on notification when it appears on your system tray to go to Details page.'),
             SimpleButton('Get Next Date', onPressed: () async {
-              DateTime referenceDate =
-                  DateUtils.parseStringToDate('2021-01-12 20:00:00')!;
+              DateTime referenceDate = DateTime.now().toUtc();
+                  //DateUtils.parseStringToDate('2021-01-12 20:00:00')!;
               DateTime expectedDate =
                   DateUtils.parseStringToDate('2021-01-12 21:00:00')!;
-              NotificationSchedule schedule =
-                  NotificationCalendar.fromDate(date: expectedDate);
+              NotificationSchedule schedule = NotificationCalendar(weekday: DateTime.monday);
+                  //NotificationCalendar.fromDate(date: expectedDate);
 
               DateTime result = await AwesomeNotifications()
                   .getNextDate(schedule, fixedDate: referenceDate);
-              debugPrint(DateUtils.parseDateToString(result));
+              print(result);
+              print(DateUtils.parseDateToString(result.toLocal()));
             }),
 
             /* ******************************************************************** */

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		05380B5A25F678EE001D5D0A /* res_morph_power_rangers.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 05380B5925F678EE001D5D0A /* res_morph_power_rangers.aiff */; };
+		05A79A35263AC3890086EB4E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 05A79A34263AC3890086EB4E /* GoogleService-Info.plist */; };
 		06133C53BCB23C8EE09E7525 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05380AFC25F5C29A001D5D0A /* Pods_Runner.framework */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
@@ -39,6 +40,8 @@
 		05380B1F25F5C438001D5D0A /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05380B2325F5C441001D5D0A /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05380B5925F678EE001D5D0A /* res_morph_power_rangers.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; name = res_morph_power_rangers.aiff; path = ../../../../../../AndroidStudioProjects/awesome_notifications/example/ios/Runner/res_morph_power_rangers.aiff; sourceTree = "<group>"; };
+		058F16B3263C9D730077283C /* FirebaseCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		05A79A34263AC3890086EB4E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		05C0EE5025F2DA0100DC0E72 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		05C0EE5225F2DA0100DC0E72 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
 		05C0EE8525F2DF0200DC0E72 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
@@ -78,6 +81,7 @@
 		05C0EE4F25F2DA0100DC0E72 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				058F16B3263C9D730077283C /* FirebaseCore.framework */,
 				05380B2325F5C441001D5D0A /* Pods_Runner.framework */,
 				05380B1F25F5C438001D5D0A /* Pods_Runner.framework */,
 				05380B1A25F5C324001D5D0A /* awesome_notifications.framework */,
@@ -123,6 +127,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				05A79A34263AC3890086EB4E /* GoogleService-Info.plist */,
 				05380B5925F678EE001D5D0A /* res_morph_power_rangers.aiff */,
 				05C0EE8525F2DF0200DC0E72 /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
@@ -216,6 +221,7 @@
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				05380B5A25F678EE001D5D0A /* res_morph_power_rangers.aiff in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				05A79A35263AC3890086EB4E /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,7 +383,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -392,6 +397,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.carda.awesomeNotificationsExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_STYLE = all;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -509,7 +515,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -524,6 +529,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.carda.awesomeNotificationsExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_STYLE = all;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -535,7 +541,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -550,6 +555,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.carda.awesomeNotificationsExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_STYLE = all;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
