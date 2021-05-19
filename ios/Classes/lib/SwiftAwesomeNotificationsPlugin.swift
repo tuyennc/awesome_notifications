@@ -304,8 +304,9 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         
         guard let pushNotification:PushNotification = NotificationBuilder.jsonDataToPushNotification(jsonData: arguments)
         else {
-            Log.d("receiveNotification","notification data invalid")
-            completionHandler([])
+            if(SwiftAwesomeNotificationsPlugin.debug){
+                Log.d("receiveNotification","Awesome notification data invalid")
+            }
             return
         }
         
