@@ -124,17 +124,17 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     @available(iOS 10.0, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
+        guard let jsonData:String = response.notification.request.content.userInfo[Definitions.NOTIFICATION_JSON] as? String else {
+                
+            if(SwiftAwesomeNotificationsPlugin.debug){
+                debugPrint("Received an invalid awesome notification content. Notification ignored.")
+            }
+            return;
+        }
+        
         var userText:String?
         if let textResponse =  response as? UNTextInputNotificationResponse {
             userText =  textResponse.userText
-        }
-        
-        guard let jsonData:String = response.notification.request.content.userInfo[Definitions.NOTIFICATION_JSON] as? String else {
-                
-            print("Received an invalid notification content")
-            completionHandler()
-            return;
-            
         }
         
         receiveAction(
