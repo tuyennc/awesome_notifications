@@ -17,6 +17,10 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     static var firebaseEnabled:Bool = false
     static var firebaseDeviceToken:String?
     
+    private var originalUserCenterDelegate:UNUserNotificationCenterDelegate?
+    private var originalDelegateHasDidReceive = false
+    private var originalDelegateHasWillPresent = false
+    
     static var appLifeCycle:NotificationLifeCycle {
         get { return LifeCycleManager.getLifeCycle(referenceKey: "currentlifeCycle") }
         set (newValue) { LifeCycleManager.setLifeCycle(referenceKey: "currentlifeCycle", lifeCycle: newValue) }
@@ -87,14 +91,14 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
     */
     
+    /*
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        /*
         Messaging.messaging().apnsToken = deviceToken
         if let token = requestFirebaseToken() {
             flutterChannel?.invokeMethod(Definitions.CHANNEL_METHOD_NEW_FCM_TOKEN, arguments: token)
         }
-        */
     }
+     */
     /*
     // For Firebase Messaging versions older than 7.0
     // https://github.com/rafaelsetragni/awesome_notifications/issues/39
@@ -127,7 +131,15 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         guard let jsonData:String = response.notification.request.content.userInfo[Definitions.NOTIFICATION_JSON] as? String else {
                 
             if(SwiftAwesomeNotificationsPlugin.debug){
-                debugPrint("Received an invalid awesome notification content. Notification ignored.")
+                debugPrint("Received an invalid awesome notification action content. Notification action ignored.")
+            }
+            
+            
+            if(originalUserCenterDelegate != nil && originalDelegateHasDidReceive){
+                originalUserCenterDelegate!.userNotificationCenter!(center, didReceive: response, withCompletionHandler: completionHandler)
+            }
+            else {
+                completionHandler()
             }
             return;
         }
@@ -148,10 +160,19 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     @available(iOS 10.0, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        receiveNotification(content: notification.request.content, withCompletionHandler: completionHandler)
+        displayNotification(center, willPresent: notification, withCompletionHandler: completionHandler)
     }
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
+        
+        originalUserCenterDelegate = UNUserNotificationCenter.current().delegate
+        
+        originalDelegateHasDidReceive = originalUserCenterDelegate?.responds(
+                to: #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:))
+        ) ?? false
+        originalDelegateHasWillPresent = originalUserCenterDelegate?.responds(
+            to: #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:))
+        ) ?? false
         
         UNUserNotificationCenter.current().delegate = self
         
@@ -160,12 +181,13 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         rescheduleLostNotifications()
 		
         if(SwiftAwesomeNotificationsPlugin.debug){
-			Log.d(SwiftAwesomeNotificationsPlugin.TAG, "Awesome Notifications attached for iOS")
+			Log.d(SwiftAwesomeNotificationsPlugin.TAG, "Awesome Notifications attached to iOS")
         }
 		
         return true
     }
     
+    /*
     var backgroundSessionCompletionHandler: (() -> Void)?
     var backgroundSynchTask: UIBackgroundTaskIdentifier = .invalid
     public func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) -> Bool {
@@ -176,7 +198,6 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         return true
     }
     
-    /*
     private func requestFirebaseToken() -> String? {
         if let token = SwiftAwesomeNotificationsPlugin.firebaseDeviceToken ?? Messaging.messaging().fcmToken {
             SwiftAwesomeNotificationsPlugin.firebaseDeviceToken = token
@@ -279,7 +300,9 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     */
     
     @available(iOS 10.0, *)
-    private func receiveNotification(content:UNNotificationContent, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void){
+    private func displayNotification(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void){
+        
+        let content:UNNotificationContent = notification.request.content
         
         var arguments:[String : Any?]
         if(content.userInfo[Definitions.NOTIFICATION_JSON] != nil){
@@ -305,7 +328,14 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         guard let pushNotification:PushNotification = NotificationBuilder.jsonDataToPushNotification(jsonData: arguments)
         else {
             if(SwiftAwesomeNotificationsPlugin.debug){
-                Log.d("receiveNotification","Awesome notification data invalid")
+                Log.d("receiveNotification","Awesome notification data is invalid. Display threatment ignored.")
+            }
+            
+            if(originalUserCenterDelegate != nil && originalDelegateHasWillPresent){
+                originalUserCenterDelegate!.userNotificationCenter!(center, willPresent: notification, withCompletionHandler: completionHandler)
+            }
+            else {
+                completionHandler([.alert, .badge, .sound])
             }
             return
         }
