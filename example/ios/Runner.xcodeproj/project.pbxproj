@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05357D9F2657174700074956 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 05357D9E2657174600074956 /* GoogleService-Info.plist */; };
 		05380B5A25F678EE001D5D0A /* res_morph_power_rangers.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 05380B5925F678EE001D5D0A /* res_morph_power_rangers.aiff */; };
 		06133C53BCB23C8EE09E7525 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05380AFC25F5C29A001D5D0A /* Pods_Runner.framework */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
@@ -33,6 +34,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		05357D9E2657174600074956 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../AndroidStudioProjects/awesome_notifications/example/ios/Runner/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		05380AFC25F5C29A001D5D0A /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05380B1625F5C311001D5D0A /* awesome_notifications.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = awesome_notifications.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05380B1A25F5C324001D5D0A /* awesome_notifications.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = awesome_notifications.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,6 +126,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				05357D9E2657174600074956 /* GoogleService-Info.plist */,
 				05380B5925F678EE001D5D0A /* res_morph_power_rangers.aiff */,
 				05C0EE8525F2DF0200DC0E72 /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
@@ -218,6 +221,7 @@
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				05380B5A25F678EE001D5D0A /* res_morph_power_rangers.aiff in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				05357D9F2657174700074956 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

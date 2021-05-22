@@ -1,14 +1,13 @@
 import 'dart:math';
 
 import 'package:awesome_notifications_example/common_widgets/led_light.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:awesome_notifications_example/utils/firebase_utils.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 //import 'package:flutter/material.dart' as Material show DateUtils;
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
-import 'package:awesome_notifications_example/main.dart';
 import 'package:awesome_notifications_example/routes.dart';
 import 'package:awesome_notifications_example/utils/media_player_central.dart';
 import 'package:awesome_notifications_example/utils/notification_util.dart';
@@ -99,29 +98,17 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
   void initState() {
     super.initState();
 
-    // Uncomment those lines after activate google services inside example/android/build.gradle
-    // initializeFirebaseService();
-
-    // this is not part of notification system, but media player simulator instead
-    MediaPlayerCentral.mediaStream.listen((media) {
-      switch (MediaPlayerCentral.mediaLifeCycle) {
-        case MediaLifeCycle.Stopped:
-          cancelNotification(100);
-          break;
-
-        case MediaLifeCycle.Paused:
-          updateNotificationMediaPlayer(100, media);
-          break;
-
-        case MediaLifeCycle.Playing:
-          updateNotificationMediaPlayer(100, media);
-          break;
-      }
-    });
-
     // If you pretend to use the firebase service, you need to initialize it
     // getting a valid token
-    // initializeFirebaseService();
+    FirebaseUtils.initializeFirebaseService(context).then((String firebaseAppToken){
+      if (!mounted) {
+        _firebaseAppToken = firebaseAppToken;
+      } else {
+        setState(() {
+          _firebaseAppToken = firebaseAppToken;
+        });
+      }
+    });
 
     AwesomeNotifications().createdStream.listen((receivedNotification) {
       String? createdSourceText =
@@ -150,7 +137,7 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
           receivedNotification.buttonKeyPressed.startsWith('MEDIA_')) {
         processMediaControls(receivedNotification);
       } else {
-        processDefaultActionReceived(receivedNotification);
+        processDefaultActionReceived(context, receivedNotification);
       }
     });
 
@@ -160,12 +147,29 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
       });
 
       if (!isAllowed) {
-        requestUserPermission(isAllowed);
+        showRequestUserPermissionDialog(isAllowed);
+      }
+    });
+
+    // this is not part of notification system, but of the media player simulator instead
+    MediaPlayerCentral.mediaStream.listen((media) {
+      switch (MediaPlayerCentral.mediaLifeCycle) {
+        case MediaLifeCycle.Stopped:
+          cancelNotification(100);
+          break;
+
+        case MediaLifeCycle.Paused:
+          updateNotificationMediaPlayer(100, media);
+          break;
+
+        case MediaLifeCycle.Playing:
+          updateNotificationMediaPlayer(100, media);
+          break;
       }
     });
   }
 
-  void requestUserPermission(bool isAllowed) async {
+  void showRequestUserPermissionDialog(bool isAllowed) async {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -219,131 +223,12 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
     );
   }
 
-  void processDefaultActionReceived(ReceivedAction receivedNotification) {
-    Fluttertoast.showToast(msg: 'Action received');
-
-    String targetPage;
-
-    // Avoid to reopen the media page if is already opened
-    if (receivedNotification.channelKey == 'media_player') {
-      targetPage = PAGE_MEDIA_DETAILS;
-      if (Navigator.of(context).isCurrent(PAGE_MEDIA_DETAILS)) return;
-    } else {
-      targetPage = PAGE_NOTIFICATION_DETAILS;
-    }
-
-    // Avoid to open the notification details page over another details page already opened
-    Navigator.pushNamedAndRemoveUntil(context, targetPage,
-        (route) => (route.settings.name != targetPage) || route.isFirst,
-        arguments: receivedNotification);
-  }
-
-  void processInputTextReceived(ReceivedAction receivedNotification) {
-    Fluttertoast.showToast(
-        msg: 'Msg: ' + receivedNotification.buttonKeyInput,
-        backgroundColor: App.mainColor,
-        textColor: Colors.white);
-  }
-
-  void processMediaControls(actionReceived) {
-    switch (actionReceived.buttonKeyPressed) {
-      case 'MEDIA_CLOSE':
-        MediaPlayerCentral.stop();
-        break;
-
-      case 'MEDIA_PLAY':
-      case 'MEDIA_PAUSE':
-        MediaPlayerCentral.playPause();
-        break;
-
-      case 'MEDIA_PREV':
-        MediaPlayerCentral.previousMedia();
-        break;
-
-      case 'MEDIA_NEXT':
-        MediaPlayerCentral.nextMedia();
-        break;
-
-      default:
-        break;
-    }
-
-    Fluttertoast.showToast(
-        msg: 'Media: ' +
-            actionReceived.buttonKeyPressed.replaceFirst('MEDIA_', ''),
-        backgroundColor: App.mainColor,
-        textColor: Colors.white);
-  }
-
   @override
   void dispose() {
     AwesomeNotifications().createdSink.close();
     AwesomeNotifications().displayedSink.close();
     AwesomeNotifications().actionSink.close();
     super.dispose();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initializeFirebaseService() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    String firebaseAppToken = await messaging.getToken(
-          // https://stackoverflow.com/questions/54996206/firebase-cloud-messaging-where-to-find-public-vapid-key
-          vapidKey: '',
-        ) ??
-        '';
-
-    if (StringUtils.isNullOrEmpty(firebaseAppToken,
-        considerWhiteSpaceAsEmpty: true)) return;
-
-    if (!mounted) {
-      _firebaseAppToken = firebaseAppToken;
-    } else {
-      setState(() {
-        _firebaseAppToken = firebaseAppToken;
-      });
-    }
-
-    print('Firebase token: $firebaseAppToken');
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-
-      if (
-          // This step (if condition) is only necessary if you pretend to use the
-          // test page inside console.firebase.google.com
-          !StringUtils.isNullOrEmpty(message.notification?.title,
-                  considerWhiteSpaceAsEmpty: true) ||
-          !StringUtils.isNullOrEmpty(message.notification?.body,
-              considerWhiteSpaceAsEmpty: true)
-      ){
-
-        print('Message also contained a notification: ${message.notification}');
-
-        String? imageUrl;
-        imageUrl ??= message.notification!.android?.imageUrl;
-        imageUrl ??= message.notification!.apple?.imageUrl;
-
-        // https://pub.dev/packages/awesome_notifications#notification-types-values-and-defaults
-        Map<String, dynamic> notificationAdapter = {
-          NOTIFICATION_CONTENT: {
-            NOTIFICATION_ID: Random().nextInt(2147483647),
-            NOTIFICATION_CHANNEL_KEY: 'basic_channel',
-            NOTIFICATION_TITLE: message.notification!.title,
-            NOTIFICATION_BODY: message.notification!.body,
-            NOTIFICATION_LAYOUT:
-                StringUtils.isNullOrEmpty(imageUrl) ? 'Default' : 'BigPicture',
-            NOTIFICATION_BIG_PICTURE: imageUrl
-          }
-        };
-
-        AwesomeNotifications()
-            .createNotificationFromJsonData(notificationAdapter);
-      } else {
-        AwesomeNotifications().createNotificationFromJsonData(message.data);
-      }
-    });
   }
 
   @override
@@ -418,7 +303,7 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
                 '* Android: notifications are enabled by default and are considered not dangerous.\n'
                 '* iOS: notifications are not enabled by default and you must explicitly request it to the user.'),
             SimpleButton('Request permission',
-                onPressed: () => requestUserPermission(notificationsAllowed)),
+                onPressed: () => showRequestUserPermissionDialog(notificationsAllowed)),
 
             /* ******************************************************************** */
 

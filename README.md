@@ -514,6 +514,9 @@ OBS: not all emojis work with all platforms. Please, test the specific emoji bef
 ## How to send Push Notifications using Firebase Cloud Messaging plugin (FCM)
 
 To send a notification using Awesome Notifications and FCM Services, you need to send a POST request to the address https://fcm.googleapis.com/fcm/send.
+
+Also, on our example app, you can find the class `FirebaseUtils` with all basic features you need to user `firebase_messaging` with `awesome_notifications`.
+
 Due to limitations on Android and iOS, you should send a empty **notification** field and use only the **data** field to send your data, as bellow:
 
 OBS: `actionButtons` and `schedule` are **optional**
@@ -522,27 +525,36 @@ OBS 2: ensure to read all the documentation inside [FlutterFire Overview Documen
 <br>
 OBS 3: data only messages are classed as "low priority". Devices can throttle and ignore these messages if your application is in the background, terminated, or a variety of other conditions such as low battery or currently high CPU usage. To help improve delivery, you can bump the priority of messages. Note; this does still not guarantee delivery. More info [here](https://firebase.flutter.dev/docs/messaging/usage/#low-priority-messages)
 <br>
-OBS 4: Again, the background message method of the `firebase_messaging` plug-in runs in the background mode (which falls under iOS background execution rules) that can suspend all of your background executions for an indefinite period of time, for various reasons. Unfortunately, this is a known behavior of iOS and there is nothing to do about it. 15 minutes of delay is the smaller period of time possible between each execution. So, consider that the background method of `firebase_messaging` may not be executed at all or even run entirely out of the expected time.
+OBS 4: Again, the background data only message method of the `firebase_messaging` plug-in runs in the background mode (which falls under iOS background execution rules) that can suspend all of your background executions for an indefinite period of time, for various reasons. Unfortunately, this is a known behavior of iOS and there is nothing to do about it. 15 minutes of delay is the smaller period of time possible between each execution. So, consider that the background method of `firebase_messaging` may not be executed at all or even run entirely out of the expected time.
 <br>
 
 ```json
 {
     "to" : "[YOUR APP TOKEN]",
-    "mutable_content" : true,
+    "mutable-content": true,
     "content_available": true,
     "priority": "high",
+    "notification": {
+        "title": "Huston! The eagle has landed!",
+        "body": "A small step for a man, but a giant leap to Flutter's community!",
+        "sound": "default",
+        "image": "https://www.dw.com/image/49519617_303.jpg"
+    },
     "data" : {
         "content": {
             "id": 100,
-            "channelKey": "big_picture",
-            "title": "Huston!\nThe eagle has landed!",
+            "channelKey": "basic_channel",
+            "title": "Huston! The eagle has landed!",
             "body": "A small step for a man, but a giant leap to Flutter's community!",
             "notificationLayout": "BigPicture",
             "largeIcon": "https://media.fstatic.com/kdNpUx4VBicwDuRBnhBrNmVsaKU=/full-fit-in/290x478/media/artists/avatar/2013/08/neil-i-armstrong_a39978.jpeg",
             "bigPicture": "https://www.dw.com/image/49519617_303.jpg",
             "showWhen": true,
             "autoCancel": true,
-            "privacy": "Private"
+            "privacy": "Private",
+            "payload": {
+                "secret": "Awesome Notifications Rocks!"
+            }
         },
         "actionButtons": [
             {

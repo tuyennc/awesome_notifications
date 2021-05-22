@@ -26,4 +26,8 @@ class DateUtils {
         DateFormat(format).parse(parseDateToString(date)!);
     return parsedLocalDate.toUtc();
   }
+
+  static String getUtcTextDate(){
+    return parseDateToString(DateTime.now().toUtc())!;
+  }
 }

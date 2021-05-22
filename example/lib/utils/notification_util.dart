@@ -1,7 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:awesome_notifications_example/main.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications_example/routes.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +20,7 @@ import 'package:awesome_notifications/awesome_notifications.dart' as Utils
 import 'package:awesome_notifications_example/models/media_model.dart';
 import 'package:awesome_notifications_example/utils/common_functions.dart';
 import 'package:awesome_notifications_example/utils/media_player_central.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /* *********************************************
@@ -1151,4 +1158,60 @@ Future<void> cancelAllNotifications() async {
 
 String toTwoDigitString(int value) {
   return value.toString().padLeft(2, '0');
+}
+
+void processDefaultActionReceived(BuildContext context, ReceivedAction receivedNotification) {
+  Fluttertoast.showToast(msg: 'Action received');
+
+  String targetPage;
+
+  // Avoid to reopen the media page if is already opened
+  if (receivedNotification.channelKey == 'media_player') {
+    targetPage = PAGE_MEDIA_DETAILS;
+    if (Navigator.of(context).isCurrent(PAGE_MEDIA_DETAILS)) return;
+  } else {
+    targetPage = PAGE_NOTIFICATION_DETAILS;
+  }
+
+  // Avoid to open the notification details page over another details page already opened
+  Navigator.pushNamedAndRemoveUntil(context, targetPage,
+          (route) => (route.settings.name != targetPage) || route.isFirst,
+      arguments: receivedNotification);
+}
+
+void processInputTextReceived(ReceivedAction receivedNotification) {
+  Fluttertoast.showToast(
+      msg: 'Msg: ' + receivedNotification.buttonKeyInput,
+      backgroundColor: App.mainColor,
+      textColor: Colors.white);
+}
+
+void processMediaControls(actionReceived) {
+  switch (actionReceived.buttonKeyPressed) {
+    case 'MEDIA_CLOSE':
+      MediaPlayerCentral.stop();
+      break;
+
+    case 'MEDIA_PLAY':
+    case 'MEDIA_PAUSE':
+      MediaPlayerCentral.playPause();
+      break;
+
+    case 'MEDIA_PREV':
+      MediaPlayerCentral.previousMedia();
+      break;
+
+    case 'MEDIA_NEXT':
+      MediaPlayerCentral.nextMedia();
+      break;
+
+    default:
+      break;
+  }
+
+  Fluttertoast.showToast(
+      msg: 'Media: ' +
+          actionReceived.buttonKeyPressed.replaceFirst('MEDIA_', ''),
+      backgroundColor: App.mainColor,
+      textColor: Colors.white);
 }

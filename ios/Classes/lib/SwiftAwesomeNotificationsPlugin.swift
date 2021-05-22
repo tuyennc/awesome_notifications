@@ -17,6 +17,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     static var firebaseEnabled:Bool = false
     static var firebaseDeviceToken:String?
     
+    private var originalUserCenter:UNUserNotificationCenter?
     private var originalUserCenterDelegate:UNUserNotificationCenterDelegate?
     private var originalDelegateHasDidReceive = false
     private var originalDelegateHasWillPresent = false
@@ -158,14 +159,10 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         completionHandler()
     }
     
-    @available(iOS 10.0, *)
-    public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        displayNotification(center, willPresent: notification, withCompletionHandler: completionHandler)
-    }
-    
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
+    public func attachNotificationCenterDelegate(){
         
-        originalUserCenterDelegate = UNUserNotificationCenter.current().delegate
+        originalUserCenter = UNUserNotificationCenter.current()
+        originalUserCenterDelegate = originalUserCenter!.delegate
         
         originalDelegateHasDidReceive = originalUserCenterDelegate?.responds(
                 to: #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:))
@@ -179,10 +176,18 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         //enableFirebase(application)
         //enableScheduler(application)
         rescheduleLostNotifications()
-		
+        
         if(SwiftAwesomeNotificationsPlugin.debug){
-			Log.d(SwiftAwesomeNotificationsPlugin.TAG, "Awesome Notifications attached to iOS")
+            Log.d(SwiftAwesomeNotificationsPlugin.TAG, "Awesome Notifications attached to iOS")
         }
+    }
+    
+    @available(iOS 10.0, *)
+    public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        displayNotification(center, willPresent: notification, withCompletionHandler: completionHandler)
+    }
+    
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
 		
         return true
     }
@@ -710,11 +715,11 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 Messaging.messaging().delegate = self
             }
         }
-        */
         
         if !SwiftUtils.isRunningOnExtension() {
             UIApplication.shared.registerForRemoteNotifications()
         }
+        */
                 
         if #available(iOS 10.0, *) {
         
@@ -968,7 +973,9 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 			defaultIconPath,
 			channelsData
 		)
-		
+        
+        attachNotificationCenterDelegate()
+        
 		Log.d(SwiftAwesomeNotificationsPlugin.TAG, "Awesome Notifications service initialized")
 					
 		fireBackgroundLostEvents()

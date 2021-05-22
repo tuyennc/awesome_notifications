@@ -1,4 +1,6 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications/src/enumerators/notification_life_cycle.dart';
+import 'package:awesome_notifications/src/models/notification_content.dart';
 import 'package:awesome_notifications/src/models/received_models/received_notification.dart';
 import 'package:awesome_notifications/src/utils/assert_utils.dart';
 
@@ -13,8 +15,16 @@ class ReceivedAction extends ReceivedNotification {
 
   ReceivedAction();
 
+  static ReceivedAction fromNotificationContent(NotificationContent content){
+      ReceivedAction receivedAction = ReceivedAction().fromMap(content.toMap());
+      receivedAction.actionDate ??= DateUtils.getUtcTextDate();
+      receivedAction.actionLifeCycle ??= NotificationLifeCycle.Foreground;
+
+      return receivedAction;
+  }
+
   /// Imports data from a serializable object
-  ReceivedNotification fromMap(Map<String, dynamic> dataMap) {
+  ReceivedAction fromMap(Map<String, dynamic> dataMap) {
     super.fromMap(dataMap);
 
     actionLifeCycle = AssertUtils.extractEnum<NotificationLifeCycle>(

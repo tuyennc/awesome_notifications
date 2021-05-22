@@ -1,12 +1,11 @@
-import 'dart:math';
+import 'package:flutter/material.dart' hide DateUtils;
+//import 'package:flutter/material.dart' as Material show DateUtils;
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:awesome_notifications_example/routes.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications_example/models/media_model.dart';
 import 'package:awesome_notifications_example/utils/media_player_central.dart';
+import 'package:awesome_notifications_example/utils/firebase_utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -91,15 +90,15 @@ void main() async {
           enableVibration: false,
           enableLights: false),
       NotificationChannel(
-        icon: 'resource://drawable/res_media_icon',
-        channelKey: 'media_player',
-        channelName: 'Media player controller',
-        channelDescription: 'Media player controller',
-        defaultPrivacy: NotificationPrivacy.Public,
-        enableVibration: false,
-        enableLights: false,
-        playSound: false,
-        locked: true),
+          icon: 'resource://drawable/res_media_icon',
+          channelKey: 'media_player',
+          channelName: 'Media player controller',
+          channelDescription: 'Media player controller',
+          defaultPrivacy: NotificationPrivacy.Public,
+          enableVibration: false,
+          enableLights: false,
+          playSound: false,
+          locked: true),
       NotificationChannel(
           channelKey: 'big_picture',
           channelName: 'Big pictures',
@@ -154,53 +153,11 @@ void main() async {
     debug: true
   );
 
-  // Uncomment those lines after activate google services inside example/android/build.gradle
+  // Uncomment the line above, after activate google services inside example/android/build.gradle
   // Create the initialization Future outside of `build`:
-  //FirebaseApp firebaseApp = await Firebase.initializeApp();
-  //FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await FirebaseUtils.loadFirebaseCore();
 
   runApp(App());
-}
-
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
-  print('Handling a background message: ${message.messageId}');
-
-  if(
-    !StringUtils.isNullOrEmpty(message.notification?.title, considerWhiteSpaceAsEmpty: true) ||
-    !StringUtils.isNullOrEmpty(message.notification?.body, considerWhiteSpaceAsEmpty: true)
-  ){
-    print('message also contained a notification: ${message.notification}');
-
-    String? imageUrl;
-    imageUrl ??= message.notification!.android?.imageUrl;
-    imageUrl ??= message.notification!.apple?.imageUrl;
-
-    Map<String, dynamic> notificationAdapter = {
-      NOTIFICATION_CHANNEL_KEY: 'basic_channel',
-      NOTIFICATION_ID:
-            message.data[NOTIFICATION_CONTENT]?[NOTIFICATION_ID] ??
-            message.messageId ??
-            Random().nextInt(2147483647),
-      NOTIFICATION_TITLE:
-            message.data[NOTIFICATION_CONTENT]?[NOTIFICATION_TITLE] ??
-            message.notification?.title,
-      NOTIFICATION_BODY:
-            message.data[NOTIFICATION_CONTENT]?[NOTIFICATION_BODY] ??
-            message.notification?.body ,
-      NOTIFICATION_LAYOUT:
-          StringUtils.isNullOrEmpty(imageUrl) ? 'Default' : 'BigPicture',
-      NOTIFICATION_BIG_PICTURE: imageUrl
-    };
-
-    AwesomeNotifications().createNotificationFromJsonData(notificationAdapter);
-  }
-  else {
-    AwesomeNotifications().createNotificationFromJsonData(message.data);
-  }
 }
 
 class App extends StatefulWidget {
@@ -218,6 +175,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   void initState() {
+
     MediaPlayerCentral.addAll([
       MediaModel(
           diskImagePath: 'asset://assets/images/rock-disc.jpg',

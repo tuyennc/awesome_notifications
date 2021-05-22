@@ -53,11 +53,7 @@ class FirebaseDataSource extends HttpDataSource {
 
   Future<String> pushBasicNotification({
     required String firebaseServerKey,
-    required String firebaseAppToken,
-    required int notificationId,
-    required String title,
-    required String body,
-    Map<String, String> payload = const {}
+    required String firebaseAppToken
   }) async {
     return await _pushNotification(
         firebaseServerKey: firebaseServerKey,
@@ -67,24 +63,43 @@ class FirebaseDataSource extends HttpDataSource {
   Map<String, dynamic> getFirebaseExampleContent({required String firebaseAppToken}) {
     return {
       'to': firebaseAppToken,
-      'mutable_content' : true,
-      'content_available': true,
-      'priority': 'high',
-      'data': {
-        'content': {
-          'id': 100,
-          'channelKey': 'big_picture',
-          'title': "Huston!\nThe eagle has landed!",
-          'body':
-              "A small step for a man, but a giant leap to Flutter's community!",
-          'notificationLayout': 'BigPicture',
-          'largeIcon':
-              "https://avidabloga.files.wordpress.com/2012/08/emmemc3b3riadeneilarmstrong3.jpg",
-          'bigPicture': "https://www.dw.com/image/49519617_303.jpg",
-          'showWhen': true,
-          'autoCancel': true,
-          'privacy': 'Private'
-        }
+      "mutable-content": true,
+      "content_available": true,
+      "priority": "high",
+      "notification": {
+        "title": "Huston! The eagle has landed!",
+        "body": "A small step for a man, but a giant leap to Flutter's community!",
+        "sound": "default",
+        "image": "https://www.dw.com/image/49519617_303.jpg"
+      },
+      "data" : {
+        "content": {
+          "id": 100,
+          "channelKey": "basic_channel",
+          "title": "Huston! The eagle has landed!",
+          "body": "A small step for a man, but a giant leap to Flutter's community!",
+          "notificationLayout": "BigPicture",
+          "largeIcon": "https://media.fstatic.com/kdNpUx4VBicwDuRBnhBrNmVsaKU=/full-fit-in/290x478/media/artists/avatar/2013/08/neil-i-armstrong_a39978.jpeg",
+          "bigPicture": "https://www.dw.com/image/49519617_303.jpg",
+          "showWhen": true,
+          "autoCancel": true,
+          "privacy": "Private",
+          "payload": {
+            "secret": "Awesome Notifications Rocks!"
+          }
+        },
+        "actionButtons": [
+          {
+            "key": "REDIRECT",
+            "label": "Redirect",
+            "autoCancel": true
+          },
+          {
+            "key": "DISMISS",
+            "label": "Dismiss",
+            "autoCancel": true
+          }
+        ]
       }
     };
   }

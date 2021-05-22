@@ -148,11 +148,7 @@ class _FirebaseTestPageState extends State<FirebaseTestPage> {
       int id, String firebaseServerKey) async {
     return await widget.firebaseDataSource.pushBasicNotification(
         firebaseServerKey: firebaseServerKey,
-        firebaseAppToken: widget.firebaseAppToken,
-        notificationId: id,
-        title: 'Notification through firebase',
-        body:
-            'This notification was sent through firebase messaging cloud services.',
-        payload: {'uuid': 'testPayloadKey'});
+        firebaseAppToken: widget.firebaseAppToken
+    );
   }
 }
