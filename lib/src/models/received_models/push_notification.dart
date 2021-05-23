@@ -18,7 +18,8 @@ class PushNotification extends Model {
   /// Imports data from a serializable object
   PushNotification? fromMap(Map<String, dynamic> mapData) {
     try {
-      assert(mapData.containsKey('content') && mapData['content'] is Map);
+      assert(mapData.containsKey(NOTIFICATION_CONTENT) &&
+          mapData[NOTIFICATION_CONTENT] is Map);
 
       Map<String, dynamic> contentData =
           Map<String, dynamic>.from(mapData[NOTIFICATION_CONTENT]);
@@ -74,9 +75,10 @@ class PushNotification extends Model {
       }
     }
     return {
-      'content': content?.toMap() ?? {},
-      'schedule': schedule?.toMap() ?? {},
-      'actionButtons': actionButtonsData.isEmpty ? null : actionButtonsData
+      NOTIFICATION_CONTENT: content?.toMap() ?? {},
+      NOTIFICATION_SCHEDULE: schedule?.toMap() ?? {},
+      NOTIFICATION_ACTION_BUTTONS:
+          actionButtonsData.isEmpty ? null : actionButtonsData
     };
   }
 

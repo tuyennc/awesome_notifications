@@ -20,7 +20,7 @@ public class NotificationContentModel : AbstractModel {
     var payload:[String:String?]?
     
     var playSound: Bool?
-    var customSound: String?
+    var soundSource: String?
     var locked: Bool?
     var icon: String?
     var largeIcon: String?
@@ -55,7 +55,7 @@ public class NotificationContentModel : AbstractModel {
         self.showWhen       = MapUtils<Bool>.getValueOrDefault(reference: "showWhen", arguments: arguments)
         
         self.playSound             = MapUtils<Bool>.getValueOrDefault(reference: "playSound", arguments: arguments)
-        self.customSound           = MapUtils<String>.getValueOrDefault(reference: "customSound", arguments: arguments)
+        self.soundSource           = MapUtils<String>.getValueOrDefault(reference: "soundSource", arguments: arguments)
         self.locked                = MapUtils<Bool>.getValueOrDefault(reference: "locked", arguments: arguments)
         self.icon                  = MapUtils<String>.getValueOrDefault(reference: "icon", arguments: arguments)
         self.largeIcon             = MapUtils<String>.getValueOrDefault(reference: "largeIcon", arguments: arguments)
@@ -121,7 +121,7 @@ public class NotificationContentModel : AbstractModel {
         if(self.summary != nil){ mapData["summary"] = self.summary }
         if(self.showWhen != nil){ mapData["showWhen"] = self.showWhen }
         if(self.playSound != nil){ mapData["playSound"] = self.playSound }
-        if(self.customSound != nil){ mapData["customSound"] = self.customSound }
+        if(self.soundSource != nil){ mapData["soundSource"] = self.soundSource }
         if(self.icon != nil){ mapData["icon"] = self.icon }
         if(self.largeIcon != nil){ mapData["largeIcon"] = self.largeIcon }
         if(self.locked != nil){ mapData["locked"] = self.locked }

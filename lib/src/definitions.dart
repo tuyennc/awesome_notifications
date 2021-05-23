@@ -106,10 +106,15 @@ const NOTIFICATION_LAYOUT = 'notificationLayout';
 const NOTIFICATION_CREATED_SOURCE = 'createdSource';
 const NOTIFICATION_CREATED_LIFECYCLE = 'createdLifeCycle';
 const NOTIFICATION_DISPLAYED_LIFECYCLE = 'displayedLifeCycle';
+const NOTIFICATION_DISMISSED_LIFECYCLE = 'dismissedLifeCycle';
 const NOTIFICATION_ACTION_LIFECYCLE = 'actionLifeCycle';
 const NOTIFICATION_CREATED_DATE = 'createdDate';
 const NOTIFICATION_DISPLAYED_DATE = 'displayedDate';
 const NOTIFICATION_ACTION_DATE = 'actionDate';
+const NOTIFICATION_DISMISSED_DATE = 'dismissedDate';
+
+const NOTIFICATION_DISPLAY_ON_FOREGROUND = 'displayOnForeground';
+const NOTIFICATION_DISPLAY_ON_BACKGROUND = 'displayOnBackground';
 
 const NOTIFICATION_SCHEDULE_TIMEZONE = 'timeZone';
 const NOTIFICATION_SCHEDULE_ERA = 'era';
@@ -131,16 +136,17 @@ const NOTIFICATION_TITLE = 'title';
 const NOTIFICATION_BODY = 'body';
 const NOTIFICATION_SUMMARY = 'summary';
 const NOTIFICATION_SHOW_WHEN = 'showWhen';
-const NOTIFICATION_ACTION_KEY = 'actionKey';
 const NOTIFICATION_EXPANDABLE_BODY = 'expandableBody';
 const NOTIFICATION_JSON = 'notificationJson';
 
 const NOTIFICATION_ACTION_BUTTONS = 'actionButtons';
 const NOTIFICATION_BUTTON_KEY = 'key';
 const NOTIFICATION_BUTTON_LABEL = 'label';
-const NOTIFICATION_BUTTON_INPUT = 'action_input';
 const NOTIFICATION_BUTTON_TYPE = 'buttonType';
 const NOTIFICATION_ENABLED = "enabled";
+
+const NOTIFICATION_ACTION_KEY = 'actionKey';
+const NOTIFICATION_ACTION_INPUT = 'actionInput';
 
 const NOTIFICATION_PAYLOAD = 'payload';
 const NOTIFICATION_INITIAL_FIXED_DATE = 'fixedDate';
@@ -156,7 +162,7 @@ const NOTIFICATION_AUTO_CANCEL = 'autoCancel';
 const NOTIFICATION_LOCKED = 'locked';
 const NOTIFICATION_ICON = 'icon';
 const NOTIFICATION_PLAY_SOUND = 'playSound';
-const NOTIFICATION_SOUND_PATH = 'sound';
+const NOTIFICATION_SOUND_SOURCE = 'soundSource';
 const NOTIFICATION_ENABLE_VIBRATION = 'enableVibration';
 const NOTIFICATION_VIBRATION_PATTERN = 'vibrationPattern';
 const NOTIFICATION_GROUP_KEY = 'groupKey';
@@ -168,7 +174,8 @@ const NOTIFICATION_CHANNEL_NAME = 'channelName';
 const NOTIFICATION_CHANNEL_DESCRIPTION = 'channelDescription';
 const NOTIFICATION_CHANNEL_SHOW_BADGE = 'channelShowBadge';
 const NOTIFICATION_IMPORTANCE = 'importance';
-const NOTIFICATION_COLOR = 'color';
+const NOTIFICATION_DEFAULT_COLOR = 'defaultColor';
+const NOTIFICATION_BACKGROUND_COLOR = 'backgroundColor';
 const NOTIFICATION_LARGE_ICON = 'largeIcon';
 const NOTIFICATION_BIG_PICTURE = 'bigPicture';
 const NOTIFICATION_HIDE_LARGE_ICON_ON_EXPAND = 'hideLargeIconOnExpand';
@@ -217,7 +224,7 @@ class Definitions {
     NOTIFICATION_ENABLED: true,
     NOTIFICATION_PAYLOAD: null,
     NOTIFICATION_ENABLE_VIBRATION: true,
-    NOTIFICATION_COLOR: Colors.black,
+    NOTIFICATION_DEFAULT_COLOR: Colors.black,
     NOTIFICATION_LED_COLOR: Colors.white,
     NOTIFICATION_ENABLE_LIGHTS: true,
     NOTIFICATION_LED_OFF_MS: 700,

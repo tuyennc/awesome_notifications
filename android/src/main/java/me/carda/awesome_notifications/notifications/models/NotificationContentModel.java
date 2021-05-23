@@ -31,11 +31,11 @@ public class NotificationContentModel extends Model {
     public Boolean showWhen;
     public List<Object> actionButtons;
     public Map<String, String> payload;
-    public Boolean playSound;
     public String icon;
     public String largeIcon;
     public Boolean locked;
     public String bigPicture;
+    public String soundSource;
     public Boolean hideLargeIconOnExpand;
     public Boolean autoCancel;
     public Boolean displayOnForeground;
@@ -80,12 +80,12 @@ public class NotificationContentModel extends Model {
         color = getValueOrDefault(arguments, Definitions.NOTIFICATION_COLOR, Long.class);
         backgroundColor = getValueOrDefault(arguments, Definitions.NOTIFICATION_BACKGROUND_COLOR, Long.class);
 
+        soundSource = getValueOrDefault(arguments, Definitions.NOTIFICATION_SOUND_SOURCE, String.class);
+
         id    = getValueOrDefault(arguments, Definitions.NOTIFICATION_ID, Integer.class);
         title = getValueOrDefault(arguments, Definitions.NOTIFICATION_TITLE, String.class);
         body  = getValueOrDefault(arguments, Definitions.NOTIFICATION_BODY, String.class);
         summary = getValueOrDefault(arguments, Definitions.NOTIFICATION_SUMMARY, String.class);
-
-        playSound = getValueOrDefault(arguments, Definitions.NOTIFICATION_PLAY_SOUND, Boolean.class);
 
         showWhen = getValueOrDefault(arguments, Definitions.NOTIFICATION_SHOW_WHEN, Boolean.class);
         locked = getValueOrDefault(arguments, Definitions.NOTIFICATION_LOCKED, Boolean.class);
@@ -129,11 +129,11 @@ public class NotificationContentModel extends Model {
         returnedObject.put(Definitions.NOTIFICATION_BODY, this.body);
         returnedObject.put(Definitions.NOTIFICATION_SUMMARY, this.summary);
 
+        returnedObject.put(Definitions.NOTIFICATION_SOUND_SOURCE, this.soundSource);
+
         returnedObject.put(Definitions.NOTIFICATION_SHOW_WHEN, this.showWhen);
 
         returnedObject.put(Definitions.NOTIFICATION_LOCKED, this.locked);
-
-        returnedObject.put(Definitions.NOTIFICATION_PLAY_SOUND, this.playSound);
 
         returnedObject.put(Definitions.NOTIFICATION_TICKER, this.ticker);
         returnedObject.put(Definitions.NOTIFICATION_PAYLOAD, this.payload);

@@ -27,7 +27,7 @@ class DateUtils {
     return parsedLocalDate.toUtc();
   }
 
-  static String getUtcTextDate(){
+  static String getUtcTextDate() {
     return parseDateToString(DateTime.now().toUtc())!;
   }
 }

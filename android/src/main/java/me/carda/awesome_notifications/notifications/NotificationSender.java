@@ -159,22 +159,20 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
 
             if(created){
                 CreatedManager.saveCreated(context, receivedNotification);
-                BroadcastSender.SendBroadcastNotificationCreated(
-                    context,
-                    receivedNotification
-                );
-
                 CreatedManager.commitChanges(context);
+                BroadcastSender.SendBroadcastNotificationCreated(
+                        context,
+                        receivedNotification
+                );
             }
 
             if(displayed){
                 DisplayedManager.saveDisplayed(context, receivedNotification);
+                DisplayedManager.commitChanges(context);
                 BroadcastSender.SendBroadcastNotificationDisplayed(
                     context,
                     receivedNotification
                 );
-
-                DisplayedManager.commitChanges(context);
             }
         }
     }

@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications/src/enumerators/notification_layout.dart';
 import 'package:awesome_notifications/src/enumerators/notification_life_cycle.dart';
 import 'package:awesome_notifications/src/enumerators/notification_source.dart';
@@ -37,7 +38,7 @@ class NotificationContent extends BaseNotificationContent {
       String? icon,
       String? largeIcon,
       String? bigPicture,
-      String? customSound,
+      String? soundSource,
       bool? autoCancel,
       Color? color,
       Color? backgroundColor,
@@ -65,7 +66,7 @@ class NotificationContent extends BaseNotificationContent {
             icon: icon,
             largeIcon: largeIcon,
             bigPicture: bigPicture,
-            customSound: customSound,
+            soundSource: soundSource,
             autoCancel: autoCancel,
             color: color,
             backgroundColor: backgroundColor);
@@ -74,33 +75,32 @@ class NotificationContent extends BaseNotificationContent {
   NotificationContent? fromMap(Map<String, dynamic> mapData) {
     super.fromMap(mapData);
 
-    this.hideLargeIconOnExpand =
-        AssertUtils.extractValue(mapData, 'hideLargeIconOnExpand');
+    this.hideLargeIconOnExpand = AssertUtils.extractValue(
+        mapData, NOTIFICATION_HIDE_LARGE_ICON_ON_EXPAND);
 
-    this.progress = AssertUtils.extractValue(mapData, 'progress');
-    this.ticker = AssertUtils.extractValue(mapData, 'ticker');
-    this.locked = AssertUtils.extractValue(mapData, 'locked');
+    this.progress = AssertUtils.extractValue(mapData, NOTIFICATION_PROGRESS);
+    this.ticker = AssertUtils.extractValue(mapData, NOTIFICATION_TICKER);
+    this.locked = AssertUtils.extractValue(mapData, NOTIFICATION_LOCKED);
 
     this.notificationLayout = AssertUtils.extractEnum(
-        mapData, 'notificationLayout', NotificationLayout.values);
+        mapData, NOTIFICATION_LAYOUT, NotificationLayout.values);
 
-    this.displayedLifeCycle = AssertUtils.extractEnum(
-        mapData, 'displayedLifeCycle', NotificationLifeCycle.values);
+    this.displayedLifeCycle = AssertUtils.extractEnum(mapData,
+        NOTIFICATION_DISPLAYED_LIFECYCLE, NotificationLifeCycle.values);
+    this.displayedDate =
+        AssertUtils.extractValue<String>(mapData, NOTIFICATION_DISPLAYED_DATE);
 
     this.createdSource = AssertUtils.extractEnum(
-        mapData, 'createdSource', NotificationSource.values);
+        mapData, NOTIFICATION_CREATED_SOURCE, NotificationSource.values);
     this.createdLifeCycle = AssertUtils.extractEnum(
-        mapData, 'createdLifeCycle', NotificationLifeCycle.values);
+        mapData, NOTIFICATION_CREATED_LIFECYCLE, NotificationLifeCycle.values);
+    this.createdDate =
+        AssertUtils.extractValue<String>(mapData, NOTIFICATION_CREATED_DATE);
 
-    this.createdDate = AssertUtils.extractValue<String>(mapData, 'createdDate');
-
-    this.displayOnForeground =
-        AssertUtils.extractValue<bool>(mapData, 'displayOnForeground');
-    this.displayOnBackground =
-        AssertUtils.extractValue<bool>(mapData, 'displayOnBackground');
-
-    this.displayedDate =
-        AssertUtils.extractValue<String>(mapData, 'displayedDate');
+    this.displayOnForeground = AssertUtils.extractValue<bool>(
+        mapData, NOTIFICATION_DISPLAY_ON_FOREGROUND);
+    this.displayOnBackground = AssertUtils.extractValue<bool>(
+        mapData, NOTIFICATION_DISPLAY_ON_BACKGROUND);
 
     try {
       validate();
@@ -115,25 +115,23 @@ class NotificationContent extends BaseNotificationContent {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> dataMap = super.toMap();
 
-    List<dynamic> actionButtonList = [];
-
     dataMap = dataMap
       ..addAll({
-        'hideLargeIconOnExpand': hideLargeIconOnExpand,
-        'progress': progress,
-        'ticker': ticker,
-        'locked': locked,
-        'actionButtons': actionButtonList.length > 0 ? actionButtonList : null,
-        'notificationLayout':
-            AssertUtils.toSimpleEnumString(notificationLayout),
-        'createdSource': AssertUtils.toSimpleEnumString(createdSource),
-        'createdLifeCycle': AssertUtils.toSimpleEnumString(createdLifeCycle),
-        'displayedLifeCycle':
+        NOTIFICATION_HIDE_LARGE_ICON_ON_EXPAND: hideLargeIconOnExpand,
+        NOTIFICATION_PROGRESS: progress,
+        NOTIFICATION_TICKER: ticker,
+        NOTIFICATION_LOCKED: locked,
+        NOTIFICATION_LAYOUT: AssertUtils.toSimpleEnumString(notificationLayout),
+        NOTIFICATION_CREATED_DATE: createdDate,
+        NOTIFICATION_CREATED_SOURCE:
+            AssertUtils.toSimpleEnumString(createdSource),
+        NOTIFICATION_CREATED_LIFECYCLE:
+            AssertUtils.toSimpleEnumString(createdLifeCycle),
+        NOTIFICATION_DISPLAYED_DATE: displayedDate,
+        NOTIFICATION_DISPLAYED_LIFECYCLE:
             AssertUtils.toSimpleEnumString(displayedLifeCycle),
-        'displayOnForeground': displayOnForeground,
-        'displayOnBackground': displayOnBackground,
-        'createdDate': createdDate,
-        'displayedDate': displayedDate,
+        NOTIFICATION_DISPLAY_ON_FOREGROUND: displayOnForeground,
+        NOTIFICATION_DISPLAY_ON_BACKGROUND: displayOnBackground,
       });
     return dataMap;
   }

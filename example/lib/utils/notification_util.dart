@@ -1180,10 +1180,12 @@ void processDefaultActionReceived(BuildContext context, ReceivedAction receivedN
 }
 
 void processInputTextReceived(ReceivedAction receivedNotification) {
-  Fluttertoast.showToast(
-      msg: 'Msg: ' + receivedNotification.buttonKeyInput,
-      backgroundColor: App.mainColor,
-      textColor: Colors.white);
+  Future.delayed(const Duration(seconds: 2), () =>
+    Fluttertoast.showToast(
+        msg: 'Msg: ' + receivedNotification.buttonKeyInput,
+        backgroundColor: App.mainColor,
+        textColor: Colors.white,
+    ));
 }
 
 void processMediaControls(actionReceived) {

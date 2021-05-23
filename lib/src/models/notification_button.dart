@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications/src/enumerators/action_button_type.dart';
 import 'package:awesome_notifications/src/enumerators/media_source.dart';
 import 'package:awesome_notifications/src/models/model.dart';
@@ -33,13 +34,13 @@ class NotificationActionButton extends Model {
 
   @override
   NotificationActionButton? fromMap(Map<String, dynamic> dataMap) {
-    key = AssertUtils.extractValue(dataMap, 'key');
-    icon = AssertUtils.extractValue(dataMap, 'icon');
-    label = AssertUtils.extractValue(dataMap, 'label');
-    enabled = AssertUtils.extractValue(dataMap, 'enabled');
-    autoCancel = AssertUtils.extractValue(dataMap, 'autoCancel');
+    key = AssertUtils.extractValue(dataMap, NOTIFICATION_KEY);
+    icon = AssertUtils.extractValue(dataMap, NOTIFICATION_ICON);
+    label = AssertUtils.extractValue(dataMap, NOTIFICATION_BUTTON_LABEL);
+    enabled = AssertUtils.extractValue(dataMap, NOTIFICATION_ENABLED);
+    autoCancel = AssertUtils.extractValue(dataMap, NOTIFICATION_AUTO_CANCEL);
     buttonType = AssertUtils.extractEnum(
-            dataMap, 'buttonType', ActionButtonType.values) ??
+            dataMap, NOTIFICATION_BUTTON_TYPE, ActionButtonType.values) ??
         ActionButtonType.Default;
 
     return this;
@@ -48,12 +49,12 @@ class NotificationActionButton extends Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      'key': key,
-      'icon': icon,
-      'label': label,
-      'enabled': enabled,
-      'autoCancel': autoCancel,
-      'buttonType': AssertUtils.toSimpleEnumString(buttonType)
+      NOTIFICATION_KEY: key,
+      NOTIFICATION_ICON: icon,
+      NOTIFICATION_BUTTON_LABEL: label,
+      NOTIFICATION_ENABLED: enabled,
+      NOTIFICATION_AUTO_CANCEL: autoCancel,
+      NOTIFICATION_BUTTON_TYPE: AssertUtils.toSimpleEnumString(buttonType)
     };
   }
 

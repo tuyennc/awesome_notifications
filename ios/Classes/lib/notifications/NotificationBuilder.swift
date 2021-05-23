@@ -515,8 +515,8 @@ public class NotificationBuilder {
     private static func setSound(pushNotification:PushNotification, channel:NotificationChannelModel, content:UNMutableNotificationContent){
         if (pushNotification.content!.playSound ?? false) && (channel.playSound ?? false) {
             
-            if(!StringUtils.isNullOrEmpty(pushNotification.content!.customSound)){
-                content.sound = AudioUtils.getSoundFromSource(SoundPath: pushNotification.content!.customSound!)
+            if(!StringUtils.isNullOrEmpty(pushNotification.content!.soundSource)){
+                content.sound = AudioUtils.getSoundFromSource(SoundPath: pushNotification.content!.soundSource!)
                 return
             }
             

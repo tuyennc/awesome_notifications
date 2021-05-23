@@ -8,19 +8,21 @@ import 'package:awesome_notifications/src/utils/assert_utils.dart';
 class ReceivedAction extends ReceivedNotification {
   NotificationLifeCycle? actionLifeCycle;
   NotificationLifeCycle? dismissedLifeCycle;
+
   String buttonKeyPressed = '';
   String buttonKeyInput = '';
+
   String? actionDate;
   String? dismissedDate;
 
   ReceivedAction();
 
-  static ReceivedAction fromNotificationContent(NotificationContent content){
-      ReceivedAction receivedAction = ReceivedAction().fromMap(content.toMap());
-      receivedAction.actionDate ??= DateUtils.getUtcTextDate();
-      receivedAction.actionLifeCycle ??= NotificationLifeCycle.Foreground;
+  static ReceivedAction fromNotificationContent(NotificationContent content) {
+    ReceivedAction receivedAction = ReceivedAction().fromMap(content.toMap());
+    receivedAction.actionDate ??= DateUtils.getUtcTextDate();
+    receivedAction.actionLifeCycle ??= NotificationLifeCycle.Foreground;
 
-      return receivedAction;
+    return receivedAction;
   }
 
   /// Imports data from a serializable object
@@ -28,18 +30,22 @@ class ReceivedAction extends ReceivedNotification {
     super.fromMap(dataMap);
 
     actionLifeCycle = AssertUtils.extractEnum<NotificationLifeCycle>(
-        dataMap, 'actionLifeCycle', NotificationLifeCycle.values);
+        dataMap, NOTIFICATION_ACTION_LIFECYCLE, NotificationLifeCycle.values);
 
-    dismissedLifeCycle = AssertUtils.extractEnum(
-        dataMap, 'dismissedLifeCycle', NotificationLifeCycle.values);
+    dismissedLifeCycle = AssertUtils.extractEnum(dataMap,
+        NOTIFICATION_DISMISSED_LIFECYCLE, NotificationLifeCycle.values);
 
-    actionDate = AssertUtils.extractValue<String>(dataMap, 'actionDate');
-    dismissedDate = AssertUtils.extractValue<String>(dataMap, 'dismissedDate');
+    actionDate =
+        AssertUtils.extractValue<String>(dataMap, NOTIFICATION_ACTION_DATE);
+    dismissedDate =
+        AssertUtils.extractValue<String>(dataMap, NOTIFICATION_DISMISSED_DATE);
 
     buttonKeyPressed =
-        AssertUtils.extractValue<String>(dataMap, 'actionKey') ?? '';
+        AssertUtils.extractValue<String>(dataMap, NOTIFICATION_ACTION_KEY) ??
+            '';
     buttonKeyInput =
-        AssertUtils.extractValue<String>(dataMap, 'actionInput') ?? '';
+        AssertUtils.extractValue<String>(dataMap, NOTIFICATION_ACTION_INPUT) ??
+            '';
 
     return this;
   }
@@ -49,13 +55,14 @@ class ReceivedAction extends ReceivedNotification {
     Map<String, dynamic> map = super.toMap();
     return map
       ..addAll({
-        'actionDate': actionDate,
-        'dismissedDate': dismissedDate,
-        'actionLifeCycle': AssertUtils.toSimpleEnumString(actionLifeCycle),
-        'dismissedLifeCycle':
+        NOTIFICATION_ACTION_DATE: actionDate,
+        NOTIFICATION_DISMISSED_DATE: dismissedDate,
+        NOTIFICATION_ACTION_LIFECYCLE:
+            AssertUtils.toSimpleEnumString(actionLifeCycle),
+        NOTIFICATION_DISMISSED_LIFECYCLE:
             AssertUtils.toSimpleEnumString(dismissedLifeCycle),
-        'buttonKeyPressed': buttonKeyPressed,
-        'buttonKeyInput': buttonKeyInput
+        NOTIFICATION_ACTION_KEY: buttonKeyPressed,
+        NOTIFICATION_ACTION_INPUT: buttonKeyInput
       });
   }
 }

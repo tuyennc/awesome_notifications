@@ -289,8 +289,8 @@ class AwesomeNotifications {
   Future<bool> createNotificationFromJsonData(
       Map<String, dynamic> mapData) async {
     try {
-
-      PushNotification? pushNotification = await extractNotificationFromJsonData(mapData);
+      PushNotification? pushNotification =
+          await extractNotificationFromJsonData(mapData);
       if (pushNotification == null) {
         throw Exception('Notification map data is invalid');
       }
@@ -299,7 +299,6 @@ class AwesomeNotifications {
           content: pushNotification.content!,
           schedule: pushNotification.schedule,
           actionButtons: pushNotification.actionButtons);
-
     } catch (e) {
       return false;
     }

@@ -110,7 +110,7 @@ enum Definitions {
     static let  NOTIFICATION_TITLE = "title"
     static let  NOTIFICATION_BODY = "body"
     static let  NOTIFICATION_SUMMARY = "summary"
-    static let  NOTIFICATION_CUSTOM_SOUND = "customSound"
+    static let  NOTIFICATION_SOUND_SOURCE = "soundSource"
     static let  NOTIFICATION_SHOW_WHEN = "showWen"
     static let  NOTIFICATION_ACTION_KEY = "actionKey"
     static let  NOTIFICATION_ACTION_INPUT = "actionInput"
