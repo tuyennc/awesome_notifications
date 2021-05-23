@@ -19,13 +19,13 @@ public class NotificationButtonModel : AbstractModel {
     public func fromMap(arguments: [String : Any?]?) -> AbstractModel? {
         if(arguments == nil){ return self }
        
-        self.key        = MapUtils<String>.getValueOrDefault(reference: "key", arguments: arguments)
-        self.icon       = MapUtils<String>.getValueOrDefault(reference: "icon", arguments: arguments)
-        self.label      = MapUtils<String>.getValueOrDefault(reference: "label", arguments: arguments)
-        self.enabled    = MapUtils<Bool>.getValueOrDefault(reference: "enabled", arguments: arguments)
-        self.autoCancel = MapUtils<Bool>.getValueOrDefault(reference: "autoCancel", arguments: arguments)
+        self.key        = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BUTTON_KEY, arguments: arguments)
+        self.icon       = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BUTTON_ICON, arguments: arguments)
+        self.label      = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BUTTON_LABEL, arguments: arguments)
+        self.enabled    = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_ENABLED, arguments: arguments)
+        self.autoCancel = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_AUTO_CANCEL, arguments: arguments)
         
-        self.buttonType = EnumUtils<ActionButtonType>.getEnumOrDefault(reference: "buttonType", arguments: arguments)
+        self.buttonType = EnumUtils<ActionButtonType>.getEnumOrDefault(reference: Definitions.NOTIFICATION_BUTTON_TYPE, arguments: arguments)
         
         return self
     }
@@ -33,13 +33,13 @@ public class NotificationButtonModel : AbstractModel {
     public func toMap() -> [String : Any?] {
         var mapData:[String: Any?] = [:]
         
-        if(key != nil) {mapData["key"] = self.key}
-        if(icon != nil) {mapData["icon"] = self.icon}
-        if(label != nil) {mapData["label"] = self.label}
-        if(enabled != nil) {mapData["enabled"] = self.enabled}
-        if(autoCancel != nil) {mapData["autoCancel"] = self.autoCancel}
+        if(key != nil) {mapData[Definitions.NOTIFICATION_BUTTON_KEY] = self.key}
+        if(icon != nil) {mapData[Definitions.NOTIFICATION_BUTTON_ICON] = self.icon}
+        if(label != nil) {mapData[Definitions.NOTIFICATION_BUTTON_LABEL] = self.label}
+        if(enabled != nil) {mapData[Definitions.NOTIFICATION_ENABLED] = self.enabled}
+        if(autoCancel != nil) {mapData[Definitions.NOTIFICATION_AUTO_CANCEL] = self.autoCancel}
         
-        if(buttonType != nil) {mapData["buttonType"] = self.buttonType?.rawValue}
+        if(buttonType != nil) {mapData[Definitions.NOTIFICATION_BUTTON_TYPE] = self.buttonType?.rawValue}
         
         return mapData
     }

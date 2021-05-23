@@ -1,4 +1,6 @@
 
+import Foundation
+
 enum Definitions {
     
     static let  BROADCAST_FCM_TOKEN = "me.carda.awesome_notifications.firebase.TOKEN"
@@ -101,16 +103,17 @@ enum Definitions {
     static let  NOTIFICATION_CREATED_LIFECYCLE = "createdLifeCycle"
     static let  NOTIFICATION_DISPLAYED_LIFECYCLE = "displayedLifeCycle"
     static let  NOTIFICATION_ACTION_LIFECYCLE = "actionLifeCycle"
+    static let  NOTIFICATION_DISMISSED_LIFECYCLE = "dismissedLifeCycle"
     static let  NOTIFICATION_CREATED_DATE = "createdDate"
     static let  NOTIFICATION_DISPLAYED_DATE = "displayedDate"
     static let  NOTIFICATION_ACTION_DATE = "actionDate"
+    static let  NOTIFICATION_DISMISSED_DATE = "dismissedDate"
 
     static let  NOTIFICATION_ID = "id"
     static let  NOTIFICATION_LAYOUT = "notificationLayout"
     static let  NOTIFICATION_TITLE = "title"
     static let  NOTIFICATION_BODY = "body"
     static let  NOTIFICATION_SUMMARY = "summary"
-    static let  NOTIFICATION_SOUND_SOURCE = "soundSource"
     static let  NOTIFICATION_SHOW_WHEN = "showWen"
     static let  NOTIFICATION_ACTION_KEY = "actionKey"
     static let  NOTIFICATION_ACTION_INPUT = "actionInput"
@@ -129,8 +132,10 @@ enum Definitions {
     static let  NOTIFICATION_ENABLED = "enabled"
     static let  NOTIFICATION_AUTO_CANCEL = "autoCancel"
     static let  NOTIFICATION_LOCKED = "locked"
+    
     static let  NOTIFICATION_DISPLAY_ON_FOREGROUND = "displayOnForeground"
     static let  NOTIFICATION_DISPLAY_ON_BACKGROUND = "displayOnBackground"
+    
     static let  NOTIFICATION_ICON = "icon"
     static let  NOTIFICATION_PLAY_SOUND = "playSound"
     static let  NOTIFICATION_SOUND_SOURCE = "soundSource"
@@ -149,7 +154,6 @@ enum Definitions {
     static let  NOTIFICATION_CHANNEL_DESCRIPTION = "channelDescription"
     static let  NOTIFICATION_CHANNEL_SHOW_BADGE = "channelShowBadge"
     static let  NOTIFICATION_IMPORTANCE = "importance"
-    static let  NOTIFICATION_COLOR = "color"
     static let  NOTIFICATION_BACKGROUND_COLOR = "backgroundColor"
     static let  NOTIFICATION_DEFAULT_COLOR = "defaultColor"
     static let  NOTIFICATION_LARGE_ICON = "largeIcon"

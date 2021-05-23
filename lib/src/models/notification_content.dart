@@ -68,7 +68,7 @@ class NotificationContent extends BaseNotificationContent {
             bigPicture: bigPicture,
             soundSource: soundSource,
             autoCancel: autoCancel,
-            color: color,
+            defaultColor: color,
             backgroundColor: backgroundColor);
 
   @override

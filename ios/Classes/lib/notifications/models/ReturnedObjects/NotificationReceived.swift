@@ -20,13 +20,12 @@ public class NotificationReceived : NotificationContentModel {
         self.body = contentModel!.body
         self.summary = contentModel!.summary
         self.showWhen = contentModel!.showWhen
-        self.actionButtons = contentModel!.actionButtons
         self.payload = contentModel!.payload
         self.largeIcon = contentModel!.largeIcon
         self.bigPicture = contentModel!.bigPicture
         self.hideLargeIconOnExpand = contentModel!.hideLargeIconOnExpand
         self.autoCancel = contentModel!.autoCancel
-        self.color = contentModel!.color
+        self.defaultColor = contentModel!.defaultColor
         self.progress = contentModel!.progress
         self.ticker = contentModel!.ticker
         self.locked = contentModel!.locked

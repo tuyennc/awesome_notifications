@@ -20,7 +20,7 @@ class BaseNotificationContent extends Model {
   String? bigPicture;
   String? soundSource;
   bool? autoCancel;
-  Color? color;
+  Color? defaultColor;
   Color? backgroundColor;
   NotificationPrivacy? privacy;
 
@@ -35,7 +35,7 @@ class BaseNotificationContent extends Model {
       this.largeIcon,
       this.bigPicture,
       this.autoCancel,
-      this.color,
+      this.defaultColor,
       this.backgroundColor,
       this.payload,
       this.soundSource});
@@ -67,7 +67,7 @@ class BaseNotificationContent extends Model {
 
     int? colorValue =
         AssertUtils.extractValue<int>(mapData, NOTIFICATION_DEFAULT_COLOR);
-    this.color = colorValue == null ? null : Color(colorValue);
+    this.defaultColor = colorValue == null ? null : Color(colorValue);
 
     int? backgroundColorValue =
         AssertUtils.extractValue<int>(mapData, NOTIFICATION_BACKGROUND_COLOR);
@@ -93,7 +93,7 @@ class BaseNotificationContent extends Model {
       NOTIFICATION_SOUND_SOURCE: soundSource,
       NOTIFICATION_AUTO_CANCEL: autoCancel,
       NOTIFICATION_PRIVACY: AssertUtils.toSimpleEnumString(privacy),
-      NOTIFICATION_DEFAULT_COLOR: color?.value,
+      NOTIFICATION_DEFAULT_COLOR: defaultColor?.value,
       NOTIFICATION_BACKGROUND_COLOR: backgroundColor?.value
     };
   }
