@@ -305,12 +305,10 @@ class AwesomeNotifications {
   }
 
   /// Check if the notifications are permitted
-  Future<bool> showNotificationConfigPage({String? channelKey}) async {
-    final bool isAllowed =
+  Future<void> showNotificationConfigPage({String? channelKey}) async {
     await _channel.invokeMethod(CHANNEL_METHOD_SHOW_NOTIFICATION_PAGE, {
       NOTIFICATION_CHANNEL_KEY: channelKey
     });
-    return isAllowed;
   }
 
   /// Check if the notifications are permitted

@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -884,19 +885,18 @@ public class AwesomeNotificationsPlugin
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, applicationContext.getPackageName());
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                intent.putExtra("app_package", applicationContext.getPackageName());
+                intent.putExtra("app_uid", applicationContext.getApplicationInfo().uid);
             } else {
-                intent.setAction(Settings.ACTION_APPLICATION_SETTINGS);
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                intent.setData(Uri.parse("package:" + applicationContext.getPackageName()));
             }
 
-            //for Android 5-7
-            intent.putExtra("app_package", applicationContext.getPackageName());
-            intent.putExtra("app_uid", applicationContext.getApplicationInfo().uid);
-
-            // for Android 8 and above
-            intent.putExtra("android.provider.extra.APP_PACKAGE", applicationContext.getPackageName());
-
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
             applicationContext.startActivity(intent);
         }
     }
