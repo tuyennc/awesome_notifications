@@ -1369,6 +1369,10 @@ Future<bool> requireUserNotificationPermissions(BuildContext context, {String? c
   return isAllowed;
 }
 
+Future<void> showNotificationConfigPage() async {
+  AwesomeNotifications().showNotificationConfigPage();
+}
+
 Future<void> showRequestUserPermissionDialog(BuildContext context, {String? channelKey}) async {
   return showDialog(
     context: context,

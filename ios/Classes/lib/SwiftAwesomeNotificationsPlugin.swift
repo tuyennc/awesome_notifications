@@ -533,6 +533,13 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             fireBackgroundLostEvents()
         }
         SwiftAwesomeNotificationsPlugin.didIRealyGoneBackground = false
+        
+        /*if(SwiftAwesomeNotificationsPlugin.hasGoneToAuthorizationPage){
+            SwiftAwesomeNotificationsPlugin.hasGoneToAuthorizationPage = false
+            
+            SwiftAwesomeNotificationsPlugin.pendingAuthorizationReturn() = result
+            SwiftAwesomeNotificationsPlugin.lastChannelKeyRequested = channelKey
+        }*/
 		
         if(SwiftAwesomeNotificationsPlugin.debug){
 			Log.d(
@@ -766,6 +773,10 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 				case Definitions.CHANNEL_METHOD_IS_NOTIFICATION_ALLOWED:
                     try channelMethodIsNotificationAllowed(call: call, result: result)
 					return
+                    
+                case Definitions.CHANNEL_METHOD_SHOW_NOTIFICATION_PAGE:
+                    try channelMethodShowNotificationConfigPage(call: call, result: result)
+                    return
 
 				case Definitions.CHANNEL_METHOD_REQUEST_NOTIFICATIONS:
                     try channelMethodRequestNotification(call: call, result: result)
@@ -1025,9 +1036,24 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
          
     }*/
     
+    private func isChannelEnabled(channelKey:String) -> Bool {
+        let channel:NotificationChannelModel? = ChannelManager.getChannelByKey(channelKey: channelKey)
+        return
+            channel?.importance == nil ?
+                false :
+                channel?.importance != NotificationImportance.None
+    }
+    
     private func channelMethodIsNotificationAllowed(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
+        let platformParameters:[String:Any?]? = call.arguments as? [String:Any?] ?? [:]
+        let channelKey:String? = platformParameters?[Definitions.NOTIFICATION_CHANNEL_KEY] as? String
+        
         if #available(iOS 10.0, *) {
-            NotificationBuilder.isNotificationAllowed(completion: { (allowed) in
+            NotificationBuilder.isNotificationAllowed(completion: { [self] (allowed) in
+                if(allowed && channelKey != nil){
+                    result(isChannelEnabled(channelKey: channelKey!))
+                    return
+                }
                 result(allowed)
             })
         }
@@ -1035,12 +1061,44 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             result(nil)
         }
     }
+    
+    private func channelMethodShowNotificationConfigPage(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
+        if #available(iOS 10.0, *) {
+            
+            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
+
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                    result(nil)// Prints true
+                })
+            }
+        }
+        else {
+            result(nil)
+        }
+    }
 
     private func channelMethodRequestNotification(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
+        let platformParameters:[String:Any?]? = call.arguments as? [String:Any?] ?? [:]
+        let channelKey:String? = platformParameters?[Definitions.NOTIFICATION_CHANNEL_KEY] as? String
+        
         if #available(iOS 10.0, *) {
-            NotificationBuilder.requestPermissions { (allowed) in
-                result(allowed)
-            }
+            NotificationBuilder.isNotificationAllowed(completion: { (allowed) in
+                if(!allowed){
+                    NotificationBuilder.requestPermissions { [self] (allowed) in
+                        if(allowed && channelKey != nil){
+                            result(isChannelEnabled(channelKey: channelKey!))
+                            return
+                        }
+                        result(allowed)
+                    }
+                }
+                else {
+                    result(true)
+                }
+            })
         }
         else {
             result(nil)

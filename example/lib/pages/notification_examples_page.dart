@@ -274,6 +274,8 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> wit
                 '* iOS: notifications are not enabled by default and you must explicitly request it to the user.'),
             SimpleButton('Request permission',
                 onPressed: () => showRequestUserPermissionDialog(context)),
+            SimpleButton("Display notification's config page",
+                onPressed: () => showNotificationConfigPage()),
 
             /* ******************************************************************** */
 
