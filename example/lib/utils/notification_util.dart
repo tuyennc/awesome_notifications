@@ -46,7 +46,10 @@ Future<void> externalUrl(String url) async {
     BASIC NOTIFICATIONS
 ************************************************ */
 
-Future<void> showBasicNotification(int id) async {
+Future<void> showBasicNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
     content: NotificationContent(
       id: id,
@@ -57,7 +60,10 @@ Future<void> showBasicNotification(int id) async {
   );
 }
 
-Future<void> showEmojiNotification(int id) async {
+Future<void> showEmojiNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
     content: NotificationContent(
       id: id,
@@ -73,7 +79,10 @@ Future<void> showEmojiNotification(int id) async {
   ));
 }
 
-Future<void> showNotificationWithPayloadContent(int id) async {
+Future<void> showNotificationWithPayloadContent(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -83,7 +92,10 @@ Future<void> showNotificationWithPayloadContent(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showNotificationWithoutTitle(int id) async {
+Future<void> showNotificationWithoutTitle(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -92,7 +104,10 @@ Future<void> showNotificationWithoutTitle(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showNotificationWithoutBody(int id) async {
+Future<void> showNotificationWithoutBody(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -101,7 +116,10 @@ Future<void> showNotificationWithoutBody(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> sendBackgroundNotification(int id) async {
+Future<void> sendBackgroundNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -113,7 +131,10 @@ Future<void> sendBackgroundNotification(int id) async {
     BADGE NOTIFICATIONS
 ************************************************ */
 
-Future<void> showBadgeNotification(int id) async {
+Future<void> showBadgeNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -124,7 +145,10 @@ Future<void> showBadgeNotification(int id) async {
   );
 }
 
-Future<void> showWithoutBadgeNotification(int id) async {
+Future<void> showWithoutBadgeNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -154,7 +178,10 @@ Future<void> resetBadgeIndicator() async {
     ACTION BUTTONS NOTIFICATIONS
 ************************************************ */
 
-Future<void> showNotificationWithActionButtons(int id) async {
+Future<void> showNotificationWithActionButtons(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -170,7 +197,10 @@ Future<void> showNotificationWithActionButtons(int id) async {
       ]);
 }
 
-Future<void> showNotificationWithIconsAndActionButtons(int id) async {
+Future<void> showNotificationWithIconsAndActionButtons(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -186,7 +216,10 @@ Future<void> showNotificationWithIconsAndActionButtons(int id) async {
       ]);
 }
 
-Future<void> showNotificationWithActionButtonsAndReply(int id) async {
+Future<void> showNotificationWithActionButtonsAndReply(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -212,7 +245,10 @@ Future<void> showNotificationWithActionButtonsAndReply(int id) async {
     LOCKED (ONGOING) NOTIFICATIONS
 ************************************************ */
 
-Future<void> showLockedNotification(int id) async {
+Future<void> showLockedNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: 'locked_notification',
       channelName: 'Locked notification',
@@ -228,7 +264,10 @@ Future<void> showLockedNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showUnlockedNotification(int id) async {
+Future<void> showUnlockedNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: 'locked_notification',
       channelName: 'Unlocked notification',
@@ -249,12 +288,16 @@ Future<void> showUnlockedNotification(int id) async {
     NOTIFICATION CHANNELS MANIPULATION
 ************************************************ */
 
-Future<void> showNotificationImportance(
+Future<void> showNotificationImportance(BuildContext context,
     int id, NotificationImportance importance) async {
   String importanceKey = importance.toString().toLowerCase().split('.').last;
   String channelKey = 'importance_' + importanceKey + '_channel';
   String title = 'Importance levels (' + importanceKey + ')';
   String body = 'Test of importance levels to ' + importanceKey;
+
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
 
   await AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: channelKey,
@@ -302,7 +345,10 @@ Future<void> removeTestChannel(String channelName) async {
     DELAYED NOTIFICATIONS
 ************************************************ */
 
-Future<void> delayNotification(int id) async {
+Future<void> delayNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -318,7 +364,10 @@ Future<void> delayNotification(int id) async {
     DELAYED NOTIFICATIONS
 ************************************************ */
 
-Future<void> showLowVibrationNotification(int id) async {
+Future<void> showLowVibrationNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -328,7 +377,10 @@ Future<void> showLowVibrationNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showMediumVibrationNotification(int id) async {
+Future<void> showMediumVibrationNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -338,7 +390,10 @@ Future<void> showMediumVibrationNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showHighVibrationNotification(int id) async {
+Future<void> showHighVibrationNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -348,7 +403,10 @@ Future<void> showHighVibrationNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showCustomVibrationNotification(int id) async {
+Future<void> showCustomVibrationNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: "custom_vibration",
       channelName: "Custom vibration",
@@ -373,7 +431,10 @@ Future<void> showCustomVibrationNotification(int id) async {
     COLORFUL AND LED NOTIFICATIONS
 ************************************************ */
 
-Future<void> redNotification(int id, bool delayLEDTests) async {
+Future<void> redNotification(BuildContext context, int id, bool delayLEDTests) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: "colorful_notification",
       channelName: "Colorful notifications",
@@ -407,7 +468,10 @@ Future<void> redNotification(int id, bool delayLEDTests) async {
           timeZone: await AwesomeNotifications().getLocalTimeZoneIdentifier()) : null);
 }
 
-Future<void> blueNotification(int id, bool delayLEDTests) async {
+Future<void> blueNotification(BuildContext context, int id, bool delayLEDTests) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: "colorful_notification",
       channelName: "Colorful notifications",
@@ -439,7 +503,10 @@ Future<void> blueNotification(int id, bool delayLEDTests) async {
       schedule: delayLEDTests ? NotificationInterval(interval: 5, timeZone: await AwesomeNotifications().getLocalTimeZoneIdentifier()) : null);
 }
 
-Future<void> yellowNotification(int id, bool delayLEDTests) async {
+Future<void> yellowNotification(BuildContext context, int id, bool delayLEDTests) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: "colorful_notification",
       channelName: "Colorful notifications",
@@ -471,7 +538,10 @@ Future<void> yellowNotification(int id, bool delayLEDTests) async {
       schedule: delayLEDTests ? NotificationInterval(interval: 5, timeZone: await AwesomeNotifications().getLocalTimeZoneIdentifier()) : null);
 }
 
-Future<void> purpleNotification(int id, bool delayLEDTests) async {
+Future<void> purpleNotification(BuildContext context, int id, bool delayLEDTests) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: "colorful_notification",
       channelName: "Colorful notifications",
@@ -503,7 +573,10 @@ Future<void> purpleNotification(int id, bool delayLEDTests) async {
       schedule: delayLEDTests ? NotificationInterval(interval: 5, timeZone: await AwesomeNotifications().getLocalTimeZoneIdentifier()) : null);
 }
 
-Future<void> greenNotification(int id, bool delayLEDTests) async {
+Future<void> greenNotification(BuildContext context, int id, bool delayLEDTests) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: "colorful_notification",
       channelName: "Colorful notifications",
@@ -540,7 +613,10 @@ Future<void> greenNotification(int id, bool delayLEDTests) async {
     CUSTOM SOUND NOTIFICATIONS
 ************************************************ */
 
-Future<void> showCustomSoundNotification(int id) async {
+Future<void> showCustomSoundNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -559,7 +635,10 @@ Future<void> showCustomSoundNotification(int id) async {
     SILENCED NOTIFICATIONS
 ************************************************ */
 
-Future<void> showNotificationWithNoSound(int id) async {
+Future<void> showNotificationWithNoSound(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -577,7 +656,10 @@ Future<void> showNotificationWithNoSound(int id) async {
     BIG PICTURE NOTIFICATIONS
 ************************************************ */
 
-Future<void> showBigPictureNetworkNotification(int id) async {
+Future<void> showBigPictureNetworkNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: 11,
@@ -589,7 +671,10 @@ Future<void> showBigPictureNetworkNotification(int id) async {
           notificationLayout: NotificationLayout.BigPicture));
 }
 
-Future<void> showBigPictureAssetNotification(int id) async {
+Future<void> showBigPictureAssetNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -602,7 +687,10 @@ Future<void> showBigPictureAssetNotification(int id) async {
 }
 
 /// Just to simulates a file already saved inside device storage
-Future<void> showBigPictureFileNotification(int id) async {
+Future<void> showBigPictureFileNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   String newFilePath = await downloadAndSaveImageOnDisk(
       'https://images.freeimages.com/images/large-previews/be7/puppy-2-1456421.jpg',
       'newTestImage.jpg');
@@ -622,7 +710,10 @@ Future<void> showBigPictureFileNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showBigPictureResourceNotification(int id) async {
+Future<void> showBigPictureResourceNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -634,7 +725,10 @@ Future<void> showBigPictureResourceNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showLargeIconNotification(int id) async {
+Future<void> showLargeIconNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -647,7 +741,10 @@ Future<void> showLargeIconNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showBigPictureAndLargeIconNotification(int id) async {
+Future<void> showBigPictureAndLargeIconNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -662,7 +759,10 @@ Future<void> showBigPictureAndLargeIconNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showBigPictureNotificationActionButtons(int id) async {
+Future<void> showBigPictureNotificationActionButtons(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -684,7 +784,10 @@ Future<void> showBigPictureNotificationActionButtons(int id) async {
       ]);
 }
 
-Future<void> showBigPictureNotificationActionButtonsAndReply(int id) async {
+Future<void> showBigPictureNotificationActionButtonsAndReply(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -709,7 +812,10 @@ Future<void> showBigPictureNotificationActionButtonsAndReply(int id) async {
       ]);
 }
 
-Future<void> showBigPictureNotificationHideExpandedLargeIcon(int id) async {
+Future<void> showBigPictureNotificationHideExpandedLargeIcon(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -730,7 +836,10 @@ Future<void> showBigPictureNotificationHideExpandedLargeIcon(int id) async {
     BIG TEXT NOTIFICATIONS
 ************************************************ */
 
-Future<void> showBigTextNotification(int id) async {
+Future<void> showBigTextNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -741,7 +850,10 @@ Future<void> showBigTextNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showBigTextNotificationWithDifferentSummary(int id) async {
+Future<void> showBigTextNotificationWithDifferentSummary(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -753,7 +865,10 @@ Future<void> showBigTextNotificationWithDifferentSummary(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showBigTextHtmlNotification(int id) async {
+Future<void> showBigTextHtmlNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -765,7 +880,10 @@ Future<void> showBigTextHtmlNotification(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showBigTextNotificationWithActionAndReply(int id) async {
+Future<void> showBigTextNotificationWithActionAndReply(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -913,7 +1031,10 @@ Future<void> showInboxNotification(int id) async {
     INBOX NOTIFICATIONS
 ************************************************ */
 
-Future<void> showGroupedNotifications(id) async {
+Future<void> showGroupedNotifications(BuildContext context, id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: 1,
@@ -996,7 +1117,10 @@ Future<String> getUtcTimeZone(){
   return AwesomeNotifications().getUtcTimeZoneIdentifier();
 }
 
-Future<void> repeatMinuteNotification(int id) async {
+Future<void> repeatMinuteNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   String localTimeZone = await AwesomeNotifications().getLocalTimeZoneIdentifier();
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -1010,7 +1134,10 @@ Future<void> repeatMinuteNotification(int id) async {
       schedule: NotificationInterval(interval: 60, timeZone: localTimeZone, repeats: true));
 }
 
-Future<void> repeatMinuteNotificationOClock(int id) async {
+Future<void> repeatMinuteNotificationOClock(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   String localTimeZone = await AwesomeNotifications().getLocalTimeZoneIdentifier();
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -1025,7 +1152,10 @@ Future<void> repeatMinuteNotificationOClock(int id) async {
 }
 
 Future<void> showNotificationAtScheduleCron(
-    int id, DateTime scheduleTime) async {
+    BuildContext context, int id, DateTime scheduleTime) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   String timeZoneIdentifier = AwesomeNotifications.localTimeZoneIdentifier;
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -1045,7 +1175,10 @@ Future<void> showNotificationAtScheduleCron(
       schedule: NotificationCalendar.fromDate(date: scheduleTime));
 }
 
-Future<void> showNotificationWithNoBadge(int id) async {
+Future<void> showNotificationWithNoBadge(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: 'no_badge',
       channelName: 'No Badge Notifications',
@@ -1061,7 +1194,10 @@ Future<void> showNotificationWithNoBadge(int id) async {
           payload: {'uuid': 'uuid-test'}));
 }
 
-Future<void> showProgressNotification(int id) async {
+Future<void> showProgressNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   var maxStep = 10;
   for (var simulatedStep = 1; simulatedStep <= maxStep + 1; simulatedStep++) {
     await Future.delayed(Duration(seconds: 1), () async {
@@ -1097,7 +1233,10 @@ Future<void> showProgressNotification(int id) async {
   }
 }
 
-Future<void> showIndeterminateProgressNotification(int id) async {
+Future<void> showIndeterminateProgressNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -1113,7 +1252,10 @@ Future<void> showIndeterminateProgressNotification(int id) async {
           locked: true));
 }
 
-Future<void> showNotificationWithUpdatedChannelDescription(int id) async {
+Future<void> showNotificationWithUpdatedChannelDescription(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
   AwesomeNotifications().setChannel(NotificationChannel(
       channelKey: 'updated_channel',
       channelName: 'Channel to update (updated)',
@@ -1216,4 +1358,57 @@ void processMediaControls(actionReceived) {
           actionReceived.buttonKeyPressed.replaceFirst('MEDIA_', ''),
       backgroundColor: App.mainColor,
       textColor: Colors.white);
+}
+
+Future<bool> requireUserNotificationPermissions(BuildContext context, {String? channelKey}) async {
+  bool isAllowed = await AwesomeNotifications().isNotificationAllowed(channelKey: channelKey);
+  if(!isAllowed){
+    await showRequestUserPermissionDialog(context, channelKey: channelKey);
+    isAllowed = await AwesomeNotifications().isNotificationAllowed(channelKey: channelKey);
+  }
+  return isAllowed;
+}
+
+Future<void> showRequestUserPermissionDialog(BuildContext context, {String? channelKey}) async {
+  return showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      backgroundColor: Color(0xfffbfbfb),
+      title: Text('Get Notified!',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/images/animated-bell.gif',
+            height: 200,
+            fit: BoxFit.fitWidth,
+          ),
+          Text(
+            'Allow Awesome Notifications to send you beautiful notifications!',
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          style: TextButton.styleFrom(backgroundColor: Colors.grey),
+          onPressed: () async {
+            Navigator.of(context).pop();
+          },
+          child: Text('Later', style: TextStyle(color: Colors.white)),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(backgroundColor: Colors.deepPurple),
+          onPressed: () async {
+            await AwesomeNotifications()
+                .requestPermissionToSendNotifications(channelKey: channelKey);
+            Navigator.of(context).pop();
+          },
+          child: Text('Allow', style: TextStyle(color: Colors.white)),
+        )
+      ],
+    ),
+  );
 }

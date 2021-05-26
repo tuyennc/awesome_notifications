@@ -62,8 +62,10 @@ public interface Definitions {
     String CHANNEL_METHOD_SET_NOTIFICATION_CHANNEL = "setNotificationChannel";
     String CHANNEL_METHOD_REMOVE_NOTIFICATION_CHANNEL = "removeNotificationChannel";
 
+    String CHANNEL_METHOD_SHOW_NOTIFICATION_PAGE = "showNotificationPage";
     String CHANNEL_METHOD_IS_NOTIFICATION_ALLOWED = "isNotificationAllowed";
     String CHANNEL_METHOD_REQUEST_NOTIFICATIONS = "requestNotifications";
+
     String CHANNEL_METHOD_GET_BADGE_COUNT = "getBadgeCount";
     String CHANNEL_METHOD_SET_BADGE_COUNT = "setBadgeCount";
     String CHANNEL_METHOD_GET_NEXT_DATE = "getNextDate";

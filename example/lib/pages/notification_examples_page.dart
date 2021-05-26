@@ -1,23 +1,25 @@
 import 'dart:math';
 
-import 'package:awesome_notifications_example/common_widgets/led_light.dart';
-import 'package:awesome_notifications_example/utils/firebase_utils.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 //import 'package:flutter/material.dart' as Material show DateUtils;
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'package:awesome_notifications_example/routes.dart';
-import 'package:awesome_notifications_example/utils/media_player_central.dart';
 import 'package:awesome_notifications_example/utils/notification_util.dart';
+import 'package:awesome_notifications_example/utils/media_player_central.dart';
+import 'package:awesome_notifications_example/utils/firebase_utils.dart';
 
+import 'package:awesome_notifications_example/common_widgets/led_light.dart';
 import 'package:awesome_notifications_example/common_widgets/check_button.dart';
 import 'package:awesome_notifications_example/common_widgets/remarkble_text.dart';
 import 'package:awesome_notifications_example/common_widgets/service_control_panel.dart';
 import 'package:awesome_notifications_example/common_widgets/simple_button.dart';
 import 'package:awesome_notifications_example/common_widgets/text_divisor.dart';
 import 'package:awesome_notifications_example/common_widgets/text_note.dart';
+
 import 'package:numberpicker/numberpicker.dart';
 
 class NotificationExamplesPage extends StatefulWidget {
@@ -26,7 +28,7 @@ class NotificationExamplesPage extends StatefulWidget {
       _NotificationExamplesPageState();
 }
 
-class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
+class _NotificationExamplesPageState extends State<NotificationExamplesPage> with WidgetsBindingObserver {
   String _firebaseAppToken = '';
   //String _oneSignalToken = '';
 
@@ -97,6 +99,9 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+
+    requestNotificationPermissions();
 
     // If you pretend to use the firebase service, you need to initialize it
     // getting a valid token
@@ -141,16 +146,6 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
       }
     });
 
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      setState(() {
-        notificationsAllowed = isAllowed;
-      });
-
-      if (!isAllowed) {
-        showRequestUserPermissionDialog(isAllowed);
-      }
-    });
-
     // this is not part of notification system, but of the media player simulator instead
     MediaPlayerCentral.mediaStream.listen((media) {
       switch (MediaPlayerCentral.mediaLifeCycle) {
@@ -169,65 +164,40 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
     });
   }
 
-  void showRequestUserPermissionDialog(bool isAllowed) async {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: Color(0xfffbfbfb),
-        title: Text('Get Notified!',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'assets/images/animated-bell.gif',
-              height: 200,
-              fit: BoxFit.fitWidth,
-            ),
-            Text(
-              'Allow Awesome Notifications to send you beautiful notifications!',
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            style: TextButton.styleFrom(backgroundColor: Colors.grey),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              notificationsAllowed =
-                  await AwesomeNotifications().isNotificationAllowed();
-              setState(() {
-                notificationsAllowed = notificationsAllowed;
-              });
-            },
-            child: Text('Later', style: TextStyle(color: Colors.white)),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(backgroundColor: Colors.deepPurple),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await AwesomeNotifications()
-                  .requestPermissionToSendNotifications();
-              notificationsAllowed =
-                  await AwesomeNotifications().isNotificationAllowed();
-              setState(() {
-                notificationsAllowed = notificationsAllowed;
-              });
-            },
-            child: Text('Allow', style: TextStyle(color: Colors.white)),
-          )
-        ],
-      ),
-    );
+  Future<bool> requestNotificationPermissions() async {
+
+    bool isAllowed = await requireUserNotificationPermissions(context);
+
+    if(mounted){
+      setState(() {
+        notificationsAllowed = isAllowed;
+      });
+    } else {
+      notificationsAllowed = isAllowed;
+    }
+
+    return isAllowed;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(state == AppLifecycleState.resumed){
+      AwesomeNotifications().isNotificationAllowed().then((bool isAllowed){
+        if(mounted){
+          setState(() {
+            notificationsAllowed = isAllowed;
+          });
+        } else {
+          notificationsAllowed = isAllowed;
+        }
+      });
+    }
   }
 
   @override
   void dispose() {
-    AwesomeNotifications().createdSink.close();
-    AwesomeNotifications().displayedSink.close();
-    AwesomeNotifications().actionSink.close();
+    AwesomeNotifications().dispose();
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -303,7 +273,7 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
                 '* Android: notifications are enabled by default and are considered not dangerous.\n'
                 '* iOS: notifications are not enabled by default and you must explicitly request it to the user.'),
             SimpleButton('Request permission',
-                onPressed: () => showRequestUserPermissionDialog(notificationsAllowed)),
+                onPressed: () => showRequestUserPermissionDialog(context)),
 
             /* ******************************************************************** */
 
@@ -311,15 +281,15 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
             TextNote('A simple and fast notification to fresh start.\n\n'
                 'Tap on notification when it appears on your system tray to go to Details page.'),
             SimpleButton('Show the most basic notification',
-                onPressed: () => showBasicNotification(1)),
+                onPressed: () => showBasicNotification(context, 1)),
             SimpleButton('Show notification with payload',
-                onPressed: () => showNotificationWithPayloadContent(1)),
+                onPressed: () => showNotificationWithPayloadContent(context, 1)),
             SimpleButton('Show notification without body content',
-                onPressed: () => showNotificationWithoutBody(1)),
+                onPressed: () => showNotificationWithoutBody(context, 1)),
             SimpleButton('Show notification without title content',
-                onPressed: () => showNotificationWithoutTitle(1)),
+                onPressed: () => showNotificationWithoutTitle(context, 1)),
             SimpleButton('Send background notification',
-                onPressed: () => sendBackgroundNotification(1)),
+                onPressed: () => sendBackgroundNotification(context, 1)),
             SimpleButton('Cancel the basic notification',
                 backgroundColor: Colors.red,
                 labelColor: Colors.white,
@@ -341,22 +311,22 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
                 '\n\n'
                 '* Resource: images access through drawable native resources.\n\t Example:\n\t resource://url.com/to/image-asset.png'),
             SimpleButton('Show large icon notification',
-                onPressed: () => showLargeIconNotification(2)),
+                onPressed: () => showLargeIconNotification(context, 2)),
             SimpleButton('Show big picture notification\n(Network Source)',
-                onPressed: () => showBigPictureNetworkNotification(2)),
+                onPressed: () => showBigPictureNetworkNotification(context, 2)),
             SimpleButton('Show big picture notification\n(Asset Source)',
-                onPressed: () => showBigPictureAssetNotification(2)),
+                onPressed: () => showBigPictureAssetNotification(context, 2)),
             SimpleButton('Show big picture notification\n(File Source)',
-                onPressed: () => showBigPictureFileNotification(2)),
+                onPressed: () => showBigPictureFileNotification(context, 2)),
             SimpleButton('Show big picture notification\n(Resource Source)',
-                onPressed: () => showBigPictureResourceNotification(2)),
+                onPressed: () => showBigPictureResourceNotification(context, 2)),
             SimpleButton(
                 'Show big picture and\nlarge icon notification simultaneously',
-                onPressed: () => showBigPictureAndLargeIconNotification(2)),
+                onPressed: () => showBigPictureAndLargeIconNotification(context, 2)),
             SimpleButton(
                 'Show big picture notification,\n but hide large icon on expand',
                 onPressed: () =>
-                    showBigPictureNotificationHideExpandedLargeIcon(2)),
+                    showBigPictureNotificationHideExpandedLargeIcon(context, 2)),
             SimpleButton('Cancel notification',
                 backgroundColor: Colors.red,
                 labelColor: Colors.white,
@@ -371,7 +341,7 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
                 'To send local and push notifications with emojis, use the class Emoji concatenated with your text.\n\n'
                 'Attention: not all Emojis work with all platforms. Please, test the specific emoji before using it in production.'),
             SimpleButton('Show notification with emojis',
-                onPressed: () => showEmojiNotification(1)),
+                onPressed: () => showEmojiNotification(context, 1)),
             SimpleButton(
               'Go to complete Emojis list (web)',
               onPressed: () => externalUrl(
@@ -385,9 +355,9 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
                 'To send local or push locked notification, that users cannot dismiss it swiping it, set the "locked" property to true.\n\n' +
                     "Attention: Notification's content locked property has priority over the Channel's one."),
             SimpleButton('Send/Update the locked notification',
-                onPressed: () => showLockedNotification(2)),
+                onPressed: () => showLockedNotification(context, 2)),
             SimpleButton('Send/Update the unlocked notification',
-                onPressed: () => showUnlockedNotification(2)),
+                onPressed: () => showUnlockedNotification(context, 2)),
 
             /* ******************************************************************** */
 
@@ -404,25 +374,25 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
                 "Attention: Notification's channel importance can only be defined on first time."),
             SimpleButton('Display notification with NotificationImportance.Max',
                 onPressed: () =>
-                    showNotificationImportance(3, NotificationImportance.Max)),
+                    showNotificationImportance(context, 3, NotificationImportance.Max)),
             SimpleButton(
                 'Display notification with NotificationImportance.High',
                 onPressed: () =>
-                    showNotificationImportance(3, NotificationImportance.High)),
+                    showNotificationImportance(context, 3, NotificationImportance.High)),
             SimpleButton(
                 'Display notification with NotificationImportance.Default',
-                onPressed: () => showNotificationImportance(
+                onPressed: () => showNotificationImportance(context,
                     3, NotificationImportance.Default)),
             SimpleButton('Display notification with NotificationImportance.Low',
                 onPressed: () =>
-                    showNotificationImportance(3, NotificationImportance.Low)),
+                    showNotificationImportance(context, 3, NotificationImportance.Low)),
             SimpleButton('Display notification with NotificationImportance.Min',
                 onPressed: () =>
-                    showNotificationImportance(3, NotificationImportance.Min)),
+                    showNotificationImportance(context, 3, NotificationImportance.Min)),
             SimpleButton(
                 'Display notification with NotificationImportance.None',
                 onPressed: () =>
-                    showNotificationImportance(3, NotificationImportance.None)),
+                    showNotificationImportance(context, 3, NotificationImportance.None)),
 
             /* ******************************************************************** */
 
@@ -440,20 +410,20 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
                 'Since Android Nougat, icons are only displayed on media layout. The icon media needs to be a native resource type.'),
             SimpleButton(
                 'Show notification with\nsimple Action buttons (one disabled)',
-                onPressed: () => showNotificationWithActionButtons(3)),
+                onPressed: () => showNotificationWithActionButtons(context, 3)),
             SimpleButton('Show notification with\nIcons and Action buttons',
-                onPressed: () => showNotificationWithIconsAndActionButtons(3)),
+                onPressed: () => showNotificationWithIconsAndActionButtons(context, 3)),
             SimpleButton('Show notification with\nReply and Action button',
-                onPressed: () => showNotificationWithActionButtonsAndReply(3)),
+                onPressed: () => showNotificationWithActionButtonsAndReply(context, 3)),
             SimpleButton('Show Big picture notification\nwith Action Buttons',
-                onPressed: () => showBigPictureNotificationActionButtons(3)),
+                onPressed: () => showBigPictureNotificationActionButtons(context, 3)),
             SimpleButton(
                 'Show Big picture notification\nwith Reply and Action button',
                 onPressed: () =>
-                    showBigPictureNotificationActionButtonsAndReply(3)),
+                    showBigPictureNotificationActionButtonsAndReply(context, 3)),
             SimpleButton(
                 'Show Big text notification\nwith Reply and Action button',
-                onPressed: () => showBigTextNotificationWithActionAndReply(3)),
+                onPressed: () => showBigTextNotificationWithActionAndReply(context, 3)),
             SimpleButton('Cancel notification',
                 backgroundColor: Colors.red,
                 labelColor: Colors.white,
@@ -475,11 +445,11 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
                 'OBS3: Badge channels for native Android only works on version 8.0 (API level 26) and beyond.'),
             SimpleButton(
                 'Shows a notification with a badge indicator channel activate',
-                onPressed: () => showBadgeNotification(Random().nextInt(100))),
+                onPressed: () => showBadgeNotification(context, Random().nextInt(100))),
             SimpleButton(
                 'Shows a notification with a badge indicator channel deactivate',
                 onPressed: () =>
-                    showWithoutBadgeNotification(Random().nextInt(100))),
+                    showWithoutBadgeNotification(context, Random().nextInt(100))),
             SimpleButton('Read the badge indicator count', onPressed: () async {
               int amount = await getBadgeIndicator();
               Fluttertoast.showToast(msg: 'Badge count: $amount');
@@ -508,15 +478,15 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
             TextNote(
                 'A vibration pattern pre-configured in a channel could be updated at any time using the method PushNotification.setChannel'),
             SimpleButton('Show plain notification with low vibration pattern',
-                onPressed: () => showLowVibrationNotification(4)),
+                onPressed: () => showLowVibrationNotification(context, 4)),
             SimpleButton(
                 'Show plain notification with medium vibration pattern',
-                onPressed: () => showMediumVibrationNotification(4)),
+                onPressed: () => showMediumVibrationNotification(context, 4)),
             SimpleButton('Show plain notification with high vibration pattern',
-                onPressed: () => showHighVibrationNotification(4)),
+                onPressed: () => showHighVibrationNotification(context, 4)),
             SimpleButton(
                 'Show plain notification with custom vibration pattern',
-                onPressed: () => showCustomVibrationNotification(4)),
+                onPressed: () => showCustomVibrationNotification(context, 4)),
             SimpleButton('Cancel notification',
                 backgroundColor: Colors.red,
                 labelColor: Colors.white,
@@ -556,15 +526,15 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
               });
             }),
             SimpleButton('Notification with red text color\nand red LED',
-                onPressed: () => redNotification(5, delayLEDTests)),
+                onPressed: () => redNotification(context, 5, delayLEDTests)),
             SimpleButton('Notification with yellow text color\nand yellow LED',
-                onPressed: () => yellowNotification(5, delayLEDTests)),
+                onPressed: () => yellowNotification(context, 5, delayLEDTests)),
             SimpleButton('Notification with green text color\nand green LED',
-                onPressed: () => greenNotification(5, delayLEDTests)),
+                onPressed: () => greenNotification(context, 5, delayLEDTests)),
             SimpleButton('Notification with blue text color\nand blue LED',
-                onPressed: () => blueNotification(5, delayLEDTests)),
+                onPressed: () => blueNotification(context, 5, delayLEDTests)),
             SimpleButton('Notification with purple text color\nand purple LED',
-                onPressed: () => purpleNotification(5, delayLEDTests)),
+                onPressed: () => purpleNotification(context, 5, delayLEDTests)),
             SimpleButton('Cancel notification',
                 backgroundColor: Colors.red,
                 labelColor: Colors.white,
@@ -574,7 +544,7 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
 
             TextDivisor(title: 'Notification Sound'),
             SimpleButton('Show notification with custom sound',
-                onPressed: () => showCustomSoundNotification(6)),
+                onPressed: () => showCustomSoundNotification(context, 6)),
             SimpleButton('Cancel notification',
                 backgroundColor: Colors.red,
                 labelColor: Colors.white,
@@ -584,7 +554,7 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
 
             TextDivisor(title: 'Silenced Notifications'),
             SimpleButton('Show notification with no sound',
-                onPressed: () => showNotificationWithNoSound(7)),
+                onPressed: () => showNotificationWithNoSound(context, 7)),
             SimpleButton('Cancel notification',
                 backgroundColor: Colors.red,
                 labelColor: Colors.white,
@@ -596,18 +566,18 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
             SimpleButton('Schedule notification with local time zone', onPressed: () async {
               DateTime? pickedDate = await pickScheduleDate(context, isUtc: false);
               if (pickedDate != null) {
-                showNotificationAtScheduleCron(8, pickedDate);
+                showNotificationAtScheduleCron(context, 8, pickedDate);
               }
             }),
             SimpleButton('Schedule notification with utc time zone', onPressed: () async {
               DateTime? pickedDate = await pickScheduleDate(context, isUtc: true);
               if (pickedDate != null) {
-                showNotificationAtScheduleCron(8, pickedDate);
+                showNotificationAtScheduleCron(context, 8, pickedDate);
               }
             }),
             SimpleButton(
               'Show notification at every single minute',
-              onPressed: () => repeatMinuteNotification(8),
+              onPressed: () => repeatMinuteNotification(context, 8),
             ),
             /*
           SimpleButton(
@@ -617,7 +587,7 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
           */
             SimpleButton(
               'Show notification at every single minute o\'clock',
-              onPressed: () => repeatMinuteNotificationOClock(8),
+              onPressed: () => repeatMinuteNotificationOClock(context, 8),
             ),
             /*
           SimpleButton(
@@ -748,9 +718,9 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
 
             TextDivisor(title: 'Progress Notifications'),
             SimpleButton('Show indeterminate progress notification',
-                onPressed: () => showIndeterminateProgressNotification(9)),
+                onPressed: () => showIndeterminateProgressNotification(context, 9)),
             SimpleButton('Show progress notification - updates every second',
-                onPressed: () => showProgressNotification(9)),
+                onPressed: () => showProgressNotification(context, 9)),
             SimpleButton('Cancel notification',
                 backgroundColor: Colors.red,
                 labelColor: Colors.white,
@@ -783,7 +753,7 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> {
 
             TextDivisor(title: 'Grouped Notifications'),
             SimpleButton('Show grouped notifications',
-                onPressed: () => showGroupedNotifications(12)),
+                onPressed: () => showGroupedNotifications(context, 12)),
             SimpleButton('Cancel notification',
                 backgroundColor: Colors.red,
                 labelColor: Colors.white,

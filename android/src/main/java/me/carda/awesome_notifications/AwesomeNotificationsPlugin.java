@@ -1,5 +1,6 @@
 package me.carda.awesome_notifications;
 
+import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.media.session.MediaSessionCompat;
 import io.flutter.Log;
@@ -28,6 +30,8 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.*;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import io.flutter.app.FlutterApplication;
+import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -75,13 +79,19 @@ import me.carda.awesome_notifications.utils.MapUtils;
 import me.carda.awesome_notifications.utils.MediaUtils;
 import me.carda.awesome_notifications.utils.StringUtils;
 
+import static me.carda.awesome_notifications.Definitions.NOTIFICATION_CHANNEL_KEY;
+
 /** AwesomeNotificationsPlugin **/
 public class AwesomeNotificationsPlugin
         extends BroadcastReceiver
-        implements FlutterPlugin, MethodCallHandler, PluginRegistry.NewIntentListener, ActivityAware {
+        implements FlutterPlugin, MethodCallHandler, PluginRegistry.NewIntentListener, ActivityAware, Application.ActivityLifecycleCallbacks {
 
     public static Boolean debug = false;
     public static Boolean hasGooglePlayServices;
+
+    public static Result pendingAuthorizationReturn;
+    public static String lastChannelKeyRequested = null;
+    public static Boolean hasGoneToAuthorizationPage = false;
 
     public static NotificationLifeCycle appLifeCycle = NotificationLifeCycle.AppKilled;
 
@@ -118,6 +128,7 @@ public class AwesomeNotificationsPlugin
     @Override
     public boolean onNewIntent(Intent intent){
         //Log.d(TAG, "onNewIntent called");
+
         return receiveNotificationAction(intent);
     }
 
@@ -179,7 +190,48 @@ public class AwesomeNotificationsPlugin
             Log.d(TAG, "Awesome Notifications attached for Android "+Build.VERSION.SDK_INT);
 
         NotificationScheduler.refreshScheduleNotifications(context);
+
         // enableFirebase(context);
+    }
+
+    @Override
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        getApplicationLifeCycle();
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+        getApplicationLifeCycle();
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+        getApplicationLifeCycle();
+
+        if(hasGoneToAuthorizationPage){
+            hasGoneToAuthorizationPage = false;
+            pendingAuthorizationReturn.success(isNotificationEnabled(applicationContext, lastChannelKeyRequested));
+        }
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+        getApplicationLifeCycle();
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+        getApplicationLifeCycle();
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+        getApplicationLifeCycle();
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+        getApplicationLifeCycle();
     }
 
     // private void enableFirebase(Context context){
@@ -203,6 +255,9 @@ public class AwesomeNotificationsPlugin
         initialActivity = activityPluginBinding.getActivity();
         activityPluginBinding.addOnNewIntentListener(this);
         getApplicationLifeCycle();
+
+        Application application = initialActivity.getApplication();
+        application.registerActivityLifecycleCallbacks(this);
 
         if(AwesomeNotificationsPlugin.debug)
             Log.d(TAG, "Notification Lifecycle: (onAttachedToActivity)" + appLifeCycle.toString());
@@ -491,6 +546,10 @@ public class AwesomeNotificationsPlugin
                     channelIsNotificationAllowed(call, result);
                     return;
 
+                case Definitions.CHANNEL_METHOD_SHOW_NOTIFICATION_PAGE:
+                    channelShowNotificationPage(call, result);
+                    return;
+
                 case Definitions.CHANNEL_METHOD_REQUEST_NOTIFICATIONS:
                     channelRequestNotification(call, result);
                     return;
@@ -707,7 +766,7 @@ public class AwesomeNotificationsPlugin
         @SuppressWarnings("unchecked")
         Map<String, Object> data = MapUtils.extractArgument(call.arguments(), Map.class).orNull();
         Integer count = (Integer) data.get(Definitions.NOTIFICATION_CHANNEL_SHOW_BADGE);
-        String channelKey = (String) data.get(Definitions.NOTIFICATION_CHANNEL_KEY);
+        String channelKey = (String) data.get(NOTIFICATION_CHANNEL_KEY);
 
         if(count == null || count < 0)
             throw new AwesomeNotificationException("Invalid Badge");
@@ -797,10 +856,27 @@ public class AwesomeNotificationsPlugin
     }
 
     private void channelIsNotificationAllowed(MethodCall call, Result result) throws Exception {
-        result.success(isNotificationEnabled(applicationContext));
+
+        String channelKey = null;
+        Map<String, Object> argumentsData = call.arguments();
+
+        if(argumentsData != null){
+            Object object = argumentsData.get(NOTIFICATION_CHANNEL_KEY);
+            if(object != null){
+                channelKey = (String) argumentsData.get(NOTIFICATION_CHANNEL_KEY);
+                result.success(isNotificationEnabled(applicationContext, channelKey));
+            }
+        }
+
+        result.success(isNotificationEnabled(applicationContext, channelKey));
     }
 
-    private void channelRequestNotification(MethodCall call, Result result) throws Exception {
+    private void channelShowNotificationPage(MethodCall call, Result result) throws Exception {
+        showNotificationConfigPage();
+        result.success(null);
+    }
+
+    private void showNotificationConfigPage(){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
@@ -822,7 +898,31 @@ public class AwesomeNotificationsPlugin
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             applicationContext.startActivity(intent);
+        }
+    }
+
+    private void channelRequestNotification(MethodCall call, Result result) throws Exception {
+
+        Map<String, Object> argumentsData = call.arguments();
+        String channelKey = null;
+
+        if(argumentsData != null){
+            channelKey = (String) argumentsData.get(NOTIFICATION_CHANNEL_KEY);
+        }
+
+        if (isNotificationEnabled(applicationContext, channelKey)){
             result.success(true);
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            // Necessary to return the call only after the app goes to foreground on next time
+            pendingAuthorizationReturn = result;
+            hasGoneToAuthorizationPage = true;
+            lastChannelKeyRequested = channelKey;
+
+            showNotificationConfigPage();
         }
         else {
             channelIsNotificationAllowed(call, result);
@@ -838,7 +938,7 @@ public class AwesomeNotificationsPlugin
             throw new AwesomeNotificationException("Invalid parameters");
         }
 
-        if(!isNotificationEnabled(applicationContext)){
+        if(!isNotificationEnabled(applicationContext, null)){
             throw new AwesomeNotificationException("Notifications are disabled");
         }
 
@@ -901,12 +1001,14 @@ public class AwesomeNotificationsPlugin
     //    }
     // }
 
-    public static Boolean isNotificationEnabled(Context context){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            NotificationManagerCompat manager = NotificationManagerCompat.from(context);
-            return manager != null && manager.areNotificationsEnabled();
+    public static Boolean isNotificationEnabled(Context context, String channelKey){
+        boolean isGloballyEnable = NotificationManagerCompat.from(context).areNotificationsEnabled();
+        if (isGloballyEnable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(!StringUtils.isNullOrEmpty(channelKey)) {
+                return isChannelEnabled(context, channelKey);
+            }
         }
-        return true;
+        return isGloballyEnable;
     }
 
     public static Boolean isChannelEnabled(Context context, String channelKey){
@@ -1064,5 +1166,4 @@ public class AwesomeNotificationsPlugin
         }
         return true;
     }
-
 }

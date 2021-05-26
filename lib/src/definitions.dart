@@ -39,6 +39,7 @@ const CHANNEL_FLUTTER_PLUGIN = 'awesome_notifications';
 const CHANNEL_METHOD_INITIALIZE = 'initialize';
 const CHANNEL_METHOD_GET_DRAWABLE_DATA = 'getDrawableData';
 
+const CHANNEL_METHOD_SHOW_NOTIFICATION_PAGE = 'showNotificationPage';
 const CHANNEL_METHOD_IS_NOTIFICATION_ALLOWED = 'isNotificationAllowed';
 const CHANNEL_METHOD_REQUEST_NOTIFICATIONS = 'requestNotifications';
 

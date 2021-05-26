@@ -305,16 +305,29 @@ class AwesomeNotifications {
   }
 
   /// Check if the notifications are permitted
-  Future<bool> isNotificationAllowed() async {
+  Future<bool> showNotificationConfigPage({String? channelKey}) async {
     final bool isAllowed =
-        await _channel.invokeMethod(CHANNEL_METHOD_IS_NOTIFICATION_ALLOWED);
+    await _channel.invokeMethod(CHANNEL_METHOD_SHOW_NOTIFICATION_PAGE, {
+      NOTIFICATION_CHANNEL_KEY: channelKey
+    });
+    return isAllowed;
+  }
+
+  /// Check if the notifications are permitted
+  Future<bool> isNotificationAllowed({String? channelKey}) async {
+    final bool isAllowed =
+        await _channel.invokeMethod(CHANNEL_METHOD_IS_NOTIFICATION_ALLOWED, {
+          NOTIFICATION_CHANNEL_KEY: channelKey
+        });
     return isAllowed;
   }
 
   /// Prompts the user to enabled notifications
-  Future<bool> requestPermissionToSendNotifications() async {
+  Future<bool> requestPermissionToSendNotifications({String? channelKey}) async {
     final bool isAllowed =
-        await _channel.invokeMethod(CHANNEL_METHOD_REQUEST_NOTIFICATIONS);
+        await _channel.invokeMethod(CHANNEL_METHOD_REQUEST_NOTIFICATIONS, {
+          NOTIFICATION_CHANNEL_KEY: channelKey
+        });
     return isAllowed;
   }
 
