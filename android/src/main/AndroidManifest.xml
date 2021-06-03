@@ -16,27 +16,25 @@
   
     <application>
 
-        <!-- <service
-            android:name=".services.firebase.FCMService"
-            android:exported="false">
+        <receiver android:name=".notifications.broadcastReceivers.DismissedNotificationReceiver">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="DISMISSED_NOTIFICATION" />
             </intent-filter>
-        </service>
+        </receiver>
 
-        <service
-            android:name=".services.AutoCancelService"
-            android:stopWithTask="true" />
+        <receiver android:name=".notifications.broadcastReceivers.KeepOnTopActionReceiver">
+            <intent-filter>
+                <action android:name="broadcast.awesome_notifications.KEEP_ON_TOP" />
+            </intent-filter>
+        </receiver>
 
-        <meta-data android:name="firebase_messaging_auto_init_enabled" android:value="true" />
+        <receiver android:name="androidx.media.session.MediaButtonReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
 
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="me.carda.awesome_notifications.firebase.background_channel"/> -->
-
-        <receiver android:name=".notifications.broadcastReceivers.DismissedNotificationReceiver"/>
         <receiver android:name=".notifications.broadcastReceivers.ScheduledNotificationReceiver"/>
-        <receiver android:name=".notifications.broadcastReceivers.KeepOnTopActionReceiver"/>
         <receiver android:name=".notifications.broadcastReceivers.RefreshNotificationBootReceiver">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -45,11 +43,6 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-            </intent-filter>
-        </receiver>
-        <receiver android:name="androidx.media.session.MediaButtonReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
 

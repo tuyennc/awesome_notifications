@@ -12,8 +12,8 @@ import java.util.List;
 
 import androidx.core.app.NotificationManagerCompat;
 import me.carda.awesome_notifications.Definitions;
-import me.carda.awesome_notifications.notifications.enumeratos.DefaultRingtoneType;
-import me.carda.awesome_notifications.notifications.enumeratos.MediaSource;
+import me.carda.awesome_notifications.notifications.enumerators.DefaultRingtoneType;
+import me.carda.awesome_notifications.notifications.enumerators.MediaSource;
 import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificationException;
 import me.carda.awesome_notifications.notifications.models.NotificationChannelModel;
 import me.carda.awesome_notifications.utils.AudioUtils;

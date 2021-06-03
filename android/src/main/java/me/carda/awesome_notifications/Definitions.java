@@ -3,13 +3,13 @@ package me.carda.awesome_notifications;
 import java.util.HashMap;
 import java.util.Map;
 
-import me.carda.awesome_notifications.notifications.enumeratos.ActionButtonType;
-import me.carda.awesome_notifications.notifications.enumeratos.DefaultRingtoneType;
-import me.carda.awesome_notifications.notifications.enumeratos.GroupAlertBehaviour;
-import me.carda.awesome_notifications.notifications.enumeratos.GroupSort;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationImportance;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationLayout;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationPrivacy;
+import me.carda.awesome_notifications.notifications.enumerators.ActionButtonType;
+import me.carda.awesome_notifications.notifications.enumerators.DefaultRingtoneType;
+import me.carda.awesome_notifications.notifications.enumerators.GroupAlertBehaviour;
+import me.carda.awesome_notifications.notifications.enumerators.GroupSort;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationImportance;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationLayout;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationPrivacy;
 
 public interface Definitions {
 
@@ -25,7 +25,6 @@ public interface Definitions {
     String INITIALIZE_DEBUG_MODE = "debug";
     String INITIALIZE_CHANNELS = "initializeChannels";
     String INITIALIZE_DEFAULT_ICON = "defaultIcon";
-    String INITIALIZE_REQUIRE_PERMISSION = "requirePermission";
 
     String BROADCAST_CREATED_NOTIFICATION   = "broadcast.awesome_notifications.CREATED_NOTIFICATION";
     String BROADCAST_DISPLAYED_NOTIFICATION = "broadcast.awesome_notifications.DISPLAYED_NOTIFICATION";
@@ -55,10 +54,6 @@ public interface Definitions {
     String CHANNEL_METHOD_GET_UTC_TIMEZONE_IDENTIFIER = "getUtcTimeZoneIdentifier";
     String CHANNEL_METHOD_GET_LOCAL_TIMEZONE_IDENTIFIER = "getLocalTimeZoneIdentifier";
 
-    String CHANNEL_METHOD_GET_FCM_TOKEN = "getFirebaseToken";
-    String CHANNEL_METHOD_NEW_FCM_TOKEN = "newTokenReceived";
-    String CHANNEL_METHOD_IS_FCM_AVAILABLE = "isFirebaseAvailable";
-
     String CHANNEL_METHOD_SET_NOTIFICATION_CHANNEL = "setNotificationChannel";
     String CHANNEL_METHOD_REMOVE_NOTIFICATION_CHANNEL = "removeNotificationChannel";
 
@@ -86,7 +81,6 @@ public interface Definitions {
     String CHANNEL_METHOD_LIST_ALL_SCHEDULES = "listAllSchedules";
     String CHANNEL_FORCE_UPDATE = "forceUpdate";
 
-    String FIREBASE_ENABLED = "FIREBASE_ENABLED";
     String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     String DISMISSED_NOTIFICATION = "DISMISSED_NOTIFICATION";
     String MEDIA_BUTTON = "MEDIA_BUTTON";
@@ -185,15 +179,13 @@ public interface Definitions {
     String NOTIFICATION_ALLOW_WHILE_IDLE = "allowWhileIdle";
 
     Map<String, Object> initialValues = new HashMap<String, Object>(){{
-        put(Definitions.FIREBASE_ENABLED, true);
+        put(Definitions.NOTIFICATION_ID, -1);
         put(Definitions.NOTIFICATION_SCHEDULE_REPEATS, true);
-        put(Definitions.NOTIFICATION_ID, 0);
         put(Definitions.NOTIFICATION_IMPORTANCE, NotificationImportance.Default);
         put(Definitions.NOTIFICATION_LAYOUT, NotificationLayout.Default);
         put(Definitions.NOTIFICATION_GROUP_SORT, GroupSort.Desc);
         put(Definitions.NOTIFICATION_GROUP_ALERT_BEHAVIOR, GroupAlertBehaviour.All);
         put(Definitions.NOTIFICATION_DEFAULT_PRIVACY, NotificationPrivacy.Private);
-        //put(Definitions.NOTIFICATION_PRIVACY, NotificationPrivacy.Private);
         put(Definitions.NOTIFICATION_CHANNEL_KEY, "miscellaneous");
         put(Definitions.NOTIFICATION_CHANNEL_DESCRIPTION, "Notifications");
         put(Definitions.NOTIFICATION_CHANNEL_NAME, "Notifications");
@@ -214,7 +206,6 @@ public interface Definitions {
         put(Definitions.NOTIFICATION_PLAY_SOUND, true);
         put(Definitions.NOTIFICATION_AUTO_CANCEL, true);
         put(Definitions.NOTIFICATION_DEFAULT_RINGTONE_TYPE, DefaultRingtoneType.Notification);
-        //put(Definitions.NOTIFICATION_LOCKED, false);
         put(Definitions.NOTIFICATION_TICKER, "ticker");
         put(Definitions.NOTIFICATION_ALLOW_WHILE_IDLE, false);
         put(Definitions.NOTIFICATION_ONLY_ALERT_ONCE, false);

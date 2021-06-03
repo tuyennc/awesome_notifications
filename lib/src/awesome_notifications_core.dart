@@ -45,10 +45,6 @@ class AwesomeNotifications {
 */
   /// STREAM CREATION METHODS *********************************************
 
-  // Streams are created so that app can respond to notification-related events since the plugin is initialised in the `main` function
-  // final StreamController<String> _tokenStreamController =
-  //   StreamController<String>();
-
   final StreamController<ReceivedNotification>
       // ignore: close_sinks
       _createdSubject = StreamController<ReceivedNotification>();
@@ -66,11 +62,6 @@ class AwesomeNotifications {
       _dismissedSubject = StreamController<ReceivedAction>();
 
   /// STREAM METHODS *********************************************
-
-  /// Stream to capture all FCM token updates. Could be changed at any time.
-  // Stream<String> get fcmTokenStream {
-  //   return _tokenStreamController.stream;
-  // }
 
   /// Stream to capture all created notifications
   Stream<ReceivedNotification> get createdStream {
@@ -93,11 +84,6 @@ class AwesomeNotifications {
   }
 
   /// SINK METHODS *********************************************
-
-  /// Sink to dispose the stream, if you don't need it anymore.
-  // Sink get fcmTokenSink {
-  //   return _tokenStreamController.sink;
-  // }
 
   /// Sink to dispose the stream, if you don't need it anymore.
   Sink get createdSink {
@@ -123,7 +109,6 @@ class AwesomeNotifications {
 
   /// Closes definitely all the streams.
   dispose() {
-    //_tokenStreamController.close();
     _createdSubject.close();
     _displayedSubject.close();
     _dismissedSubject.close();
@@ -201,10 +186,6 @@ class AwesomeNotifications {
     Map<String, dynamic> arguments = Map<String, dynamic>.from(call.arguments);
 
     switch (call.method) {
-      // case CHANNEL_METHOD_NEW_FCM_TOKEN:
-      //   final String token = call.arguments;
-      //   _tokenStreamController.add(token);
-      //   return;
 
       case CHANNEL_METHOD_NOTIFICATION_CREATED:
         _createdSubject.sink.add(ReceivedNotification().fromMap(arguments));
@@ -228,6 +209,8 @@ class AwesomeNotifications {
         throw UnsupportedError('Unrecognized JSON message');
     }
   }
+
+  static int get maxID => 2147483647;
 
   void _validateId(int id) {
     if (id > 0x7FFFFFFF || id < -0x80000000) {
@@ -377,7 +360,6 @@ class AwesomeNotifications {
     }
     Map<String, dynamic> data = {
       NOTIFICATION_CHANNEL_SHOW_BADGE: amount
-      //NOTIFICATION_CHANNEL_KEY: channelKey
     };
     await _channel.invokeMethod(CHANNEL_METHOD_SET_BADGE_COUNT, data);
   }

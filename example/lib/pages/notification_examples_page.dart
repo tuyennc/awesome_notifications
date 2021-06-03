@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:awesome_notifications_example/common_widgets/badge_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 //import 'package:flutter/material.dart' as Material show DateUtils;
@@ -19,8 +20,6 @@ import 'package:awesome_notifications_example/common_widgets/service_control_pan
 import 'package:awesome_notifications_example/common_widgets/simple_button.dart';
 import 'package:awesome_notifications_example/common_widgets/text_divisor.dart';
 import 'package:awesome_notifications_example/common_widgets/text_note.dart';
-
-import 'package:numberpicker/numberpicker.dart';
 
 class NotificationExamplesPage extends StatefulWidget {
   @override
@@ -63,19 +62,17 @@ class _NotificationExamplesPageState extends State<NotificationExamplesPage> wit
   }
 
   Future<int?> pickBadgeCounter(BuildContext context) async {
+    int amount = await getBadgeIndicator();
     // show the dialog
     return showDialog<int?>(
       context: context,
       builder: (BuildContext context) {
-        int amount = 50;
 
         return AlertDialog(
           title: Text("Choose the new badge amount"),
-          content: NumberPicker(
-            value: amount,
-            minValue: 0,
-            maxValue: 999,
-            onChanged: (newValue) => amount = newValue,
+          content: BadgeNumberPicker(
+              initialAmount: amount,
+              onChanged: (newValue) => amount = newValue,
           ),
           actions: [
             TextButton(

@@ -15,9 +15,9 @@ import androidx.core.app.NotificationManagerCompat;
 
 import me.carda.awesome_notifications.BroadcastSender;
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationLayout;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationLifeCycle;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationSource;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationLayout;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationSource;
 import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificationException;
 import me.carda.awesome_notifications.notifications.managers.CreatedManager;
 import me.carda.awesome_notifications.notifications.managers.DismissedManager;
@@ -106,22 +106,22 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
 
                 NotificationReceived receivedNotification = null;
 
-                if(pushNotification.content.createdSource == null){
+                if(createdSource == null)
+                    createdSource = NotificationSource.Local;
+
+                if(pushNotification.content.createdLifeCycle == null){
+                    pushNotification.content.createdDate = DateUtils.getUTCDate();
                     pushNotification.content.createdSource = createdSource;
+                    pushNotification.content.createdLifeCycle = appLifeCycle;
                     created = true;
                 }
-
-                if(pushNotification.content.createdLifeCycle == null)
-                    pushNotification.content.createdLifeCycle = appLifeCycle;
 
                 if (
                     !StringUtils.isNullOrEmpty(pushNotification.content.title) ||
                     !StringUtils.isNullOrEmpty(pushNotification.content.body)
                 ){
 
-                    if(pushNotification.content.displayedLifeCycle == null)
-                        pushNotification.content.displayedLifeCycle = appLifeCycle;
-
+                    pushNotification.content.displayedLifeCycle = appLifeCycle;
                     pushNotification.content.displayedDate = DateUtils.getUTCDate();
 
                     pushNotification = showNotification(context, pushNotification);
@@ -182,10 +182,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
     private PushNotification _buildSummaryGroupNotification(PushNotification original){
 
         PushNotification pushSummary = pushNotification.ClonePush();
-        pushSummary.content.id = new Random().nextInt((2147483647 - 2147483000) + 1) + 2147483000;
-        pushSummary.content.notificationLayout = NotificationLayout.Default;
-        pushSummary.content.largeIcon = null;
-        pushSummary.content.bigPicture = null;
+        pushSummary.content.generateNextRandomId();
         pushSummary.groupSummary = true;
 
         return  pushSummary;
@@ -209,7 +206,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
 
                     if(pushNotification.groupSummary){
                         PushNotification pushSummary = _buildSummaryGroupNotification(pushNotification);
-                        Notification summaryNotification = notificationBuilder.createNotification(context, pushSummary);
+                        Notification summaryNotification = notificationBuilder.createNotification(context, pushSummary, true);
                         notificationManager.notify(pushSummary.content.id, summaryNotification);
                     }
 

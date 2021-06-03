@@ -5,14 +5,15 @@ import android.content.Context;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.Random;
 
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
-import me.carda.awesome_notifications.notifications.enumeratos.MediaSource;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationLayout;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationLifeCycle;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationPrivacy;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationSource;
+import me.carda.awesome_notifications.notifications.enumerators.MediaSource;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationLayout;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationPrivacy;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationSource;
 import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificationException;
 import me.carda.awesome_notifications.notifications.managers.ChannelManager;
 import me.carda.awesome_notifications.utils.BitmapUtils;
@@ -58,8 +59,17 @@ public class NotificationContentModel extends Model {
 
     public NotificationContentModel(){}
 
+    public void generateNextRandomId() {
+        int max = 2147483646;
+        long tsLong = System.currentTimeMillis();
+        id = (int) (tsLong % max + 1);
+    }
+
     @Override
     public NotificationContentModel fromMap(Map<String, Object> arguments) {
+
+        id = getValueOrDefault(arguments, Definitions.NOTIFICATION_ID, Integer.class);
+        if(id < 0) generateNextRandomId();
 
         createdDate = MapUtils.extractValue(arguments, Definitions.NOTIFICATION_CREATED_DATE, String.class)
                             .or(DateUtils.getUTCDate());
@@ -82,7 +92,6 @@ public class NotificationContentModel extends Model {
 
         soundSource = getValueOrDefault(arguments, Definitions.NOTIFICATION_SOUND_SOURCE, String.class);
 
-        id    = getValueOrDefault(arguments, Definitions.NOTIFICATION_ID, Integer.class);
         title = getValueOrDefault(arguments, Definitions.NOTIFICATION_TITLE, String.class);
         body  = getValueOrDefault(arguments, Definitions.NOTIFICATION_BODY, String.class);
         summary = getValueOrDefault(arguments, Definitions.NOTIFICATION_SUMMARY, String.class);

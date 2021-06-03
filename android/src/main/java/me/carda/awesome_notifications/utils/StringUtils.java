@@ -8,7 +8,11 @@ import java.security.MessageDigest;
 public class StringUtils {
 
     public static Boolean isNullOrEmpty(String string){
-        return string == null || string.trim().isEmpty();
+        return isNullOrEmpty(string, true);
+    }
+
+    public static Boolean isNullOrEmpty(String string, boolean considerWhiteSpaceAsEmpty){
+        return string == null || (considerWhiteSpaceAsEmpty ? string.trim().isEmpty() : string.isEmpty());
     }
 
     public static String getValueOrDefault(String value, String defaultValue){

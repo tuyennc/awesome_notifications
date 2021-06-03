@@ -1,13 +1,9 @@
 package me.carda.awesome_notifications.notifications.models.returnedData;
 
-import java.util.List;
 import java.util.Map;
 
 import me.carda.awesome_notifications.Definitions;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationLayout;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationLifeCycle;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationPrivacy;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationSource;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
 import me.carda.awesome_notifications.notifications.models.Model;
 import me.carda.awesome_notifications.notifications.models.NotificationContentModel;
 import me.carda.awesome_notifications.notifications.models.PushNotification;

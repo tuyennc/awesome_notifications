@@ -16,35 +16,20 @@ public class BroadcastSender {
 
     private static final String TAG = "BroadcastSender";
 
-    public static boolean SendBroadcastNewFcmToken(Context context, String token){
-        boolean success = false;
-
-        Intent intent = new Intent(Definitions.BROADCAST_FCM_TOKEN);
-        intent.putExtra(Definitions.EXTRA_BROADCAST_FCM_TOKEN, token);
-
-        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
-        success = broadcastManager.sendBroadcast(intent);
-
-        return success;
-    }
-
     public static Boolean SendBroadcastNotificationCreated(Context context, NotificationReceived notificationReceived){
 
-        Boolean success = false;
+        boolean success = false;
 
         Map<String, Object> data = notificationReceived.toMap();
 
         Intent intent = new Intent(Definitions.BROADCAST_CREATED_NOTIFICATION);
         intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) data);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         try {
 
             LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
             success = broadcastManager.sendBroadcast(intent);
-
-            if(success){
-                //Log.d(TAG, "Sent created to broadcast");
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,19 +40,16 @@ public class BroadcastSender {
 
     public static Boolean SendBroadcastKeepOnTopAction(Context context, ActionReceived actionReceived){
 
-        Boolean success = false;
+        boolean success = false;
 
         Intent intent = new Intent(Definitions.BROADCAST_KEEP_ON_TOP);
         intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) actionReceived.toMap());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         try {
 
             LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
             success = broadcastManager.sendBroadcast(intent);
-
-            if(success){
-                //Log.d(TAG, "Sent created to broadcast");
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,21 +60,18 @@ public class BroadcastSender {
 
     public static Boolean SendBroadcastNotificationDisplayed(Context context, NotificationReceived notificationReceived){
 
-        Boolean success = false;
+        boolean success = false;
 
         Map<String, Object> data = notificationReceived.toMap();
 
         Intent intent = new Intent(Definitions.BROADCAST_DISPLAYED_NOTIFICATION);
         intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) data);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         try {
 
             LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
             success = broadcastManager.sendBroadcast(intent);
-
-            if(success){
-                //Log.d(TAG, "Sent displayed to broadcast");
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,7 +82,7 @@ public class BroadcastSender {
 
     public static Boolean SendBroadcastNotificationDismissed(Context context, ActionReceived actionReceived){
 
-        Boolean success = false;
+        boolean success = false;
 
         DismissedManager.saveDismissed(context, actionReceived);
 
@@ -111,15 +90,12 @@ public class BroadcastSender {
 
         Intent intent = new Intent(Definitions.BROADCAST_DISMISSED_NOTIFICATION);
         intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) data);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         try {
 
             LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
             success = broadcastManager.sendBroadcast(intent);
-
-            if(success){
-                //Log.d(TAG, "Sent dismissed to broadcast");
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,21 +106,18 @@ public class BroadcastSender {
 
     public static Boolean SendBroadcastMediaButton(Context context, ActionReceived actionReceived){
 
-        Boolean success = false;
+        boolean success = false;
 
         Map<String, Object> data = actionReceived.toMap();
 
         Intent intent = new Intent(Definitions.BROADCAST_MEDIA_BUTTON);
         intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) data);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         try {
 
             LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
             success = broadcastManager.sendBroadcast(intent);
-
-            if(success){
-                //Log.d(TAG, "Sent dismissed to broadcast");
-            }
 
         } catch (Exception e) {
             e.printStackTrace();

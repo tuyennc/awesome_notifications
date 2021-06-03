@@ -7,12 +7,12 @@ import java.util.Map;
 
 import androidx.annotation.Nullable;
 import me.carda.awesome_notifications.Definitions;
-import me.carda.awesome_notifications.notifications.enumeratos.DefaultRingtoneType;
-import me.carda.awesome_notifications.notifications.enumeratos.GroupSort;
-import me.carda.awesome_notifications.notifications.enumeratos.MediaSource;
-import me.carda.awesome_notifications.notifications.enumeratos.GroupAlertBehaviour;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationImportance;
-import me.carda.awesome_notifications.notifications.enumeratos.NotificationPrivacy;
+import me.carda.awesome_notifications.notifications.enumerators.DefaultRingtoneType;
+import me.carda.awesome_notifications.notifications.enumerators.GroupSort;
+import me.carda.awesome_notifications.notifications.enumerators.MediaSource;
+import me.carda.awesome_notifications.notifications.enumerators.GroupAlertBehaviour;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationImportance;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationPrivacy;
 import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificationException;
 import me.carda.awesome_notifications.utils.AudioUtils;
 import me.carda.awesome_notifications.utils.BooleanUtils;
