@@ -9,40 +9,42 @@ import Foundation
 
 public class NotificationContentModel : AbstractModel {
 
-    var id: Int?
-    var channelKey: String?
-    var title: String?
-    var body: String?
-    var summary: String?
-    var showWhen: Bool?
+    public var id: Int?
+    public var channelKey: String?
+    public var title: String?
+    public var body: String?
+    public var summary: String?
+    public var showWhen: Bool?
     
-    var payload:[String:String?]?
+    public var payload:[String:String?]?
     
-    var playSound: Bool?
-    var soundSource: String?
-    var locked: Bool?
-    var icon: String?
-    var largeIcon: String?
-    var bigPicture: String?
-    var hideLargeIconOnExpand: Bool?
-    var autoCancel: Bool?
-    var displayOnForeground: Bool?
-    var displayOnBackground: Bool?
-    var defaultColor: Int64?
-    var backgroundColor: Int64?
-    var progress: Int?
-    var ticker: String?
+    public var playSound: Bool?
+    public var soundSource: String?
+    public var locked: Bool?
+    public var icon: String?
+    public var largeIcon: String?
+    public var bigPicture: String?
+    public var hideLargeIconOnExpand: Bool?
+    public var autoCancel: Bool?
+    public var displayOnForeground: Bool?
+    public var displayOnBackground: Bool?
+    public var defaultColor: Int64?
+    public var backgroundColor: Int64?
+    public var progress: Int?
+    public var ticker: String?
 
-    var privacy: NotificationPrivacy?
-    var privateMessage: String?
+    public var privacy: NotificationPrivacy?
+    public var privateMessage: String?
 
-    var notificationLayout: NotificationLayout?
+    public var notificationLayout: NotificationLayout?
 
-    var createdSource: NotificationSource?
-    var createdLifeCycle: NotificationLifeCycle?
-    var displayedLifeCycle: NotificationLifeCycle?
-    var createdDate: String?
-    var displayedDate: String?
+    public var createdSource: NotificationSource?
+    public var createdLifeCycle: NotificationLifeCycle?
+    public var displayedLifeCycle: NotificationLifeCycle?
+    public var createdDate: String?
+    public var displayedDate: String?
+    
+    public init(){}
     
     public func fromMap(arguments: [String : Any?]?) -> AbstractModel? {
                 

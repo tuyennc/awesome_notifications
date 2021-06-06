@@ -9,8 +9,10 @@ import Foundation
 
 public class StringUtils {
 
-    public static func isNullOrEmpty(_ value:String?) -> Bool {
-        return value?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+    public static func isNullOrEmpty(_ value:String?, considerWhiteSpaceAsEmpty:Bool = true) -> Bool {
+        return considerWhiteSpaceAsEmpty ?
+            (value?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) :
+            (value?.isEmpty ?? true)
     }
     
     public static func random(length: Int) -> String {

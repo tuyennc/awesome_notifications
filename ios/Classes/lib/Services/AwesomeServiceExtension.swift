@@ -67,17 +67,8 @@ open class AwesomeServiceExtension: UNNotificationServiceExtension {
                 
                 NotificationBuilder.setUserInfoContent(pushNotification: pushNotification!, content: content)
                 
-                if StringUtils.isNullOrEmpty(title) {
-                    content.title = pushNotification?.content?.title ?? ""
-                }
-                
-                if StringUtils.isNullOrEmpty(body) {
-                    content.body = pushNotification?.content?.body ?? ""
-                }
-                
-                content.categoryIdentifier = Definitions.DEFAULT_CATEGORY_IDENTIFIER
-                //contentHandler(content)
-                //return
+                content.title = pushNotification?.content?.title ?? ""
+                content.body = pushNotification?.content?.body ?? ""
                 
                 if let pushNotification = pushNotification {
                     do {

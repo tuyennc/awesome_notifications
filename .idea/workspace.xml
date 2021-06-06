@@ -9,36 +9,53 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e193cc25-4aee-4ee7-85e6-38b386ea7f1b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/example/lib/common_widgets/badge_picker.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/lib/common_widgets/shadow_top.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ios/Classes/lib/externalLibs/MD5.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/AwesomeNotificationsPlugin.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/AwesomeNotificationsPlugin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/BroadcastSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/BroadcastSender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/Definitions.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/Definitions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationSender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/DismissedNotificationReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/DismissedNotificationReceiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/enumeratos/NotificationSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/enumeratos/NotificationSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/DefaultsModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/DefaultsModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/services/firebase/FCMService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/utils/StringUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/utils/StringUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/pages/notification_examples_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/pages/notification_examples_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/awesome_notifications_core.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/awesome_notifications_core.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/utils/map_utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/utils/map_utils.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Podfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Podfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Runner/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Runner/Info.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/pages/notification_details_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/pages/notification_details_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/pages/notification_examples_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/pages/home_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/routes.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/routes.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/Definitions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/Definitions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/Services/AwesomeServiceExtension.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/Services/AwesomeServiceExtension.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/SwiftAwesomeNotificationsPlugin.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/SwiftAwesomeNotificationsPlugin.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/extensions/StringExtension.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/extensions/StringExtension.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/NotificationBuilder.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/NotificationBuilder.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/NotificationSenderAndScheduler.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/NotificationSenderAndScheduler.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/PushNotification.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/PushNotification.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/ActionButtonType.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/ActionButtonType.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/DefaultRingtoneType.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/DefaultRingtoneType.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/GroupAlertBehaviour.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/GroupAlertBehaviour.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/GroupSort.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/GroupSort.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/NotificationImportance.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/NotificationImportance.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/NotificationLayout.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/NotificationLayout.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/NotificationPrivacy.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/NotificationPrivacy.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/NotificationSource.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/enumerators/NotificationSource.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationButtonModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationButtonModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationCalendarModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationCalendarModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationChannelModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationChannelModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationContentModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationContentModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationIntervalModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/notifications/models/NotificationIntervalModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/BooleanUtils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/BooleanUtils.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/DateUtils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/DateUtils.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/DoubleUtils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/DoubleUtils.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/EnumUtils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/EnumUtils.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/FloatUtils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/FloatUtils.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/IntUtils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/IntUtils.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/ListUtils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/ListUtils.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/Log.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/Log.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/MapUtils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/MapUtils.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/lib/utils/StringUtils.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/lib/utils/StringUtils.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/awesome_notifications.podspec" beforeDir="false" afterPath="$PROJECT_DIR$/ios/awesome_notifications.podspec" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[VirtualDevicePath@C:\Users\Rafael Setragni\.android\avd\Pixel_XL.avd]" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -105,7 +122,7 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -154,45 +171,45 @@
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="420" y="278" key="FileChooserDialogImpl/0.0.2560.1040@0.0.2560.1040" timestamp="1622478778176" />
-    <state width="2517" height="233" key="GridCell.Tab.0.bottom" timestamp="1622496063783">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state width="1566" height="308" key="GridCell.Tab.0.bottom" timestamp="1622895510666">
+      <screen x="0" y="25" width="1920" height="943" />
     </state>
     <state width="2517" height="221" key="GridCell.Tab.0.bottom/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
     <state width="2517" height="233" key="GridCell.Tab.0.bottom/0.0.2560.1040@0.0.2560.1040" timestamp="1622496063783" />
     <state width="1840" height="252" key="GridCell.Tab.0.bottom/0.25.1280.943@0.25.1280.943" timestamp="1615310363198" />
     <state width="1510" height="251" key="GridCell.Tab.0.bottom/0.25.1552.943@0.25.1552.943" timestamp="1615333823121" />
     <state width="1862" height="308" key="GridCell.Tab.0.bottom/0.25.1904.943@0.25.1904.943" timestamp="1620170234703" />
-    <state width="1878" height="308" key="GridCell.Tab.0.bottom/0.25.1920.943@0.25.1920.943" timestamp="1621809717657" />
+    <state width="1566" height="308" key="GridCell.Tab.0.bottom/0.25.1920.943@0.25.1920.943" timestamp="1622895510666" />
     <state width="1840" height="252" key="GridCell.Tab.0.bottom/0.25.1920.959@0.25.1920.959" timestamp="1615307684400" />
-    <state width="2517" height="233" key="GridCell.Tab.0.center" timestamp="1622496063783">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state width="1566" height="308" key="GridCell.Tab.0.center" timestamp="1622895510665">
+      <screen x="0" y="25" width="1920" height="943" />
     </state>
     <state width="2517" height="221" key="GridCell.Tab.0.center/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
     <state width="2517" height="233" key="GridCell.Tab.0.center/0.0.2560.1040@0.0.2560.1040" timestamp="1622496063783" />
     <state width="1840" height="252" key="GridCell.Tab.0.center/0.25.1280.943@0.25.1280.943" timestamp="1615310363195" />
     <state width="1510" height="251" key="GridCell.Tab.0.center/0.25.1552.943@0.25.1552.943" timestamp="1615333823115" />
     <state width="1862" height="308" key="GridCell.Tab.0.center/0.25.1904.943@0.25.1904.943" timestamp="1620170234702" />
-    <state width="1878" height="308" key="GridCell.Tab.0.center/0.25.1920.943@0.25.1920.943" timestamp="1621809717655" />
+    <state width="1566" height="308" key="GridCell.Tab.0.center/0.25.1920.943@0.25.1920.943" timestamp="1622895510665" />
     <state width="1840" height="252" key="GridCell.Tab.0.center/0.25.1920.959@0.25.1920.959" timestamp="1615307684399" />
-    <state width="2517" height="233" key="GridCell.Tab.0.left" timestamp="1622496063783">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state width="1566" height="308" key="GridCell.Tab.0.left" timestamp="1622895510650">
+      <screen x="0" y="25" width="1920" height="943" />
     </state>
     <state width="2517" height="221" key="GridCell.Tab.0.left/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
     <state width="2517" height="233" key="GridCell.Tab.0.left/0.0.2560.1040@0.0.2560.1040" timestamp="1622496063783" />
     <state width="1840" height="252" key="GridCell.Tab.0.left/0.25.1280.943@0.25.1280.943" timestamp="1615310363192" />
     <state width="1510" height="251" key="GridCell.Tab.0.left/0.25.1552.943@0.25.1552.943" timestamp="1615333823114" />
     <state width="1862" height="308" key="GridCell.Tab.0.left/0.25.1904.943@0.25.1904.943" timestamp="1620170234702" />
-    <state width="1878" height="308" key="GridCell.Tab.0.left/0.25.1920.943@0.25.1920.943" timestamp="1621809717647" />
+    <state width="1566" height="308" key="GridCell.Tab.0.left/0.25.1920.943@0.25.1920.943" timestamp="1622895510650" />
     <state width="1840" height="252" key="GridCell.Tab.0.left/0.25.1920.959@0.25.1920.959" timestamp="1615307684398" />
-    <state width="2517" height="233" key="GridCell.Tab.0.right" timestamp="1622496063783">
-      <screen x="0" y="0" width="2560" height="1040" />
+    <state width="1566" height="308" key="GridCell.Tab.0.right" timestamp="1622895510666">
+      <screen x="0" y="25" width="1920" height="943" />
     </state>
     <state width="2517" height="221" key="GridCell.Tab.0.right/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
     <state width="2517" height="233" key="GridCell.Tab.0.right/0.0.2560.1040@0.0.2560.1040" timestamp="1622496063783" />
     <state width="1840" height="252" key="GridCell.Tab.0.right/0.25.1280.943@0.25.1280.943" timestamp="1615310363196" />
     <state width="1510" height="251" key="GridCell.Tab.0.right/0.25.1552.943@0.25.1552.943" timestamp="1615333823115" />
     <state width="1862" height="308" key="GridCell.Tab.0.right/0.25.1904.943@0.25.1904.943" timestamp="1620170234703" />
-    <state width="1878" height="308" key="GridCell.Tab.0.right/0.25.1920.943@0.25.1920.943" timestamp="1621809717657" />
+    <state width="1566" height="308" key="GridCell.Tab.0.right/0.25.1920.943@0.25.1920.943" timestamp="1622895510666" />
     <state width="1840" height="252" key="GridCell.Tab.0.right/0.25.1920.959@0.25.1920.959" timestamp="1615307684400" />
     <state x="341" y="230" key="RollbackChangesDialog" timestamp="1621552172929">
       <screen x="0" y="25" width="1920" height="943" />

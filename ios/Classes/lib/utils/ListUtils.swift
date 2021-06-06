@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ListUtils {
+public class ListUtils {
 
     public static func isEmptyLists(_ list: [AnyObject]?) -> Bool {
         return list?.isEmpty ?? true

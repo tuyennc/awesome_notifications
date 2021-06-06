@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DateUtils {
+public class DateUtils {
 
     public static let localTimeZone :TimeZone = Date.localTimeZone()//Calendar.current.timeZone
     public static let utcTimeZone :TimeZone = TimeZone(secondsFromGMT: 0)!;

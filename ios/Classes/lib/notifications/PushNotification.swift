@@ -9,9 +9,11 @@ import Foundation
 
 public class PushNotification : AbstractModel {
         
-    var content:NotificationContentModel?
-    var actionButtons:[NotificationButtonModel]?
-    var schedule:NotificationScheduleModel?
+    public var content:NotificationContentModel?
+    public var actionButtons:[NotificationButtonModel]?
+    public var schedule:NotificationScheduleModel?
+    
+    public init() { }
     
     public func fromMap(arguments: [String : Any?]?) -> AbstractModel? {
         

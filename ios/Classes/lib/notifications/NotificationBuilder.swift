@@ -148,9 +148,15 @@ public class NotificationBuilder {
     
     public static func buildNotificationActionFromJson(jsonData:String?, actionKey:String?, userText:String?) -> ActionReceived? {
         
-        let pushNotification:PushNotification? = buildNotificationFromJson(jsonData: jsonData)
-        if(pushNotification == nil){ return nil }
-        let actionReceived:ActionReceived = ActionReceived(pushNotification!.content)
+        if let pushNotification:PushNotification = buildNotificationFromJson(jsonData: jsonData) {
+            return buildNotificationActionFromPush(pushNotification: pushNotification, actionKey: actionKey, userText: userText)
+        }
+        return nil
+    }
+    
+    public static func buildNotificationActionFromPush(pushNotification:PushNotification, actionKey:String?, userText:String?) -> ActionReceived? {
+        
+        let actionReceived:ActionReceived = ActionReceived(pushNotification.content)
         
         switch actionKey {
         

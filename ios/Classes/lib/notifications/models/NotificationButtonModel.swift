@@ -16,6 +16,8 @@ public class NotificationButtonModel : AbstractModel {
     var autoCancel:Bool?
     var buttonType:ActionButtonType?
     
+    public init(){}
+    
     public func fromMap(arguments: [String : Any?]?) -> AbstractModel? {
         if(arguments == nil){ return self }
        

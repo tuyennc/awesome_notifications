@@ -7,7 +7,7 @@
 
 import Foundation
 
-class IntUtils {
+public class IntUtils {
     
     public static func isBetween(_ value:Int, min:Int, max:Int) -> Bool {
         return value >= min && value <= max

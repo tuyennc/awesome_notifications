@@ -1,4 +1,4 @@
-enum ActionButtonType : String, CaseIterable {
+public enum ActionButtonType : String, CaseIterable {
     
     case Default = "Default"
     case InputField = "InputField"

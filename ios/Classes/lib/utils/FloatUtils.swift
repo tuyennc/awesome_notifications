@@ -7,7 +7,7 @@
 
 import Foundation
 
-class FloatUtils {
+public class FloatUtils {
 
     public static func isNullOrEmpty(_ value:Float?) -> Bool {
         return value == nil

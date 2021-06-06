@@ -36,6 +36,8 @@ public class NotificationChannelModel : AbstractModel {
     var locked: Bool?
     var onlyAlertOnce: Bool?
     
+    public init(){}
+    
     public func fromMap(arguments: [String : Any?]?) -> AbstractModel? {
         
         self.channelKey         = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_CHANNEL_KEY, arguments: arguments)

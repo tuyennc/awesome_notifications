@@ -8,7 +8,7 @@
 import Foundation
 
 @available(iOS 10.0, *)
-class NotificationSenderAndScheduler {
+public class NotificationSenderAndScheduler {
 
     public static let TAG: String = "NotificationSender"
 
@@ -21,6 +21,8 @@ class NotificationSenderAndScheduler {
     private var scheduled:  Date?
     
     private var completion: ((Bool, UNMutableNotificationContent?, Error?) -> ())?
+    
+    public init(){}
     
     public func send(
         createdSource: NotificationSource,

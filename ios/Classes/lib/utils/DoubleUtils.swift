@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DoubleUtils {
+public class DoubleUtils {
 
     public static func isNullOrEmpty(_ value:Double?) -> Bool {
         return value == nil

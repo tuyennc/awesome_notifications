@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:awesome_notifications_example/common_widgets/shadow_top.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 //import 'package:flutter/material.dart' as Material show DateUtils;
@@ -134,7 +135,7 @@ class _NotificationDetailsPageState extends State<NotificationDetailsPage> {
                           ? SizedBox()
                           : Positioned(
                               left: bigPicture == null
-                                  ? mediaQueryData.size.width / 2 - 60
+                                  ? mediaQueryData.size.width / 2 - maxSize * 0.08
                                   : 20,
                               top: mediaQueryData.padding.top +
                                   (bigPicture == null ? 30 : maxSize * 0.25),
@@ -164,7 +165,7 @@ class _NotificationDetailsPageState extends State<NotificationDetailsPage> {
                             right: 20.0,
                             bottom: 10,
                             top: bigPicture == null
-                                ? (largeIcon == null ? 120 : 190)
+                                ? (largeIcon == null ? 120 : 235)
                                 : maxSize * 0.48),
                         child: RichText(
                             text: TextSpan(children: [
@@ -242,31 +243,7 @@ class _NotificationDetailsPageState extends State<NotificationDetailsPage> {
             )
           ],
         ),
-        Theme.of(context).platform == TargetPlatform.android
-            ? SizedBox()
-            : Positioned(
-                top: 0,
-                left: 0,
-                child: Container(
-                  width: mediaQueryData.size.width,
-                  height: mediaQueryData.padding.top + 6,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black54,//Colors.white54,//
-                          Colors.black38,//Colors.white38,//
-                          Colors.black12,//Colors.white12,//
-                          Colors.transparent
-                        ],
-                        stops: [
-                          0.2,
-                          0.45,
-                          0.75,
-                          0.9
-                        ])),
-                )),
+        ShadowTop(),
         Positioned(
           top: mediaQueryData.padding.top + 10,
           left: 10,
