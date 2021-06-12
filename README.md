@@ -333,10 +333,10 @@ To show any images on notification, at any place, you need to include the respec
 
 Images can be defined using 4 prefix types:
 
-- Asset: images access through Flutter asset method. **Example**: asset://path/to/image-asset.png
-- Network: images access through internet connection. **Example**: http(s)://url.com/to/image-asset.png
-- File: images access through files stored on device. **Example**: file://path/to/image-asset.png
-- Resource: images access through drawable native resources. On Android, those files are stored inside [project]/android/app/src/main/drawabe folder. **Example**: resource://drawable/res_image-asset.png
+- Asset: images access through Flutter asset method. <br>&nbsp;&nbsp;&nbsp;&nbsp;**Example**: `asset://path/to/image-asset.png`
+- Network: images access through internet connection. <br>&nbsp;&nbsp;&nbsp;&nbsp;**Example**: `http(s)://url.com/to/image-asset.png`
+- File: images access through files stored on device. <br>&nbsp;&nbsp;&nbsp;&nbsp;**Example**: `file://path/to/image-asset.png`
+- Resource: images access through drawable native resources. On Android, those files are stored inside [project]/android/app/src/main/drawabe folder. <br>&nbsp;&nbsp;&nbsp;&nbsp;**Example**: `resource://drawable/res_image-asset.png`
 
 OBS: Unfortunately, icons and sounds can be only resource media types.
 <br>
