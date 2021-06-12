@@ -369,8 +369,9 @@ Notifications action buttons could be classified in 4 types:
 
 - Default: after user taps, the notification bar is closed and an action event is fired.
 - InputField: after user taps, a input text field is displayed to capture input by the user.
-- DisabledAction: after user taps, the notification bar is closed, but the respective action event is not fired.
+- DisabledAction: after user taps, the notification bar is closed, but the respective action event is fired.
 - KeepOnTop: after user taps, the notification bar is not closed, but an action event is fired.
+- AutoDismissible: after user taps, the notification is dismissed from status bar and none action event is fired, except `dismissedStream`.
 
 <br>
 
@@ -379,8 +380,9 @@ Notifications action buttons could be classified in 4 types:
 | -----------------: | ----------------- | ----------------- | ----------------------- |
 | **Default**        | keeps the app in foreground | brings the app to foreground | brings the app to foreground |
 | **InputField**     | keeps the app in foreground | brings the app to foreground | brings the app to foreground |
-| **DisabledAction** | keeps the app in foreground | keeps the app in background  | keeps the app terminated |
+| **DisabledAction** | keeps the app in foreground | brings the app to foreground  | brings the app to foreground |
 | **KeepOnTop**      | keeps the app in foreground | keeps the app in background  | keeps the app terminated |
+| **AutoDismissible**| keeps the app in foreground | keeps the app in background  | keeps the app terminated |
 
 <br>
 

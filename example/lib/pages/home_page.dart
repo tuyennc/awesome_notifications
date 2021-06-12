@@ -115,20 +115,28 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     AwesomeNotifications().createdStream.listen((receivedNotification) {
       String? createdSourceText =
           AssertUtils.toSimpleEnumString(receivedNotification.createdSource);
-      Fluttertoast.showToast(msg: '$createdSourceText notification created');
+      Fluttertoast.showToast(
+          msg: '$createdSourceText notification created',
+          textColor: Colors.white,
+          backgroundColor: Colors.green);
     });
 
     AwesomeNotifications().displayedStream.listen((receivedNotification) {
       String? createdSourceText =
           AssertUtils.toSimpleEnumString(receivedNotification.createdSource);
-      Fluttertoast.showToast(msg: '$createdSourceText notification displayed');
+      Fluttertoast.showToast(
+          msg: '$createdSourceText notification displayed',
+          textColor: Colors.white,
+          backgroundColor: Colors.blueAccent);
     });
 
     AwesomeNotifications().dismissedStream.listen((receivedNotification) {
       String? dismissedSourceText = AssertUtils.toSimpleEnumString(
           receivedNotification.dismissedLifeCycle);
       Fluttertoast.showToast(
-          msg: 'Notification dismissed on $dismissedSourceText');
+          msg: 'Notification dismissed on $dismissedSourceText',
+          textColor: Colors.white,
+          backgroundColor: Colors.red);
     });
 
     AwesomeNotifications().actionStream.listen((receivedNotification) {
@@ -410,8 +418,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 TextNote(
                     'Since Android Nougat, icons are only displayed on media layout. The icon media needs to be a native resource type.'),
                 SimpleButton(
-                    'Show notification with\nsimple Action buttons (one disabled)',
+                    'Show notification with\nsimple Action buttons (one disabled action)',
                     onPressed: () => showNotificationWithActionButtons(context, 3)),
+                SimpleButton('Show notification with\nsimple Action buttons (one auto dismissible)',
+                    onPressed: () => showNotificationWithAutoDismissibleButton(context, 3)),
                 SimpleButton('Show notification with\nIcons and Action buttons',
                     onPressed: () => showNotificationWithIconsAndActionButtons(context, 3)),
                 SimpleButton('Show notification with\nReply and Action button',

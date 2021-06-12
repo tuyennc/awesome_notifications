@@ -3,6 +3,7 @@
 /// [ActionButtonType.InputField] Button when pressed opens a dialog shortcut to send an text response
 /// [ActionButtonType.DisabledAction] Button when pressed should just close the notification in tray, but do not fires respective action
 /// [ActionButtonType.KeepOnTop] Button, when pressed, fires the respective action without close the notification
+/// [ActionButtonType.AutoDismissible] Button, when pressed, dismiss the current notification from status bar without open the app
 enum ActionButtonType {
   /// Default button type
   Default,
@@ -14,5 +15,8 @@ enum ActionButtonType {
   DisabledAction,
 
   /// Button, when pressed, fires the respective action without close the notification
-  KeepOnTop
+  KeepOnTop,
+
+  /// Button, when pressed, dismiss the current notification from status bar without open the app
+  AutoDismissible
 }

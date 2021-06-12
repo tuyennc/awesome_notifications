@@ -16,6 +16,7 @@
   
     <application>
 
+        <receiver android:name=".notifications.broadcastReceivers.AutoDismissibleReceiver" />
         <receiver android:name=".notifications.broadcastReceivers.DismissedNotificationReceiver">
             <intent-filter>
                 <action android:name="DISMISSED_NOTIFICATION" />

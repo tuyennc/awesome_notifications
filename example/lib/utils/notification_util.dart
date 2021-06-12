@@ -197,6 +197,25 @@ Future<void> showNotificationWithActionButtons(BuildContext context, int id) asy
       ]);
 }
 
+Future<void> showNotificationWithAutoDismissibleButton(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
+  await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+          id: id,
+          channelKey: 'basic_channel',
+          title: 'Anonymous says:',
+          body: 'Hi there!',
+          payload: {'uuid': 'user-profile-uuid'}),
+      actionButtons: [
+        NotificationActionButton(
+            key: 'READ', label: 'Mark as read', autoCancel: true),
+        NotificationActionButton(
+            key: 'DISMISS', label: 'Dismiss', buttonType: ActionButtonType.AutoDismissible)
+      ]);
+}
+
 Future<void> showNotificationWithIconsAndActionButtons(BuildContext context, int id) async {
   bool isAllowed = await requireUserNotificationPermissions(context);
   if(!isAllowed) return;
@@ -1303,7 +1322,10 @@ String toTwoDigitString(int value) {
 }
 
 void processDefaultActionReceived(BuildContext context, ReceivedAction receivedNotification) {
-  Fluttertoast.showToast(msg: 'Action received');
+  Fluttertoast.showToast(
+      msg: 'Action received',
+      textColor: Colors.black,
+      backgroundColor: Colors.yellow);
 
   String targetPage;
 

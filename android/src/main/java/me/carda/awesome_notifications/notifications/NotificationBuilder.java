@@ -27,6 +27,7 @@ import androidx.core.app.RemoteInput;
 
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.Definitions;
+import me.carda.awesome_notifications.notifications.broadcastReceivers.AutoDismissibleReceiver;
 import me.carda.awesome_notifications.notifications.broadcastReceivers.DismissedNotificationReceiver;
 import me.carda.awesome_notifications.notifications.broadcastReceivers.KeepOnTopActionReceiver;
 import me.carda.awesome_notifications.notifications.enumerators.ActionButtonType;
@@ -418,8 +419,9 @@ public class NotificationBuilder {
                 Definitions.NOTIFICATION_BUTTON_ACTION_PREFIX + "_" + buttonProperties.key,
                 pushNotification,
                 (buttonProperties.buttonType == ActionButtonType.DisabledAction) ? AwesomeNotificationsPlugin.class :
-                (buttonProperties.buttonType == ActionButtonType.KeepOnTop) ?
-                        KeepOnTopActionReceiver.class : getNotificationTargetActivityClass(context)
+                    (buttonProperties.buttonType == ActionButtonType.AutoDismissible) ? AutoDismissibleReceiver.class :
+                        (buttonProperties.buttonType == ActionButtonType.KeepOnTop) ?
+                            KeepOnTopActionReceiver.class : getNotificationTargetActivityClass(context)
             );
 
             actionIntent.putExtra(Definitions.NOTIFICATION_AUTO_CANCEL, buttonProperties.autoCancel);
@@ -438,6 +440,16 @@ public class NotificationBuilder {
                             pushNotification.content.id,
                             actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+
+                }
+                else if(buttonProperties.buttonType == ActionButtonType.AutoDismissible) {
+
+                    actionPendingIntent = PendingIntent.getBroadcast(
+                            context,
+                            pushNotification.content.id,
+                            actionIntent,
+                            PendingIntent.FLAG_CANCEL_CURRENT
                     );
 
                 }

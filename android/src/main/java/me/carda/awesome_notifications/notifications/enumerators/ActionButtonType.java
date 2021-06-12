@@ -4,5 +4,6 @@ public enum ActionButtonType {
     Default,
     InputField,
     DisabledAction,
-    KeepOnTop
+    KeepOnTop,
+    AutoDismissible
 }
