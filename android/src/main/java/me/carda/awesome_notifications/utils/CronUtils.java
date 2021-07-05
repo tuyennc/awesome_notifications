@@ -52,8 +52,10 @@ public final class CronUtils {
                 calendar.setTime(now);
                 break;
 
+            case 0: // if initial date is right now, it should not be rescheduled
+                return null;
+
             case 1: // if initial date is in future, shows in future
-            case 0: // if initial date is right now, shows now
             default:
                 calendar.setTime(initialScheduleDay);
                 break;

@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications/src/enumerators/notification_action_type.dart';
 import 'package:awesome_notifications/src/enumerators/notification_layout.dart';
 import 'package:awesome_notifications/src/enumerators/notification_life_cycle.dart';
 import 'package:awesome_notifications/src/enumerators/notification_source.dart';
@@ -20,6 +21,8 @@ class NotificationContent extends BaseNotificationContent {
 
   NotificationLayout? notificationLayout;
 
+  NotificationActionType? notificationActionType;
+
   bool? displayOnForeground;
   bool? displayOnBackground;
 
@@ -39,11 +42,12 @@ class NotificationContent extends BaseNotificationContent {
       String? largeIcon,
       String? bigPicture,
       String? soundSource,
-      bool? autoCancel,
+      bool? autoDismissible,
       Color? color,
       Color? backgroundColor,
       Map<String, String>? payload,
-      this.notificationLayout,
+      this.notificationLayout = NotificationLayout.Default,
+      this.notificationActionType = NotificationActionType.BringToForeground,
       this.hideLargeIconOnExpand,
       this.locked,
       this.progress,
@@ -54,7 +58,8 @@ class NotificationContent extends BaseNotificationContent {
       this.createdDate,
       this.displayOnForeground,
       this.displayOnBackground,
-      this.displayedDate})
+      this.displayedDate
+      })
       : super(
             id: id,
             channelKey: channelKey,
@@ -67,7 +72,7 @@ class NotificationContent extends BaseNotificationContent {
             largeIcon: largeIcon,
             bigPicture: bigPicture,
             soundSource: soundSource,
-            autoCancel: autoCancel,
+            autoDismissible: autoDismissible,
             defaultColor: color,
             backgroundColor: backgroundColor);
 
@@ -84,6 +89,9 @@ class NotificationContent extends BaseNotificationContent {
 
     this.notificationLayout = AssertUtils.extractEnum(
         mapData, NOTIFICATION_LAYOUT, NotificationLayout.values);
+
+    this.notificationActionType = AssertUtils.extractEnum(
+        mapData, NOTIFICATION_ACTION_TYPE, NotificationActionType.values);
 
     this.displayedLifeCycle = AssertUtils.extractEnum(mapData,
         NOTIFICATION_DISPLAYED_LIFECYCLE, NotificationLifeCycle.values);
@@ -130,6 +138,7 @@ class NotificationContent extends BaseNotificationContent {
         NOTIFICATION_DISPLAYED_DATE: displayedDate,
         NOTIFICATION_DISPLAYED_LIFECYCLE:
             AssertUtils.toSimpleEnumString(displayedLifeCycle),
+        NOTIFICATION_ACTION_TYPE: AssertUtils.toSimpleEnumString(notificationActionType),
         NOTIFICATION_DISPLAY_ON_FOREGROUND: displayOnForeground,
         NOTIFICATION_DISPLAY_ON_BACKGROUND: displayOnBackground,
       });

@@ -7,7 +7,7 @@ import android.content.Intent;
 //import com.google.common.reflect.TypeToken;
 
 import me.carda.awesome_notifications.Definitions;
-import me.carda.awesome_notifications.notifications.models.PushNotification;
+import me.carda.awesome_notifications.notifications.models.NotificationModel;
 import me.carda.awesome_notifications.notifications.NotificationScheduler;
 import me.carda.awesome_notifications.notifications.NotificationSender;
 import me.carda.awesome_notifications.utils.StringUtils;
@@ -28,24 +28,24 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         if (!StringUtils.isNullOrEmpty(notificationDetailsJson)) {
 
             try {
-                PushNotification pushNotification = new PushNotification().fromJson(notificationDetailsJson);
+                NotificationModel notificationModel = new NotificationModel().fromJson(notificationDetailsJson);
 
-                if(pushNotification == null){ return; }
+                if(notificationModel == null){ return; }
 
                 NotificationSender.send(
                     context,
-                    pushNotification
+                        notificationModel
                 );
 
-                if(pushNotification.schedule.repeats)
+                if(notificationModel.schedule.repeats)
                     NotificationScheduler.schedule(
                         context,
-                        pushNotification
+                            notificationModel
                     );
                 else
                     NotificationScheduler.cancelSchedule(
                         context,
-                        pushNotification.content.id
+                        notificationModel.content.id
                     );
 
             } catch (Exception e) {

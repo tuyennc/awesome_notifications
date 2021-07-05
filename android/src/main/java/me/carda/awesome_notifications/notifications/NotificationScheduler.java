@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import androidx.core.app.AlarmManagerCompat;
-import me.carda.awesome_notifications.BroadcastSender;
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.notifications.broadcastReceivers.ScheduledNotificationReceiver;
@@ -19,7 +18,7 @@ import me.carda.awesome_notifications.notifications.enumerators.NotificationLife
 import me.carda.awesome_notifications.notifications.enumerators.NotificationSource;
 import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificationException;
 import me.carda.awesome_notifications.notifications.managers.ScheduleManager;
-import me.carda.awesome_notifications.notifications.models.PushNotification;
+import me.carda.awesome_notifications.notifications.models.NotificationModel;
 import me.carda.awesome_notifications.notifications.models.returnedData.NotificationReceived;
 import me.carda.awesome_notifications.utils.BooleanUtils;
 import me.carda.awesome_notifications.utils.DateUtils;
@@ -31,29 +30,29 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
     private Context context;
     private NotificationSource createdSource;
     private NotificationLifeCycle appLifeCycle;
-    private PushNotification pushNotification;
+    private NotificationModel notificationModel;
 
     private Boolean scheduled = false;
 
     public static void schedule(
             Context context,
-            PushNotification pushNotification
+            NotificationModel notificationModel
     ) throws AwesomeNotificationException {
 
         NotificationScheduler.schedule(
             context,
-            pushNotification.content.createdSource,
-            pushNotification
+            notificationModel.content.createdSource,
+                notificationModel
         );
     }
 
     public static void schedule(
         Context context,
         NotificationSource createdSource,
-        PushNotification pushNotification
+        NotificationModel notificationModel
     ) throws AwesomeNotificationException {
 
-        if (pushNotification == null){
+        if (notificationModel == null){
             throw new AwesomeNotificationException("Invalid notification content");
         }
 
@@ -65,13 +64,13 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
             appLifeCycle = NotificationLifeCycle.AppKilled;
         }
 
-        pushNotification.validate(context);
+        notificationModel.validate(context);
 
         new NotificationScheduler(
             context,
             appLifeCycle,
             createdSource,
-            pushNotification
+                notificationModel
         ).execute();
     }
 
@@ -79,13 +78,13 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
         Context context,
         NotificationLifeCycle appLifeCycle,
         NotificationSource createdSource,
-        PushNotification pushNotification
+        NotificationModel notificationModel
     ){
         this.context = context;
         this.createdSource = createdSource;
         this.appLifeCycle = appLifeCycle;
 
-        this.pushNotification = pushNotification;
+        this.notificationModel = notificationModel;
     }
 
     /// AsyncTask METHODS BEGIN *********************************
@@ -95,24 +94,24 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
         try {
             Calendar nextValidDate = null;
 
-            if(pushNotification != null){
+            if(notificationModel != null){
 
-                if(pushNotification.content.createdSource == null){
-                    pushNotification.content.createdSource = createdSource;
+                if(notificationModel.content.createdSource == null){
+                    notificationModel.content.createdSource = createdSource;
                     scheduled = true;
                 }
 
-                if(pushNotification.schedule == null) return null;
+                if(notificationModel.schedule == null) return null;
 
-                if(pushNotification.schedule.createdDate == null){
-                    pushNotification.content.createdDate = DateUtils.getUTCDate();
+                if(notificationModel.schedule.createdDate == null){
+                    notificationModel.content.createdDate = DateUtils.getUTCDate();
                     scheduled = true;
                 }
 
-                if(pushNotification.content.createdLifeCycle == null)
-                    pushNotification.content.createdLifeCycle = appLifeCycle;
+                if(notificationModel.content.createdLifeCycle == null)
+                    notificationModel.content.createdLifeCycle = appLifeCycle;
 
-                nextValidDate = pushNotification.schedule.getNextValidDate(null);
+                nextValidDate = notificationModel.schedule.getNextValidDate(null);
 
                 /*
                 nextValidDate = CronUtils.getNextCalendar(
@@ -123,9 +122,9 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
 
                 if(nextValidDate != null){
 
-                    pushNotification = scheduleNotification(context, pushNotification, nextValidDate);
+                    notificationModel = scheduleNotification(context, notificationModel, nextValidDate);
 
-                    if(pushNotification != null){
+                    if(notificationModel != null){
                         scheduled = true;
                     }
 
@@ -168,7 +167,7 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
                     }
                     */
 
-                    cancelSchedule(context, pushNotification.content.id);
+                    cancelSchedule(context, notificationModel.content.id);
 
                     String msg = "Date is not more valid. ("+DateUtils.getUTCDate()+")";
                     Log.d(TAG, msg);
@@ -176,7 +175,7 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
             }
 
         } catch (Exception e) {
-            pushNotification = null;
+            notificationModel = null;
             e.printStackTrace();
         }
 
@@ -187,15 +186,15 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
     protected void onPostExecute(Calendar nextValidDate) {
 
         // Only fire ActionReceived if notificationModel is valid
-        if(pushNotification != null){
+        if(notificationModel != null){
             
             if(nextValidDate != null) {
 
                 if(scheduled){
-                    ScheduleManager.saveSchedule(context, pushNotification);
-                    BroadcastSender.SendBroadcastNotificationCreated(
+                    ScheduleManager.saveSchedule(context, notificationModel);
+                    NotificationGateKeeper.broadcastNotificationCreated(
                             context,
-                            new NotificationReceived(pushNotification.content)
+                            new NotificationReceived(notificationModel.content)
                     );
 
                     Log.d(TAG, "Scheduled created");
@@ -204,8 +203,8 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
                 }
             }
 
-            ScheduleManager.removeSchedule(context, pushNotification);
-            _removeFromAlarm(context, pushNotification.content.id);
+            ScheduleManager.removeSchedule(context, notificationModel);
+            _removeFromAlarm(context, notificationModel.content.id);
 
             Log.d(TAG, "Scheduled removed");
             ScheduleManager.commitChanges(context);
@@ -214,47 +213,47 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
 
     /// AsyncTask METHODS END *********************************
 
-    private PushNotification scheduleNotification(Context context, PushNotification pushNotification, Calendar nextValidDate) {
+    private NotificationModel scheduleNotification(Context context, NotificationModel notificationModel, Calendar nextValidDate) {
 
         if(nextValidDate != null){
 
-            String notificationDetailsJson = pushNotification.toJson();
+            String notificationDetailsJson = notificationModel.toJson();
             Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
 
-            notificationIntent.putExtra(Definitions.NOTIFICATION_ID, pushNotification.content.id);
+            notificationIntent.putExtra(Definitions.NOTIFICATION_ID, notificationModel.content.id);
             notificationIntent.putExtra(Definitions.NOTIFICATION_JSON, notificationDetailsJson);
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context,
-                    pushNotification.content.id,
+                    notificationModel.content.id,
                     notificationIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT
             );
 
             AlarmManager alarmManager = getAlarmManager(context);
 
-            if (BooleanUtils.getValue(pushNotification.schedule.allowWhileIdle)) {
+            if (BooleanUtils.getValue(notificationModel.schedule.allowWhileIdle)) {
                 AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, nextValidDate.getTimeInMillis(), pendingIntent);
             } else {
                 AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, nextValidDate.getTimeInMillis(), pendingIntent);
             }
 
-            return pushNotification;
+            return notificationModel;
         }
         return null;
     }
 
     public static void refreshScheduleNotifications(Context context) {
-        List<PushNotification> pushNotifications = ScheduleManager.listSchedules(context);
-        if (pushNotifications == null || pushNotifications.isEmpty()) return;
+        List<NotificationModel> notificationModels = ScheduleManager.listSchedules(context);
+        if (notificationModels == null || notificationModels.isEmpty()) return;
 
-        for (PushNotification pushNotification : pushNotifications) {
+        for (NotificationModel notificationModel : notificationModels) {
             try {
-                if(pushNotification.schedule.hasNextValidDate()){
-                    schedule(context, pushNotification);
+                if(notificationModel.schedule.hasNextValidDate()){
+                    schedule(context, notificationModel);
                 }
                 else {
-                    ScheduleManager.cancelSchedule(context, pushNotification.content.id);
+                    ScheduleManager.cancelSchedule(context, notificationModel.content.id);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -292,8 +291,8 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
 
     private static void _removeAllFromAlarm(Context context) {
         if(context != null){
-            List<PushNotification> schedules = ScheduleManager.listSchedules(context);
-            for(PushNotification schedule : schedules){
+            List<NotificationModel> schedules = ScheduleManager.listSchedules(context);
+            for(NotificationModel schedule : schedules){
                 _removeFromAlarm(context, schedule.content.id);
             }
         }

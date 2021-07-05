@@ -9,19 +9,56 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e193cc25-4aee-4ee7-85e6-38b386ea7f1b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/AutoDismissibleReceiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/background/DartBackgroundExecutor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/background/DartBackgroundService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/enumerators/NotificationActionType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/enumerators/notification_action_type.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/exceptions/awesome_notifications_exception.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/exceptions/isolate_callback_exception.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/isolates/isolate_main.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/models/received_models/silent_action.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/AwesomeNotificationsPlugin.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/AwesomeNotificationsPlugin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/BroadcastSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationGateKeeper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/Definitions.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/Definitions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/enumerators/ActionButtonType.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/enumerators/ActionButtonType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/services/AutoCancelService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationScheduler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationSender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/AutoDismissibleReceiver.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/AwesomeMediaButtonReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/AwesomeMediaButtonReceiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/DismissedNotificationReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/DismissedNotificationReceiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/KeepOnTopActionReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/SilentActionReceiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/ScheduledNotificationReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/ScheduledNotificationReceiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/enumerators/ActionButtonType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/managers/DefaultsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/managers/DefaultsManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/managers/ScheduleManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/managers/ScheduleManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/DefaultsModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/DefaultsModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/NotificationButtonModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/NotificationButtonModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/NotificationContentModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/NotificationContentModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/PushNotification.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/NotificationModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/returnedData/ActionReceived.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/returnedData/ActionReceived.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/returnedData/NotificationReceived.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/models/returnedData/NotificationReceived.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/utils/CronUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/utils/CronUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/pages/firebase_test_page.dart" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/example/lib/pages/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/pages/home_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/routes.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/routes.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/utils/firebase_utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/utils/firebase_utils.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/utils/media_player_central.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/utils/media_player_central.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/lib/utils/notification_util.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/utils/notification_util.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/enumerators/action_button_type.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/enumerators/action_button_type.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/awesome_notifications.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/awesome_notifications.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/awesome_notifications_core.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/awesome_notifications_core.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/definitions.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/definitions.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/enumerators/action_button_type.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/models/basic_notification_content.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/models/basic_notification_content.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/models/notification_button.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/models/notification_button.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/models/notification_channel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/models/notification_channel.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/models/notification_content.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/models/notification_content.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/models/received_models/push_notification.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/models/received_models/notification_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/utils/assert_utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/utils/assert_utils.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,8 +69,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
         <option value="Class" />
+        <option value="Enum" />
       </list>
     </option>
   </component>
@@ -48,7 +85,7 @@
     <option name="showMembers" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="DEBUGGABLE_DEVICE" value="motorola-moto_g_play-0029216329" />
+    <property name="DEBUGGABLE_DEVICE" value="Pixel_XL [emulator-5554]" />
     <property name="DEBUGGABLE_PROCESS" value="me.carda.awesome_notifications_example" />
     <property name="DEBUGGER_ID" value="Java" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -57,24 +94,24 @@
     <property name="dart.analysis.tool.window.force.activate" value="false" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/src/background" />
     <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="E:\plugins\awesome_notifications\example\ios\Runner" />
-      <recent name="E:\plugins\awesome_notifications\lib\src\enumerators" />
-      <recent name="E:\plugins\awesome_notifications\example\android\app" />
-      <recent name="E:\plugins\awesome_notifications\example\assets\readme" />
-      <recent name="E:\plugins\awesome_notifications\lib\src\helpers" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\plugins\awesome_notifications\lib\src\background" />
+      <recent name="E:\plugins\awesome_notifications\example\lib\background" />
       <recent name="E:\plugins\awesome_notifications\android\src\main" />
       <recent name="E:\plugins\awesome_notifications\example\android\app" />
       <recent name="E:\plugins\awesome_notifications\android\src\main\test\java\me\carda\awesome_notifications" />
-      <recent name="E:\plugins\awesome_notifications\lib\src\utils" />
-      <recent name="E:\plugins\awesome_notifications\example\assets\readme" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\plugins\awesome_notifications\lib" />
+      <recent name="E:\plugins\awesome_notifications\lib\src\extensions" />
+      <recent name="E:\plugins\awesome_notifications\example\ios\Runner" />
+      <recent name="E:\plugins\awesome_notifications\lib\src\enumerators" />
+      <recent name="E:\plugins\awesome_notifications\example\android\app" />
     </key>
   </component>
   <component name="RunManager" selected="Flutter.example/lib/main.dart">
@@ -118,27 +155,18 @@
     </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
-    <state x="1085" y="226" key="#com.intellij.ide.util.MemberChooser" timestamp="1615524991027">
+    <state x="490" y="259" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1625179939436">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state x="1085" y="226" key="#com.intellij.ide.util.MemberChooser/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1615524991027" />
-    <state x="963" y="192" key="#com.intellij.refactoring.encapsulateFields.EncalpsulateFieldsDialog" timestamp="1615553325864">
+    <state x="490" y="259" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.2560.1040@0.0.2560.1040" timestamp="1625179939436" />
+    <state x="1067" y="446" key="#xdebugger.evaluate" timestamp="1624232833371">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state x="963" y="192" key="#com.intellij.refactoring.encapsulateFields.EncalpsulateFieldsDialog/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1615553325864" />
-    <state x="1498" y="226" key="#xdebugger.evaluate" timestamp="1614899259509">
+    <state x="1067" y="446" key="#xdebugger.evaluate/0.0.2560.1040@0.0.2560.1040" timestamp="1624232833371" />
+    <state x="784" y="290" width="412" height="525" key="AndroidProcessChooserDialog" timestamp="1625194852275">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state x="1498" y="226" key="#xdebugger.evaluate/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1614899259509" />
-    <state x="92" y="92" width="2376" height="856" key="AVDManager" timestamp="1614884706846">
-      <screen x="0" y="0" width="2560" height="1040" />
-    </state>
-    <state x="92" y="92" width="2376" height="856" key="AVDManager/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1614884706846" />
-    <state x="784" y="290" width="412" height="525" key="AndroidProcessChooserDialog" timestamp="1622161147735">
-      <screen x="0" y="0" width="2560" height="1040" />
-    </state>
-    <state x="784" y="290" width="412" height="525" key="AndroidProcessChooserDialog/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1614899766283" />
-    <state x="784" y="290" key="AndroidProcessChooserDialog/0.0.2560.1040@0.0.2560.1040" timestamp="1622161147735" />
+    <state x="784" y="290" key="AndroidProcessChooserDialog/0.0.2560.1040@0.0.2560.1040" timestamp="1625194852275" />
     <state width="714" height="438" key="DebuggerActiveHint" timestamp="1621195359692">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
@@ -147,83 +175,91 @@
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="420" y="278" key="FileChooserDialogImpl/0.0.2560.1040@0.0.2560.1040" timestamp="1622478778176" />
-    <state width="1234" height="232" key="GridCell.Tab.0.bottom" timestamp="1623506978874">
+    <state width="1812" height="230" key="GridCell.Tab.0.bottom" timestamp="1625445085173">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state width="2517" height="221" key="GridCell.Tab.0.bottom/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
-    <state width="1234" height="232" key="GridCell.Tab.0.bottom/0.0.2560.1040@0.0.2560.1040" timestamp="1623506978874" />
-    <state width="1840" height="252" key="GridCell.Tab.0.bottom/0.25.1280.943@0.25.1280.943" timestamp="1615310363198" />
-    <state width="1510" height="251" key="GridCell.Tab.0.bottom/0.25.1552.943@0.25.1552.943" timestamp="1615333823121" />
+    <state width="1812" height="230" key="GridCell.Tab.0.bottom/0.0.2560.1040@0.0.2560.1040" timestamp="1625445085173" />
     <state width="1862" height="308" key="GridCell.Tab.0.bottom/0.25.1904.943@0.25.1904.943" timestamp="1620170234703" />
     <state width="1566" height="308" key="GridCell.Tab.0.bottom/0.25.1920.943@0.25.1920.943" timestamp="1622895510666" />
-    <state width="1840" height="252" key="GridCell.Tab.0.bottom/0.25.1920.959@0.25.1920.959" timestamp="1615307684400" />
-    <state width="1234" height="232" key="GridCell.Tab.0.center" timestamp="1623506978873">
+    <state width="1812" height="230" key="GridCell.Tab.0.center" timestamp="1625445085172">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state width="2517" height="221" key="GridCell.Tab.0.center/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
-    <state width="1234" height="232" key="GridCell.Tab.0.center/0.0.2560.1040@0.0.2560.1040" timestamp="1623506978873" />
-    <state width="1840" height="252" key="GridCell.Tab.0.center/0.25.1280.943@0.25.1280.943" timestamp="1615310363195" />
-    <state width="1510" height="251" key="GridCell.Tab.0.center/0.25.1552.943@0.25.1552.943" timestamp="1615333823115" />
+    <state width="1812" height="230" key="GridCell.Tab.0.center/0.0.2560.1040@0.0.2560.1040" timestamp="1625445085172" />
     <state width="1862" height="308" key="GridCell.Tab.0.center/0.25.1904.943@0.25.1904.943" timestamp="1620170234702" />
     <state width="1566" height="308" key="GridCell.Tab.0.center/0.25.1920.943@0.25.1920.943" timestamp="1622895510665" />
-    <state width="1840" height="252" key="GridCell.Tab.0.center/0.25.1920.959@0.25.1920.959" timestamp="1615307684399" />
-    <state width="1234" height="232" key="GridCell.Tab.0.left" timestamp="1623506978873">
+    <state width="1812" height="230" key="GridCell.Tab.0.left" timestamp="1625445085172">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state width="2517" height="221" key="GridCell.Tab.0.left/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
-    <state width="1234" height="232" key="GridCell.Tab.0.left/0.0.2560.1040@0.0.2560.1040" timestamp="1623506978873" />
-    <state width="1840" height="252" key="GridCell.Tab.0.left/0.25.1280.943@0.25.1280.943" timestamp="1615310363192" />
-    <state width="1510" height="251" key="GridCell.Tab.0.left/0.25.1552.943@0.25.1552.943" timestamp="1615333823114" />
+    <state width="1812" height="230" key="GridCell.Tab.0.left/0.0.2560.1040@0.0.2560.1040" timestamp="1625445085172" />
     <state width="1862" height="308" key="GridCell.Tab.0.left/0.25.1904.943@0.25.1904.943" timestamp="1620170234702" />
     <state width="1566" height="308" key="GridCell.Tab.0.left/0.25.1920.943@0.25.1920.943" timestamp="1622895510650" />
-    <state width="1840" height="252" key="GridCell.Tab.0.left/0.25.1920.959@0.25.1920.959" timestamp="1615307684398" />
-    <state width="1234" height="232" key="GridCell.Tab.0.right" timestamp="1623506978873">
+    <state width="1812" height="230" key="GridCell.Tab.0.right" timestamp="1625445085173">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state width="2517" height="221" key="GridCell.Tab.0.right/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1616032926015" />
-    <state width="1234" height="232" key="GridCell.Tab.0.right/0.0.2560.1040@0.0.2560.1040" timestamp="1623506978873" />
-    <state width="1840" height="252" key="GridCell.Tab.0.right/0.25.1280.943@0.25.1280.943" timestamp="1615310363196" />
-    <state width="1510" height="251" key="GridCell.Tab.0.right/0.25.1552.943@0.25.1552.943" timestamp="1615333823115" />
+    <state width="1812" height="230" key="GridCell.Tab.0.right/0.0.2560.1040@0.0.2560.1040" timestamp="1625445085173" />
     <state width="1862" height="308" key="GridCell.Tab.0.right/0.25.1904.943@0.25.1904.943" timestamp="1620170234703" />
     <state width="1566" height="308" key="GridCell.Tab.0.right/0.25.1920.943@0.25.1920.943" timestamp="1622895510666" />
-    <state width="1840" height="252" key="GridCell.Tab.0.right/0.25.1920.959@0.25.1920.959" timestamp="1615307684400" />
     <state x="341" y="230" key="RollbackChangesDialog" timestamp="1621552172929">
       <screen x="0" y="25" width="1920" height="943" />
     </state>
     <state x="454" y="226" key="RollbackChangesDialog/0.0.2560.1040@0.0.2560.1040" timestamp="1619348513196" />
     <state x="341" y="230" key="RollbackChangesDialog/0.25.1920.943@0.25.1920.943" timestamp="1621552172929" />
+    <state width="1288" height="528" key="XDebugger.FullValuePopup" timestamp="1624232124686">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="1288" height="528" key="XDebugger.FullValuePopup/0.0.2560.1040@0.0.2560.1040" timestamp="1624232124686" />
     <state x="470" y="236" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1621716126651">
       <screen x="0" y="25" width="1920" height="943" />
     </state>
     <state x="470" y="236" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.25.1920.943@0.25.1920.943" timestamp="1621716126651" />
-    <state x="233" y="208" width="1097" height="647" key="dock-window-1" timestamp="1615329722992">
-      <screen x="0" y="25" width="1552" height="943" />
-    </state>
-    <state x="233" y="208" width="1097" height="647" key="dock-window-1/0.25.1552.943@0.25.1552.943" timestamp="1615329722992" />
-    <state x="1479" y="173" width="964" height="838" key="find.popup" timestamp="1622607336116">
+    <state x="852" y="185" width="964" height="838" key="find.popup" timestamp="1625185501064">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state x="881" y="304" width="964" height="606" key="find.popup/0.0.2560.1040/451.-900.1600.900@0.0.2560.1040" timestamp="1615522635501" />
-    <state x="1479" y="173" width="964" height="838" key="find.popup/0.0.2560.1040@0.0.2560.1040" timestamp="1622607336116" />
+    <state x="852" y="185" width="964" height="838" key="find.popup/0.0.2560.1040@0.0.2560.1040" timestamp="1625185501064" />
     <state x="670" y="118" width="717" height="760" key="find.popup/0.25.1904.943@0.25.1904.943" timestamp="1620167419697" />
     <state x="661" y="301" width="748" height="550" key="find.popup/0.25.1920.943@0.25.1920.943" timestamp="1621603392874" />
-    <state x="661" y="306" width="1078" height="560" key="find.popup/0.25.1920.959@0.25.1920.959" timestamp="1615153580889" />
     <state x="936" y="172" width="672" height="676" key="search.everywhere.popup" timestamp="1622236458995">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="936" y="172" width="672" height="676" key="search.everywhere.popup/0.0.2560.1040@0.0.2560.1040" timestamp="1622236458995" />
-    <state x="690" y="338" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1614979209639">
-      <screen x="0" y="25" width="1920" height="943" />
-    </state>
-    <state x="690" y="338" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/0.25.1920.943@0.25.1920.943" timestamp="1614979209639" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/AwesomeNotificationsPlugin.java</url>
-          <line>125</line>
+          <line>129</line>
           <option name="timeStamp" value="121" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
+          <url>file://$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/broadcastReceivers/SilentActionReceiver.java</url>
+          <line>15</line>
+          <option name="timeStamp" value="138" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
+          <url>file://$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/AwesomeNotificationsPlugin.java</url>
+          <line>323</line>
+          <option name="timeStamp" value="144" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
+          <url>file://$PROJECT_DIR$/android/src/main/java/me/carda/awesome_notifications/notifications/NotificationBuilder.java</url>
+          <line>81</line>
+          <option name="timeStamp" value="146" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/example/lib/utils/firebase_utils.dart</url>
+          <line>1</line>
+          <option name="timeStamp" value="123" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/example/lib/background/background_main.dart</url>
+          <line>44</line>
+          <option name="timeStamp" value="126" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/src/models/notification_content.dart</url>
+          <line>92</line>
+          <option name="timeStamp" value="135" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

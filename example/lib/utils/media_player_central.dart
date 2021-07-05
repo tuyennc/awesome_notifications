@@ -21,7 +21,10 @@ class MediaPlayerCentral {
         }
       },
       onData: (Duration duration){
-        _mediaProgress.add(_timer.now);
+        if(_mediaProgress.isClosed)
+          _timer.stop();
+        else
+          _mediaProgress.add(_timer.now);
       }
   );
 

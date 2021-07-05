@@ -3,19 +3,21 @@ package me.carda.awesome_notifications;
 import java.util.HashMap;
 import java.util.Map;
 
-import me.carda.awesome_notifications.notifications.enumerators.ActionButtonType;
-import me.carda.awesome_notifications.notifications.enumerators.DefaultRingtoneType;
-import me.carda.awesome_notifications.notifications.enumerators.GroupAlertBehaviour;
 import me.carda.awesome_notifications.notifications.enumerators.GroupSort;
-import me.carda.awesome_notifications.notifications.enumerators.NotificationImportance;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationActionType;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLayout;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationPrivacy;
+import me.carda.awesome_notifications.notifications.enumerators.DefaultRingtoneType;
+import me.carda.awesome_notifications.notifications.enumerators.GroupAlertBehaviour;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationImportance;
 
 public interface Definitions {
 
     String BROADCAST_FCM_TOKEN = "me.carda.awesome_notifications.services.firebase.TOKEN";
     String EXTRA_BROADCAST_FCM_TOKEN = "token";
     String EXTRA_ANDROID_MEDIA_BUTTON = "android.intent.action.MEDIA_BUTTON";
+
+    String DART_REVERSE_CHANNEL = "awesome_notifications_reverse";
 
     String MEDIA_VALID_NETWORK = "^https?:\\/\\/";//(www)?(\\.?[a-zA-Z0-9@:%.\\-_\\+~#=]{2,256}\\/?)+(\\?\\S+)$
     String MEDIA_VALID_FILE = "^file?:\\/\\/";
@@ -29,13 +31,19 @@ public interface Definitions {
     String BROADCAST_CREATED_NOTIFICATION   = "broadcast.awesome_notifications.CREATED_NOTIFICATION";
     String BROADCAST_DISPLAYED_NOTIFICATION = "broadcast.awesome_notifications.DISPLAYED_NOTIFICATION";
     String BROADCAST_DISMISSED_NOTIFICATION = "broadcast.awesome_notifications.DISMISSED_NOTIFICATION";
+    String BROADCAST_SILENT_ACTION = "broadcast.awesome_notifications.SILENT_ACTION";
     String BROADCAST_MEDIA_BUTTON = "broadcast.awesome_notifications.MEDIA_BUTTON";
     String BROADCAST_KEEP_ON_TOP ="broadcast.awesome_notifications.KEEP_ON_TOP";
+
     String EXTRA_BROADCAST_MESSAGE = "notification";
+
+    String SILENT_HANDLE = "silentHandle";
+    String DART_BG_HANDLE = "dartBgHandle";
 
     String PUSH_NOTIFICATION_CONTENT = "content";
     String PUSH_NOTIFICATION_SCHEDULE = "schedule";
     String PUSH_NOTIFICATION_BUTTONS = "actionButtons";
+    String NOTIFICATION_SILENT_ACTION = "silentAction";
 
     String SHARED_DEFAULTS = "defaults";
     String SHARED_MANAGER = "sharedManager";
@@ -71,6 +79,8 @@ public interface Definitions {
     String CHANNEL_METHOD_DISMISS_ALL_NOTIFICATIONS = "dismissAllNotifications";
     String CHANNEL_METHOD_CANCEL_ALL_SCHEDULES = "cancelAllSchedules";
     String CHANNEL_METHOD_CANCEL_ALL_NOTIFICATIONS = "cancelAllNotifications";
+    String CHANNEL_METHOD_SILENCED_CALLBACK = "isolateCallbackReference";
+    String CHANNEL_METHOD_SILENT_ACTION = "silentAction";
 
     String CHANNEL_METHOD_NOTIFICATION_CREATED = "notificationCreated";
     String CHANNEL_METHOD_NOTIFICATION_DISPLAYED = "notificationDisplayed";
@@ -83,8 +93,7 @@ public interface Definitions {
 
     String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     String DISMISSED_NOTIFICATION = "DISMISSED_NOTIFICATION";
-    String MEDIA_BUTTON = "MEDIA_BUTTON";
-    String NOTIFICATION_BUTTON_ACTION_PREFIX = "ACTION_NOTIFICATION";
+    String NOTIFICATION_BUTTON_ACTION_PREFIX = "BUTTON_PREFIX";
 
     String SHARED_PREFERENCES_CHANNEL_MANAGER = "channel_manager";
 
@@ -128,12 +137,15 @@ public interface Definitions {
     String NOTIFICATION_ACTION_KEY = "actionKey";
     String NOTIFICATION_ACTION_INPUT = "actionInput";
     String NOTIFICATION_JSON = "notificationJson";
+    String NOTIFICATION_ACTION_TYPE = "notificationActionType";
 
     String NOTIFICATION_ACTION_BUTTONS = "actionButtons";
     String NOTIFICATION_BUTTON_KEY = "key";
     String NOTIFICATION_BUTTON_ICON = "icon";
     String NOTIFICATION_BUTTON_LABEL = "label";
-    String NOTIFICATION_BUTTON_TYPE = "buttonType";
+    String NOTIFICATION_AUTO_DISMISSIBLE = "autoDismissible";
+    String NOTIFICATION_REQUIRE_INPUT_TEXT = "requireInputText";
+    String NOTIFICATION_INPUT_TEXT = "inputText";
 
     String NOTIFICATION_PAYLOAD = "payload";
     String NOTIFICATION_INITIAL_FIXED_DATE = "fixedDate";
@@ -141,7 +153,6 @@ public interface Definitions {
     String NOTIFICATION_CRONTAB_SCHEDULE = "crontabSchedule";
     String NOTIFICATION_PRECISE_SCHEDULES = "preciseSchedules";
     String NOTIFICATION_ENABLED = "enabled";
-    String NOTIFICATION_AUTO_CANCEL = "autoCancel";
     String NOTIFICATION_LOCKED = "locked";
     String NOTIFICATION_DISPLAY_ON_FOREGROUND = "displayOnForeground";
     String NOTIFICATION_DISPLAY_ON_BACKGROUND = "displayOnBackground";
@@ -189,13 +200,18 @@ public interface Definitions {
         put(Definitions.NOTIFICATION_CHANNEL_KEY, "miscellaneous");
         put(Definitions.NOTIFICATION_CHANNEL_DESCRIPTION, "Notifications");
         put(Definitions.NOTIFICATION_CHANNEL_NAME, "Notifications");
+
         put(Definitions.NOTIFICATION_CHANNEL_SHOW_BADGE, false);
         put(Definitions.NOTIFICATION_DISPLAY_ON_FOREGROUND, true);
         put(Definitions.NOTIFICATION_DISPLAY_ON_BACKGROUND, true);
         put(Definitions.NOTIFICATION_HIDE_LARGE_ICON_ON_EXPAND, false);
-        put(Definitions.NOTIFICATION_ENABLED, true);
         put(Definitions.NOTIFICATION_SHOW_WHEN, true);
-        put(Definitions.NOTIFICATION_BUTTON_TYPE, ActionButtonType.Default);
+
+        put(Definitions.NOTIFICATION_ENABLED, true);
+        put(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, true);
+        put(Definitions.NOTIFICATION_REQUIRE_INPUT_TEXT, false);
+        put(Definitions.NOTIFICATION_ACTION_TYPE, NotificationActionType.BringToForeground);
+
         put(Definitions.NOTIFICATION_PAYLOAD, null);
         put(Definitions.NOTIFICATION_ENABLE_VIBRATION, true);
         put(Definitions.NOTIFICATION_DEFAULT_COLOR, 0xFF000000);
@@ -204,7 +220,6 @@ public interface Definitions {
         put(Definitions.NOTIFICATION_LED_OFF_MS, 700);
         put(Definitions.NOTIFICATION_LED_ON_MS, 300);
         put(Definitions.NOTIFICATION_PLAY_SOUND, true);
-        put(Definitions.NOTIFICATION_AUTO_CANCEL, true);
         put(Definitions.NOTIFICATION_DEFAULT_RINGTONE_TYPE, DefaultRingtoneType.Notification);
         put(Definitions.NOTIFICATION_TICKER, "ticker");
         put(Definitions.NOTIFICATION_ALLOW_WHILE_IDLE, false);

@@ -1,3 +1,4 @@
+/*
 import 'dart:convert';
 import 'dart:math';
 import'dart:io' show Platform;
@@ -49,7 +50,7 @@ class FirebaseUtils {
       });
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-        PushNotification? pushNotification =
+        NotificationModel? pushNotification =
           await awesomeNotificationFromFirebaseRemoteMessage(
               message,
               // Android default FCM notification is different for Android and iOS
@@ -74,7 +75,7 @@ class FirebaseUtils {
   }
 
   static Future<void> receivedActionFromFirebase(BuildContext context, RemoteMessage message) async {
-    PushNotification? pushNotification = await awesomeNotificationFromFirebaseRemoteMessage(message, acceptRemoteNotificationContent: true);
+    NotificationModel? pushNotification = await awesomeNotificationFromFirebaseRemoteMessage(message, acceptRemoteNotificationContent: true);
 
     if (pushNotification != null) {
       ReceivedAction receivedAction = ReceivedAction.fromNotificationContent(pushNotification.content!);
@@ -82,7 +83,7 @@ class FirebaseUtils {
     }
   }
 
-  static Future<PushNotification?> awesomeNotificationFromFirebaseRemoteMessage(RemoteMessage message, {bool acceptRemoteNotificationContent = false}){
+  static Future<NotificationModel?> awesomeNotificationFromFirebaseRemoteMessage(RemoteMessage message, {bool acceptRemoteNotificationContent = false}){
 
     print('Handling a firebase message: ${message.messageId}');
 
@@ -156,7 +157,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
 
-  PushNotification? pushNotification = await FirebaseUtils.awesomeNotificationFromFirebaseRemoteMessage(message);
+  NotificationModel? pushNotification = await FirebaseUtils.awesomeNotificationFromFirebaseRemoteMessage(message);
   if(pushNotification != null){
 
     AwesomeNotifications().createNotification(
@@ -165,3 +166,4 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         actionButtons: pushNotification.actionButtons);
   }
 }
+*/

@@ -2,18 +2,9 @@ package me.carda.awesome_notifications.notifications.broadcastReceivers;
 
 import android.content.Context;
 import android.content.Intent;
-import android.view.KeyEvent;
 
 import androidx.media.session.MediaButtonReceiver;
 import io.flutter.Log;
-import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
-import me.carda.awesome_notifications.BroadcastSender;
-import me.carda.awesome_notifications.Definitions;
-import me.carda.awesome_notifications.notifications.NotificationBuilder;
-import me.carda.awesome_notifications.notifications.models.returnedData.ActionReceived;
-import me.carda.awesome_notifications.utils.DateUtils;
-
-import static android.media.session.PlaybackState.ACTION_PLAY_PAUSE;
 
 public class AwesomeMediaButtonReceiver extends MediaButtonReceiver {
 

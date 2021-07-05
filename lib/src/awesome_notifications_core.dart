@@ -1,9 +1,14 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:ui';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications/src/isolates/isolate_main.dart';
 
 // In order to *not* need this ignore, consider extracting the "web" version
 // of your plugin as a separate package, instead of inlining it in the same
@@ -12,13 +17,13 @@ import 'package:flutter/widgets.dart';
 //import 'dart:html' as html;
 //import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
-import 'package:awesome_notifications/src/definitions.dart';
+import 'package:awesome_notifications/definitions.dart';
 import 'package:awesome_notifications/src/enumerators/media_source.dart';
 import 'package:awesome_notifications/src/models/notification_button.dart';
 import 'package:awesome_notifications/src/models/notification_channel.dart';
 import 'package:awesome_notifications/src/models/notification_content.dart';
 import 'package:awesome_notifications/src/models/notification_schedule.dart';
-import 'package:awesome_notifications/src/models/received_models/push_notification.dart';
+import 'package:awesome_notifications/src/models/received_models/notification_model.dart';
 import 'package:awesome_notifications/src/models/received_models/received_action.dart';
 import 'package:awesome_notifications/src/models/received_models/received_notification.dart';
 import 'package:awesome_notifications/src/utils/assert_utils.dart';
@@ -134,11 +139,16 @@ class AwesomeNotifications {
   /// OBS: [defaultIcon] needs to be a Resource media type
   /// OBS 2: [channels] are updated if they already exists
   Future<bool> initialize(
-      String? defaultIcon, List<NotificationChannel> channels,
-      {bool debug = false}) async {
+      String? defaultIcon,
+      List<NotificationChannel> channels,
+      {SilentActionHandler? onSilentActionMethod, bool debug = false}) async {
     WidgetsFlutterBinding.ensureInitialized();
 
     _channel.setMethodCallHandler(_handleMethod);
+
+    final CallbackHandle? dartCallbackReference = PluginUtilities.getCallbackHandle(dartIsolateMain);
+    final CallbackHandle? userCallbackReference = onSilentActionMethod == null ? null :
+        PluginUtilities.getCallbackHandle(onSilentActionMethod);
 
     List<dynamic> serializedChannels = [];
     for (NotificationChannel channel in channels) {
@@ -147,6 +157,7 @@ class AwesomeNotifications {
 
     String? defaultIconPath;
     if (kIsWeb) {
+      // For web release
     } else {
       if (!AssertUtils.isNullOrEmptyOrInvalid(defaultIcon, String)) {
         // To set a icon on top of notification, is mandatory to user a native resource
@@ -159,7 +170,9 @@ class AwesomeNotifications {
     var result = await _channel.invokeMethod(CHANNEL_METHOD_INITIALIZE, {
       INITIALIZE_DEBUG_MODE: debug,
       INITIALIZE_DEFAULT_ICON: defaultIconPath,
-      INITIALIZE_CHANNELS: serializedChannels
+      INITIALIZE_CHANNELS: serializedChannels,
+      DART_BG_HANDLE: dartCallbackReference!.toRawHandle(),
+      SILENT_HANDLE: userCallbackReference?.toRawHandle()
     });
 
     localTimeZoneIdentifier = await _channel
@@ -191,19 +204,27 @@ class AwesomeNotifications {
         _createdSubject.sink.add(ReceivedNotification().fromMap(arguments));
         return;
 
+      case CHANNEL_METHOD_SILENT_ACTION:
+        receiveSilentAction((call.arguments as Map).cast<String, dynamic>());
+        return;
+
       case CHANNEL_METHOD_NOTIFICATION_DISPLAYED:
         _displayedSubject.sink.add(ReceivedNotification().fromMap(arguments));
         return;
 
       case CHANNEL_METHOD_NOTIFICATION_DISMISSED:
         _dismissedSubject.sink
-            .add(ReceivedAction().fromMap(arguments) as ReceivedAction);
+            .add(ReceivedAction().fromMap(arguments));
         return;
 
       case CHANNEL_METHOD_ACTION_RECEIVED:
         _actionSubject.sink
-            .add(ReceivedAction().fromMap(arguments) as ReceivedAction);
+            .add(ReceivedAction().fromMap(arguments));
         return;
+
+      case CHANNEL_METHOD_ISOLATE_CALLBACK:
+        await channelMethodIsolateCallbackHandle(call);
+        break;
 
       default:
         throw UnsupportedError('Unrecognized JSON message');
@@ -234,7 +255,7 @@ class AwesomeNotifications {
     try {
       final bool wasCreated = await _channel.invokeMethod(
           CHANNEL_METHOD_CREATE_NOTIFICATION,
-          PushNotification(
+          NotificationModel(
                   content: content,
                   schedule: schedule,
                   actionButtons: actionButtons)
@@ -247,7 +268,7 @@ class AwesomeNotifications {
     return false;
   }
 
-  Future<PushNotification?> extractNotificationFromJsonData(
+  Future<NotificationModel?> extractNotificationFromJsonData(
       Map<String, dynamic> mapData) async {
     try {
       if (mapData[NOTIFICATION_CONTENT].runtimeType == String)
@@ -263,7 +284,7 @@ class AwesomeNotifications {
             json.decode(mapData[NOTIFICATION_BUTTONS]);
 
       // Invalid Notification
-      return PushNotification().fromMap(mapData);
+      return NotificationModel().fromMap(mapData);
     } catch (e) {
       return null;
     }
@@ -272,7 +293,7 @@ class AwesomeNotifications {
   Future<bool> createNotificationFromJsonData(
       Map<String, dynamic> mapData) async {
     try {
-      PushNotification? pushNotification =
+      NotificationModel? pushNotification =
           await extractNotificationFromJsonData(mapData);
       if (pushNotification == null) {
         throw Exception('Notification map data is invalid');
@@ -313,16 +334,16 @@ class AwesomeNotifications {
   }
 
   /// List all active scheduled notifications.
-  Future<List<PushNotification>> listScheduledNotifications() async {
-    List<PushNotification> scheduledNotifications = [];
+  Future<List<NotificationModel>> listScheduledNotifications() async {
+    List<NotificationModel> scheduledNotifications = [];
     List<Object>? returned =
         await _channel.invokeListMethod(CHANNEL_METHOD_LIST_ALL_SCHEDULES);
     if (returned != null) {
       for (Object object in returned) {
         if (object is Map) {
           try {
-            PushNotification pushNotification =
-                PushNotification().fromMap(Map<String, dynamic>.from(object))!;
+            NotificationModel pushNotification =
+                NotificationModel().fromMap(Map<String, dynamic>.from(object))!;
             scheduledNotifications.add(pushNotification);
           } catch (e) {
             return [];

@@ -12,12 +12,10 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications_example/routes.dart';
 import 'package:awesome_notifications_example/utils/notification_util.dart';
 import 'package:awesome_notifications_example/utils/media_player_central.dart';
-import 'package:awesome_notifications_example/utils/firebase_utils.dart';
 
 import 'package:awesome_notifications_example/common_widgets/led_light.dart';
 import 'package:awesome_notifications_example/common_widgets/check_button.dart';
 import 'package:awesome_notifications_example/common_widgets/remarkble_text.dart';
-import 'package:awesome_notifications_example/common_widgets/service_control_panel.dart';
 import 'package:awesome_notifications_example/common_widgets/simple_button.dart';
 import 'package:awesome_notifications_example/common_widgets/text_divisor.dart';
 import 'package:awesome_notifications_example/common_widgets/text_note.dart';
@@ -29,7 +27,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  String _firebaseAppToken = '';
 
   bool delayLEDTests = false;
 
@@ -102,7 +99,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     // If you pretend to use the firebase service, you need to initialize it
     // getting a valid token
-    FirebaseUtils.initializeFirebaseService(context).then((String firebaseAppToken){
+    /*FirebaseUtils.initializeFirebaseService(context).then((String firebaseAppToken){
       if (!mounted) {
         _firebaseAppToken = firebaseAppToken;
       } else {
@@ -110,7 +107,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           _firebaseAppToken = firebaseAppToken;
         });
       }
-    });
+    });*/
 
     AwesomeNotifications().createdStream.listen((receivedNotification) {
       String? createdSourceText =
@@ -142,10 +139,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     AwesomeNotifications().actionStream.listen((receivedNotification) {
       if (!StringUtils.isNullOrEmpty(receivedNotification.buttonKeyInput)) {
         processInputTextReceived(receivedNotification);
-      } else if (!StringUtils.isNullOrEmpty(
-              receivedNotification.buttonKeyPressed) &&
-          receivedNotification.buttonKeyPressed.startsWith('MEDIA_')) {
-        processMediaControls(receivedNotification);
       } else {
         processDefaultActionReceived(context, receivedNotification);
       }
@@ -154,6 +147,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // this is not part of notification system, but of the media player simulator instead
     MediaPlayerCentral.mediaStream.listen((media) {
       switch (MediaPlayerCentral.mediaLifeCycle) {
+
         case MediaLifeCycle.Stopped:
           cancelNotification(100);
           break;
@@ -236,30 +230,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                 /* ******************************************************************** */
 
-                TextDivisor(title: 'Push Service Status'),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    ServiceControlPanel('Firebase',
-                        !StringUtils.isNullOrEmpty(_firebaseAppToken), themeData,
-                        onPressed: () => Navigator.pushNamed(
-                            context, PAGE_FIREBASE_TESTS,
-                            arguments: _firebaseAppToken)),
-                    /*
-                  /// TODO MISSING IMPLEMENTATION FOR ONE SIGNAL
-                  ServiceControlPanel(
-                      'One Signal',
-                      _oneSignalToken.isNotEmpty,
-                      themeData
-                  ),
-                  */
-                  ],
-                ),
-                TextNote(
-                    'Is not necessary to use Firebase (or other) services to use local notifications. But all they can be used simultaneously.'),
-
-                /* ******************************************************************** */
-
                 TextDivisor(title: 'Permission to send Notifications'),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -297,6 +267,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     onPressed: () => showNotificationWithoutBody(context, 1)),
                 SimpleButton('Show notification without title content',
                     onPressed: () => showNotificationWithoutTitle(context, 1)),
+                SimpleButton('Send not auto dismissible notification',
+                    onPressed: () => sendNotAutoDismissibleNotification(context, 1)),
                 SimpleButton('Send background notification',
                     onPressed: () => sendBackgroundNotification(context, 1)),
                 SimpleButton('Cancel the basic notification',
@@ -418,15 +390,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 TextNote(
                     'Since Android Nougat, icons are only displayed on media layout. The icon media needs to be a native resource type.'),
                 SimpleButton(
-                    'Show notification with\nsimple Action buttons (one disabled action)',
+                    'Show notification with\nsimple action buttons (one disabled action)',
                     onPressed: () => showNotificationWithActionButtons(context, 3)),
+                SimpleButton(
+                    'Show notification with\nsilent action buttons (one background)',
+                    onPressed: () => showNotificationWithSilentButtons(context, 3)),
                 SimpleButton('Show notification with\nsimple Action buttons (one auto dismissible)',
                     onPressed: () => showNotificationWithAutoDismissibleButton(context, 3)),
-                SimpleButton('Show notification with\nIcons and Action buttons',
+                SimpleButton('Show notification with\nIcons and action buttons',
                     onPressed: () => showNotificationWithIconsAndActionButtons(context, 3)),
-                SimpleButton('Show notification with\nReply and Action button',
-                    onPressed: () => showNotificationWithActionButtonsAndReply(context, 3)),
-                SimpleButton('Show Big picture notification\nwith Action Buttons',
+                SimpleButton('Show notification with\nreply buttons',
+                    onPressed: () => showNotificationWithReplyButtons(context, 3)),
+                SimpleButton('Show Big picture notification\nwith action Buttons',
                     onPressed: () => showBigPictureNotificationActionButtons(context, 3)),
                 SimpleButton(
                     'Show Big picture notification\nwith Reply and Action button',

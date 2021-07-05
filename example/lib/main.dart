@@ -1,3 +1,4 @@
+import 'package:awesome_notifications_example/utils/notification_util.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 //import 'package:flutter/material.dart' as Material show DateUtils;
 
@@ -5,7 +6,7 @@ import 'package:awesome_notifications_example/routes.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications_example/models/media_model.dart';
 import 'package:awesome_notifications_example/utils/media_player_central.dart';
-import 'package:awesome_notifications_example/utils/firebase_utils.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -150,12 +151,50 @@ void main() async {
           vibrationPattern: lowVibrationPattern,
           importance: NotificationImportance.High)
     ],
-    debug: true
+    debug: true,
+    onSilentActionMethod: App.onSilentActionMethod,
   );
 
-  // Uncomment the line above, after activate google services inside example/android/build.gradle
-  // Create the initialization Future outside of `build`:
-  await FirebaseUtils.loadFirebaseCore();
+
+
+  MediaPlayerCentral.addAll([
+    MediaModel(
+        diskImagePath: 'asset://assets/images/rock-disc.jpg',
+        colorCaptureSize: Size(788, 800),
+        bandName: 'Bright Sharp',
+        trackName: 'Champagne Supernova',
+        trackSize: Duration(minutes: 4, seconds: 21)),
+    MediaModel(
+        diskImagePath: 'asset://assets/images/classic-disc.jpg',
+        colorCaptureSize: Size(500, 500),
+        bandName: 'Best of Mozart',
+        trackName: 'Allegro',
+        trackSize: Duration(minutes: 7, seconds: 41)),
+    MediaModel(
+        diskImagePath: 'asset://assets/images/remix-disc.jpg',
+        colorCaptureSize: Size(500, 500),
+        bandName: 'Dj Allucard',
+        trackName: '21st Century',
+        trackSize: Duration(minutes: 4, seconds: 59)),
+    MediaModel(
+        diskImagePath: 'asset://assets/images/dj-disc.jpg',
+        colorCaptureSize: Size(500, 500),
+        bandName: 'Dj Brainiak',
+        trackName: 'Speed of light',
+        trackSize: Duration(minutes: 4, seconds: 59)),
+    MediaModel(
+        diskImagePath: 'asset://assets/images/80s-disc.jpg',
+        colorCaptureSize: Size(500, 500),
+        bandName: 'Back to the 80\'s',
+        trackName: 'Disco revenge',
+        trackSize: Duration(minutes: 4, seconds: 59)),
+    MediaModel(
+        diskImagePath: 'asset://assets/images/old-disc.jpg',
+        colorCaptureSize: Size(500, 500),
+        bandName: 'PeacefulMind',
+        trackName: 'Never look at back',
+        trackSize: Duration(minutes: 4, seconds: 59)),
+  ]);
 
   runApp(App());
 }
@@ -170,53 +209,25 @@ class App extends StatefulWidget {
 
   @override
   _AppState createState() => _AppState();
+
+  static Future <void> onSilentActionMethod(SilentAction silentAction) async {
+    if (!StringUtils.isNullOrEmpty(
+        silentAction.buttonKeyPressed) &&
+        silentAction.buttonKeyPressed.startsWith('MEDIA_')) {
+      processMediaControls(silentAction);
+    } else {
+      Fluttertoast.showToast(
+          msg: 'Silent action received',
+          backgroundColor: Colors.blueAccent,
+          textColor: Colors.white,
+          fontSize: 16
+      );
+    }
+    debugPrint('"SilentAction": ${silentAction.toString()}');
+  }
 }
 
 class _AppState extends State<App> {
-  @override
-  void initState() {
-
-    MediaPlayerCentral.addAll([
-      MediaModel(
-          diskImagePath: 'asset://assets/images/rock-disc.jpg',
-          colorCaptureSize: Size(788, 800),
-          bandName: 'Bright Sharp',
-          trackName: 'Champagne Supernova',
-          trackSize: Duration(minutes: 4, seconds: 21)),
-      MediaModel(
-          diskImagePath: 'asset://assets/images/classic-disc.jpg',
-          colorCaptureSize: Size(500, 500),
-          bandName: 'Best of Mozart',
-          trackName: 'Allegro',
-          trackSize: Duration(minutes: 7, seconds: 41)),
-      MediaModel(
-          diskImagePath: 'asset://assets/images/remix-disc.jpg',
-          colorCaptureSize: Size(500, 500),
-          bandName: 'Dj Allucard',
-          trackName: '21st Century',
-          trackSize: Duration(minutes: 4, seconds: 59)),
-      MediaModel(
-          diskImagePath: 'asset://assets/images/dj-disc.jpg',
-          colorCaptureSize: Size(500, 500),
-          bandName: 'Dj Brainiak',
-          trackName: 'Speed of light',
-          trackSize: Duration(minutes: 4, seconds: 59)),
-      MediaModel(
-          diskImagePath: 'asset://assets/images/80s-disc.jpg',
-          colorCaptureSize: Size(500, 500),
-          bandName: 'Back to the 80\'s',
-          trackName: 'Disco revenge',
-          trackSize: Duration(minutes: 4, seconds: 59)),
-      MediaModel(
-          diskImagePath: 'asset://assets/images/old-disc.jpg',
-          colorCaptureSize: Size(500, 500),
-          bandName: 'PeacefulMind',
-          trackName: 'Never look at back',
-          trackSize: Duration(minutes: 4, seconds: 59)),
-    ]);
-
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

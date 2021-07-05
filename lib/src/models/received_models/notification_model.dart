@@ -1,4 +1,4 @@
-import 'package:awesome_notifications/src/definitions.dart';
+import 'package:awesome_notifications/definitions.dart';
 import 'package:awesome_notifications/src/models/model.dart';
 import 'package:awesome_notifications/src/models/notification_button.dart';
 import 'package:awesome_notifications/src/models/notification_calendar.dart';
@@ -8,15 +8,15 @@ import 'package:awesome_notifications/src/models/notification_schedule.dart';
 
 /// Reference Model to create a new notification
 /// [schedule] and [actionButtons] are optional
-class PushNotification extends Model {
+class NotificationModel extends Model {
   NotificationContent? content;
   NotificationSchedule? schedule;
   List<NotificationActionButton>? actionButtons;
 
-  PushNotification({this.content, this.schedule, this.actionButtons});
+  NotificationModel({this.content, this.schedule, this.actionButtons});
 
   /// Imports data from a serializable object
-  PushNotification? fromMap(Map<String, dynamic> mapData) {
+  NotificationModel? fromMap(Map<String, dynamic> mapData) {
     try {
       assert(mapData.containsKey(NOTIFICATION_CONTENT) &&
           mapData[NOTIFICATION_CONTENT] is Map);

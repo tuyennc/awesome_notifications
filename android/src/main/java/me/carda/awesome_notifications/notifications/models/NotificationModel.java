@@ -10,23 +10,23 @@ import java.util.Map;
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificationException;
 
-public class PushNotification extends Model {
+public class NotificationModel extends Model {
 
     public boolean groupSummary = false;
     public NotificationContentModel content;
     public NotificationScheduleModel schedule;
     public List<NotificationButtonModel> actionButtons;
 
-    public PushNotification(){}
+    public NotificationModel(){}
 
-    public PushNotification ClonePush(){
-        PushNotification newPush = new PushNotification();
+    public NotificationModel ClonePush(){
+        NotificationModel newPush = new NotificationModel();
         newPush.fromMap(this.toMap());
         return newPush;
     }
 
     @Override
-    public PushNotification fromMap(Map<String, Object> parameters){
+    public NotificationModel fromMap(Map<String, Object> parameters){
 
         content = extractNotificationContent(Definitions.PUSH_NOTIFICATION_CONTENT, parameters);
 
@@ -67,8 +67,8 @@ public class PushNotification extends Model {
     }
 
     @Override
-    public PushNotification fromJson(String json){
-        return (PushNotification) super.templateFromJson(json);
+    public NotificationModel fromJson(String json){
+        return (NotificationModel) super.templateFromJson(json);
     }
 
     private static NotificationContentModel extractNotificationContent(String reference, Map<String, Object> parameters) {

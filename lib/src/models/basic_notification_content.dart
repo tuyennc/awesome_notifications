@@ -5,7 +5,7 @@ import 'package:awesome_notifications/src/utils/bitmap_utils.dart';
 import 'package:awesome_notifications/src/utils/html_utils.dart';
 import 'package:flutter/material.dart';
 
-import '../definitions.dart';
+import '../../definitions.dart';
 
 class BaseNotificationContent extends Model {
   int? id;
@@ -19,7 +19,7 @@ class BaseNotificationContent extends Model {
   String? largeIcon;
   String? bigPicture;
   String? soundSource;
-  bool? autoCancel;
+  bool? autoDismissible;
   Color? defaultColor;
   Color? backgroundColor;
   NotificationPrivacy? privacy;
@@ -34,7 +34,7 @@ class BaseNotificationContent extends Model {
       this.icon,
       this.largeIcon,
       this.bigPicture,
-      this.autoCancel,
+      this.autoDismissible,
       this.defaultColor,
       this.backgroundColor,
       this.payload,
@@ -60,8 +60,8 @@ class BaseNotificationContent extends Model {
         AssertUtils.extractValue<String>(mapData, NOTIFICATION_BIG_PICTURE);
     this.soundSource =
         AssertUtils.extractValue<String>(mapData, NOTIFICATION_SOUND_SOURCE);
-    this.autoCancel =
-        AssertUtils.extractValue<bool>(mapData, NOTIFICATION_AUTO_CANCEL);
+    this.autoDismissible =
+        AssertUtils.extractValue<bool>(mapData, NOTIFICATION_AUTO_DISMISSIBLE);
     this.privacy = AssertUtils.extractEnum<NotificationPrivacy>(
         mapData, NOTIFICATION_PRIVACY, NotificationPrivacy.values);
 
@@ -91,7 +91,7 @@ class BaseNotificationContent extends Model {
       NOTIFICATION_LARGE_ICON: largeIcon,
       NOTIFICATION_BIG_PICTURE: bigPicture,
       NOTIFICATION_SOUND_SOURCE: soundSource,
-      NOTIFICATION_AUTO_CANCEL: autoCancel,
+      NOTIFICATION_AUTO_DISMISSIBLE: autoDismissible,
       NOTIFICATION_PRIVACY: AssertUtils.toSimpleEnumString(privacy),
       NOTIFICATION_DEFAULT_COLOR: defaultColor?.value,
       NOTIFICATION_BACKGROUND_COLOR: backgroundColor?.value

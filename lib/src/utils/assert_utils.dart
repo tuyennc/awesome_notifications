@@ -1,4 +1,4 @@
-import 'package:awesome_notifications/src/definitions.dart';
+import 'package:awesome_notifications/definitions.dart';
 import 'package:awesome_notifications/src/models/model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,9 +34,9 @@ class AssertUtils {
     return returnList;
   }
 
-  static dynamic? extractValue<T>(Map dataMap, String reference) {
+  static dynamic extractValue<T>(Map dataMap, String reference) {
     T? defaultValue = _getDefaultValue(reference, T);
-    dynamic? value = dataMap[reference];
+    dynamic value = dataMap[reference];
 
     // Color hexadecimal representation
     if (T == int && value != null && value is String) {
@@ -109,8 +109,8 @@ class AssertUtils {
     return _getDefaultValue(reference, T);
   }
 
-  static dynamic? _getDefaultValue(String reference, Type T) {
-    dynamic? defaultValue = Definitions.initialValues[reference];
+  static dynamic _getDefaultValue(String reference, Type T) {
+    dynamic defaultValue = Definitions.initialValues[reference];
     if (defaultValue == null || defaultValue.runtimeType != T) return null;
     return defaultValue;
   }

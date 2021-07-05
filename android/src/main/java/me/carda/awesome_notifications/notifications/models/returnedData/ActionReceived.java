@@ -4,10 +4,7 @@ import java.util.Map;
 
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
-import me.carda.awesome_notifications.notifications.models.Model;
 import me.carda.awesome_notifications.notifications.models.NotificationContentModel;
-import me.carda.awesome_notifications.notifications.models.PushNotification;
-import me.carda.awesome_notifications.utils.DateUtils;
 import me.carda.awesome_notifications.utils.MapUtils;
 
 public class ActionReceived extends NotificationContentModel {
@@ -36,7 +33,7 @@ public class ActionReceived extends NotificationContentModel {
         this.largeIcon = contentModel.largeIcon;
         this.bigPicture = contentModel.bigPicture;
         this.hideLargeIconOnExpand = contentModel.hideLargeIconOnExpand;
-        this.autoCancel = contentModel.autoCancel;
+        this.autoDismissible = contentModel.autoDismissible;
         this.color = contentModel.color;
         this.progress = contentModel.progress;
         this.ticker = contentModel.ticker;

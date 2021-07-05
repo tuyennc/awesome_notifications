@@ -32,9 +32,14 @@ public class DefaultsManager {
         return (defaults != null) ? defaults.appIcon : null;
     }
 
-    public static Boolean isFirebaseEnabled(Context context){
+    public static long getSilentCallbackDispatcher(Context context) {
         DefaultsModel defaults = shared.get(context, Definitions.SHARED_DEFAULTS, "Defaults");
-        return (defaults != null) ? defaults.firebaseEnabled : true;
+        return (defaults != null) ? defaults.silentDataCallback : 0L;
+    }
+
+    public static long getDartCallbackDispatcher(Context context) {
+        DefaultsModel defaults = shared.get(context, Definitions.SHARED_DEFAULTS, "Defaults");
+        return (defaults != null) ? defaults.reverseDartCallback : 0L;
     }
 
     public static void commitChanges(Context context){

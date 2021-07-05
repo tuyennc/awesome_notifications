@@ -10,6 +10,7 @@ import java.util.Random;
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.notifications.enumerators.MediaSource;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationActionType;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLayout;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationPrivacy;
@@ -38,7 +39,7 @@ public class NotificationContentModel extends Model {
     public String bigPicture;
     public String soundSource;
     public Boolean hideLargeIconOnExpand;
-    public Boolean autoCancel;
+    public Boolean autoDismissible;
     public Boolean displayOnForeground;
     public Boolean displayOnBackground;
     public Long color;
@@ -49,6 +50,7 @@ public class NotificationContentModel extends Model {
     public NotificationPrivacy privacy;
     public String privateMessage;
 
+    public NotificationActionType notificationActionType;
     public NotificationLayout notificationLayout;
 
     public NotificationSource createdSource;
@@ -90,6 +92,9 @@ public class NotificationContentModel extends Model {
         color = getValueOrDefault(arguments, Definitions.NOTIFICATION_COLOR, Long.class);
         backgroundColor = getValueOrDefault(arguments, Definitions.NOTIFICATION_BACKGROUND_COLOR, Long.class);
 
+        notificationActionType = getEnumValueOrDefault(arguments, Definitions.NOTIFICATION_ACTION_TYPE,
+                NotificationActionType.class, NotificationActionType.values());
+
         soundSource = getValueOrDefault(arguments, Definitions.NOTIFICATION_SOUND_SOURCE, String.class);
 
         title = getValueOrDefault(arguments, Definitions.NOTIFICATION_TITLE, String.class);
@@ -120,7 +125,7 @@ public class NotificationContentModel extends Model {
 
         payload = getValueOrDefault(arguments, Definitions.NOTIFICATION_PAYLOAD, Map.class);
 
-        autoCancel = getValueOrDefault(arguments, Definitions.NOTIFICATION_AUTO_CANCEL, Boolean.class);
+        autoDismissible = getValueOrDefault(arguments, Definitions.NOTIFICATION_AUTO_DISMISSIBLE, Boolean.class);
 
         progress    = getValueOrDefault(arguments, Definitions.NOTIFICATION_PROGRESS, Integer.class);
 
@@ -146,13 +151,16 @@ public class NotificationContentModel extends Model {
 
         returnedObject.put(Definitions.NOTIFICATION_TICKER, this.ticker);
         returnedObject.put(Definitions.NOTIFICATION_PAYLOAD, this.payload);
-        returnedObject.put(Definitions.NOTIFICATION_AUTO_CANCEL, this.autoCancel);
+        returnedObject.put(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, this.autoDismissible);
 
         returnedObject.put(Definitions.NOTIFICATION_LAYOUT,
-                this.notificationLayout != null ? this.notificationLayout.toString() : "Default");
+                this.notificationLayout != null ? this.notificationLayout.toString() : NotificationLayout.Default.toString());
+
+        returnedObject.put(Definitions.NOTIFICATION_ACTION_TYPE,
+                this.notificationActionType != null ? this.notificationActionType.toString() : NotificationActionType.BringToForeground.toString());
 
         returnedObject.put(Definitions.NOTIFICATION_CREATED_SOURCE,
-                this.createdSource != null ? this.createdSource.toString() : "Local");
+                this.createdSource != null ? this.createdSource.toString() : NotificationSource.Local.toString());
 
         returnedObject.put(Definitions.NOTIFICATION_CREATED_LIFECYCLE,
                 this.createdLifeCycle != null ? this.createdLifeCycle.toString() : AwesomeNotificationsPlugin.appLifeCycle.toString());
@@ -166,8 +174,8 @@ public class NotificationContentModel extends Model {
         if(this.actionButtons != null)
             returnedObject.put(Definitions.NOTIFICATION_ACTION_BUTTONS, this.actionButtons);
 
-        if(this.autoCancel != null)
-            returnedObject.put(Definitions.NOTIFICATION_AUTO_CANCEL, this.autoCancel);
+        if(this.autoDismissible != null)
+            returnedObject.put(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, this.autoDismissible);
 
         if(this.displayOnForeground != null)
             returnedObject.put(Definitions.NOTIFICATION_DISPLAY_ON_FOREGROUND, this.displayOnForeground);
@@ -196,8 +204,7 @@ public class NotificationContentModel extends Model {
             returnedObject.put(Definitions.NOTIFICATION_CHANNEL_KEY, this.channelKey);
 
         if(this.privacy != null)
-            returnedObject.put(Definitions.NOTIFICATION_PRIVACY,
-                    this.privacy != null ? this.privacy.toString() : null);
+            returnedObject.put(Definitions.NOTIFICATION_PRIVACY, this.privacy.toString());
 
         if(this.privateMessage != null)
             returnedObject.put(Definitions.NOTIFICATION_PRIVATE_MESSAGE, this.privateMessage);

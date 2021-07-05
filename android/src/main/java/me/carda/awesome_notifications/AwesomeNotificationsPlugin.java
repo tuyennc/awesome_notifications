@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,12 +38,13 @@ import io.flutter.plugin.common.PluginRegistry;
 
 import android.app.Activity;
 
+import me.carda.awesome_notifications.background.DartBackgroundService;
 import me.carda.awesome_notifications.notifications.BitmapResourceDecoder;
 import me.carda.awesome_notifications.notifications.models.DefaultsModel;
 import me.carda.awesome_notifications.notifications.models.NotificationCalendarModel;
 import me.carda.awesome_notifications.notifications.models.NotificationIntervalModel;
 import me.carda.awesome_notifications.notifications.models.NotificationScheduleModel;
-import me.carda.awesome_notifications.notifications.models.PushNotification;
+import me.carda.awesome_notifications.notifications.models.NotificationModel;
 import me.carda.awesome_notifications.notifications.enumerators.MediaSource;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationSource;
@@ -73,6 +75,8 @@ import me.carda.awesome_notifications.utils.MediaUtils;
 import me.carda.awesome_notifications.utils.StringUtils;
 
 import static me.carda.awesome_notifications.Definitions.NOTIFICATION_CHANNEL_KEY;
+import static me.carda.awesome_notifications.Definitions.NOTIFICATION_SILENT_ACTION;
+import static me.carda.awesome_notifications.Definitions.SILENT_HANDLE;
 
 /** AwesomeNotificationsPlugin **/
 public class AwesomeNotificationsPlugin
@@ -91,7 +95,7 @@ public class AwesomeNotificationsPlugin
 
     private static boolean isInitialized = false;
     private Activity initialActivity;
-    private static MethodChannel pluginChannel;
+    private MethodChannel pluginChannel;
     private Context applicationContext;
 
     public static MediaSessionCompat mediaSession;
@@ -131,6 +135,7 @@ public class AwesomeNotificationsPlugin
             intentFilter.addAction(Definitions.BROADCAST_CREATED_NOTIFICATION);
             intentFilter.addAction(Definitions.BROADCAST_DISPLAYED_NOTIFICATION);
             intentFilter.addAction(Definitions.BROADCAST_DISMISSED_NOTIFICATION);
+            intentFilter.addAction(Definitions.BROADCAST_SILENT_ACTION);
             intentFilter.addAction(Definitions.BROADCAST_KEEP_ON_TOP);
             intentFilter.addAction(Definitions.BROADCAST_MEDIA_BUTTON);
 
@@ -245,6 +250,10 @@ public class AwesomeNotificationsPlugin
                 onBroadcastNotificationDismissed(intent);
                 return;
 
+            case Definitions.BROADCAST_SILENT_ACTION:
+                onBroadcastSilentActionNotification(intent);
+                return;
+
             case Definitions.BROADCAST_KEEP_ON_TOP:
                 onBroadcastKeepOnTopActionNotification(intent);
                 return;
@@ -295,6 +304,27 @@ public class AwesomeNotificationsPlugin
 
             if(AwesomeNotificationsPlugin.debug)
                 Log.d(TAG, "Notification action received");
+
+        } catch (Exception e) {
+            if(AwesomeNotificationsPlugin.debug)
+                Log.d(TAG, String.format("%s", e.getMessage()));
+            e.printStackTrace();
+        }
+    }
+
+    private void onBroadcastSilentActionNotification(Intent intent) {
+        try {
+
+            Serializable serializable = intent.getSerializableExtra(Definitions.EXTRA_BROADCAST_MESSAGE);
+            Map<String, Object> dataMap = new HashMap<>();
+
+            dataMap.put(SILENT_HANDLE, DartBackgroundService.getSilentCallbackDispatcher(applicationContext));
+            dataMap.put(NOTIFICATION_SILENT_ACTION, serializable);
+
+            pluginChannel.invokeMethod(Definitions.CHANNEL_METHOD_SILENT_ACTION, dataMap);
+
+            if(AwesomeNotificationsPlugin.debug)
+                Log.d(TAG, "Notification silent action received");
 
         } catch (Exception e) {
             if(AwesomeNotificationsPlugin.debug)
@@ -556,12 +586,12 @@ public class AwesomeNotificationsPlugin
     }
 
     private void channelMethodListAllSchedules(MethodCall call, Result result) throws Exception {
-        List<PushNotification> activeSchedules = ScheduleManager.listSchedules(applicationContext);
+        List<NotificationModel> activeSchedules = ScheduleManager.listSchedules(applicationContext);
         List<Map<String, Object>> listSerialized = new ArrayList<>();
 
         if(activeSchedules != null){
-            for(PushNotification pushNotification : activeSchedules){
-                Map<String, Object> serialized = pushNotification.toMap();
+            for(NotificationModel notificationModel : activeSchedules){
+                Map<String, Object> serialized = notificationModel.toMap();
                 listSerialized.add(serialized);
             }
         }
@@ -835,9 +865,9 @@ public class AwesomeNotificationsPlugin
     private void channelMethodCreateNotification(@NonNull MethodCall call, Result result) throws Exception {
 
         Map<String, Object> pushData = call.arguments();
-        PushNotification pushNotification = new PushNotification().fromMap(pushData);
+        NotificationModel notificationModel = new NotificationModel().fromMap(pushData);
 
-        if(pushNotification == null){
+        if(notificationModel == null){
             throw new AwesomeNotificationException("Invalid parameters");
         }
 
@@ -845,16 +875,16 @@ public class AwesomeNotificationsPlugin
             throw new AwesomeNotificationException("Notifications are disabled");
         }
 
-        if(!isChannelEnabled(applicationContext, pushNotification.content.channelKey)){
-            throw new AwesomeNotificationException("The notification channel '"+pushNotification.content.channelKey+"' do not exist or is disabled");
+        if(!isChannelEnabled(applicationContext, notificationModel.content.channelKey)){
+            throw new AwesomeNotificationException("The notification channel '"+ notificationModel.content.channelKey+"' do not exist or is disabled");
         }
 
-        if(pushNotification.schedule == null){
+        if(notificationModel.schedule == null){
 
             NotificationSender.send(
                     applicationContext,
                     NotificationSource.Local,
-                    pushNotification
+                    notificationModel
             );
         }
         else {
@@ -862,7 +892,7 @@ public class AwesomeNotificationsPlugin
             NotificationScheduler.schedule(
                     applicationContext,
                     NotificationSource.Local,
-                    pushNotification
+                    notificationModel
             );
         }
 
@@ -906,6 +936,7 @@ public class AwesomeNotificationsPlugin
     private void channelMethodInitialize(@NonNull MethodCall call, Result result) throws Exception {
         List<Object> channelsData;
 
+        // Avoid double initialization
         if(isInitialized) {
             result.success(false);
             return;
@@ -913,29 +944,40 @@ public class AwesomeNotificationsPlugin
 
         Map<String, Object> platformParameters = call.arguments();
 
-        Object object = (Boolean) platformParameters.get(Definitions.INITIALIZE_DEBUG_MODE);
-        debug = object != null && (boolean) object;
-
+        Object callbackSilentObj = platformParameters.get(Definitions.SILENT_HANDLE);
+        Object callbackDartObj = platformParameters.get(Definitions.DART_BG_HANDLE);
+        Object object = platformParameters.get(Definitions.INITIALIZE_DEBUG_MODE);
         String defaultIconPath = (String) platformParameters.get(Definitions.INITIALIZE_DEFAULT_ICON);
         channelsData = (List<Object>) platformParameters.get(Definitions.INITIALIZE_CHANNELS);
+
+        debug = object != null && (boolean) object;
+        long silentCallback = callbackSilentObj == null ? 0L : (Long) callbackSilentObj;
+        long dartCallback = callbackDartObj == null ? 0L :(Long) callbackDartObj;
 
         setDefaultConfigurations(
             applicationContext,
             defaultIconPath,
+            silentCallback,
+            dartCallback,
             channelsData
         );
 
         if(AwesomeNotificationsPlugin.debug)
             Log.d(TAG, "Awesome Notifications service initialized");
 
+        if(AwesomeNotificationsPlugin.debug && silentCallback == 0L)
+            Log.e(TAG, "Attention: there is no valid method to receive silent data");
+
+        if(AwesomeNotificationsPlugin.debug && dartCallback == 0L)
+            Log.e(TAG, "Attention: there is no valid dart plugin method to receive silent data");
+
         isInitialized = true;
         result.success(true);
     }
 
-    private boolean setDefaultConfigurations(Context context, String defaultIcon, List<Object> channelsData) throws Exception {
+    private boolean setDefaultConfigurations(Context context, String defaultIcon, long silentCallback, long dartCallback, List<Object> channelsData) throws Exception {
 
-        setDefaults(context, defaultIcon);
-
+        setDefaults(context, defaultIcon, dartCallback, silentCallback);
         setChannels(context, channelsData);
 
         recoverNotificationCreated(context);
@@ -974,13 +1016,13 @@ public class AwesomeNotificationsPlugin
         ChannelManager.commitChanges(context);
     }
 
-    private void setDefaults(Context context, String defaultIcon) {
+    private void setDefaults(Context context, String defaultIcon, long dartCallbackHandle, long silentCallbackHandle) {
 
         if (MediaUtils.getMediaSourceType(defaultIcon) != MediaSource.Resource) {
             defaultIcon = null;
         }
 
-        DefaultsManager.saveDefault(context, new DefaultsModel(defaultIcon));
+        DefaultsManager.saveDefault(context, new DefaultsModel(defaultIcon, dartCallbackHandle, silentCallbackHandle));
         DefaultsManager.commitChanges(context);
     }
 
@@ -1040,7 +1082,13 @@ public class AwesomeNotificationsPlugin
     @NonNull
     private Boolean receiveNotificationAction(Intent intent, NotificationLifeCycle appLifeCycle) {
 
-        ActionReceived actionModel = NotificationBuilder.buildNotificationActionFromIntent(applicationContext, intent);
+        NotificationModel notificationModel = NotificationBuilder.buildNotificationModelFromIntent(intent);
+        ActionReceived actionModel = NotificationBuilder.buildNotificationActionFromNotificationModel(applicationContext, notificationModel, intent);
+        NotificationBuilder.finalizeNotificationIntent(applicationContext, notificationModel, intent);
+
+        if(NotificationBuilder.notificationIntentDisabledAction(intent)){
+            return true;
+        }
 
         if (actionModel != null) {
 

@@ -11,17 +11,22 @@ import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificati
 public class DefaultsModel extends Model {
 
     public String appIcon;
-    public Boolean firebaseEnabled;
+    public long silentDataCallback;
+    public long reverseDartCallback;
 
     public DefaultsModel(){}
 
-    public DefaultsModel(String defaultAppIcon){
+    public DefaultsModel(String defaultAppIcon, long dartCallbackHandle, long silentCallbackHandle){
         this.appIcon = defaultAppIcon;
+        this.reverseDartCallback = dartCallbackHandle;
+        this.silentDataCallback = silentCallbackHandle;
     }
 
     @Override
     public Model fromMap(Map<String, Object> arguments) {
         appIcon  = getValueOrDefault(arguments, Definitions.NOTIFICATION_APP_ICON, String.class);
+        silentDataCallback  = getValueOrDefault(arguments, Definitions.SILENT_HANDLE, Long.class);
+        reverseDartCallback = getValueOrDefault(arguments, Definitions.DART_BG_HANDLE, Long.class);
 
         return this;
     }
@@ -31,6 +36,9 @@ public class DefaultsModel extends Model {
         Map<String, Object> returnedObject = new HashMap<>();
 
         returnedObject.put(Definitions.NOTIFICATION_APP_ICON, appIcon);
+        returnedObject.put(Definitions.SILENT_HANDLE, silentDataCallback);
+        returnedObject.put(Definitions.DART_BG_HANDLE, reverseDartCallback);
+
         return returnedObject;
     }
 

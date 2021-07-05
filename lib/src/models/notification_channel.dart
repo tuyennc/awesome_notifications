@@ -12,7 +12,7 @@ import 'package:awesome_notifications/src/utils/bitmap_utils.dart';
 import 'package:awesome_notifications/src/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 
-import '../definitions.dart';
+import '../../definitions.dart';
 
 /// A representation of default settings that applies to all notifications with same channel key
 /// [soundSource] needs to be a native resource media type

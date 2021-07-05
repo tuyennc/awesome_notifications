@@ -1,10 +1,10 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:awesome_notifications/src/enumerators/action_button_type.dart';
-import 'package:awesome_notifications/src/enumerators/media_source.dart';
+import 'package:awesome_notifications/src/enumerators/notification_action_type.dart';
 import 'package:awesome_notifications/src/models/model.dart';
 import 'package:awesome_notifications/src/utils/assert_utils.dart';
 import 'package:awesome_notifications/src/utils/bitmap_utils.dart';
 import 'package:awesome_notifications/src/utils/string_utils.dart';
+import 'package:awesome_notifications/src/enumerators/media_source.dart';
 
 /// Notification button to display inside a notification.
 /// Since Android 7, icons are displayed only for Media Layout Notifications
@@ -12,36 +12,93 @@ import 'package:awesome_notifications/src/utils/string_utils.dart';
 ///
 /// [buttonType] could be classified in 4 types:
 ///
-/// [ActionButtonType.Default]: after user taps, the notification bar is closed and an action event is fired.
-/// [ActionButtonType.InputField]: after user taps, a input text field is displayed to capture input by the user.
-/// [ActionButtonType.DisabledAction]: after user taps, the notification bar is closed, but the respective action event is not fired.
-/// [ActionButtonType.KeepOnTop]: after user taps, the notification bar is not closed, but an action event is fired.
+/// [NotificationActionButton.Default]: after user taps, the notification bar is closed and an action event is fired.
+/// [NotificationActionButton.InputField]: after user taps, a input text field is displayed to capture input by the user.
+/// [NotificationActionButton.DisabledAction]: after user taps, the notification bar is closed, but the respective action event is not fired.
+/// [NotificationActionButton.KeepOnTop]: after user taps, the notification bar is not closed, but an action event is fired.
 class NotificationActionButton extends Model {
   String? key;
   String? label;
   String? icon;
-  bool? enabled;
-  bool? autoCancel;
-  ActionButtonType buttonType;
 
-  NotificationActionButton(
-      {this.key,
-      this.icon,
-      this.label,
-      this.enabled,
-      this.autoCancel,
-      this.buttonType = ActionButtonType.Default});
+  bool? enabled;
+  bool? autoDismissible;
+  bool? requireInputText;
+
+  NotificationActionType? notificationActionType;
+
+  NotificationActionButton({
+    this.key,
+    this.label,
+    this.icon,
+    this.enabled = true,
+    this.autoDismissible = true,
+    this.requireInputText = false,
+    this.notificationActionType = NotificationActionType.BringToForeground,
+  });
+
+  NotificationActionButton.asDefault({
+    required this.key,
+    required this.label,
+    required this.icon,
+    this.enabled = true,
+    this.autoDismissible = true,
+    this.requireInputText = false,
+    this.notificationActionType = NotificationActionType.BringToForeground,
+  });
+
+  NotificationActionButton.asDefaultSilentAction({
+    required this.key,
+    required this.label,
+    required this.icon,
+    this.enabled = true,
+    this.autoDismissible = true,
+    this.requireInputText = false,
+    this.notificationActionType = NotificationActionType.SilentMainThread,
+  });
+
+  NotificationActionButton.asDisabledAction({
+    required this.key,
+    required this.label,
+    required this.icon,
+    this.enabled = true,
+    this.autoDismissible = false,
+    this.requireInputText = false,
+    this.notificationActionType = NotificationActionType.DisabledAction,
+  });
+
+  NotificationActionButton.asKeepOnTop({
+    required this.key,
+    required this.label,
+    required this.icon,
+    this.enabled = true,
+    this.autoDismissible = false,
+    this.requireInputText = false,
+    this.notificationActionType = NotificationActionType.SilentMainThread,
+  });
+
+  NotificationActionButton.asInputText({
+    required this.key,
+    required this.label,
+    required this.icon,
+    required this.notificationActionType,
+    this.enabled = true,
+    this.autoDismissible = true,
+    this.requireInputText = true,
+  });
 
   @override
   NotificationActionButton? fromMap(Map<String, dynamic> dataMap) {
-    key = AssertUtils.extractValue(dataMap, NOTIFICATION_KEY);
-    icon = AssertUtils.extractValue(dataMap, NOTIFICATION_ICON);
+
+    key   = AssertUtils.extractValue(dataMap, NOTIFICATION_KEY);
+    icon  = AssertUtils.extractValue(dataMap, NOTIFICATION_ICON);
     label = AssertUtils.extractValue(dataMap, NOTIFICATION_BUTTON_LABEL);
+
     enabled = AssertUtils.extractValue(dataMap, NOTIFICATION_ENABLED);
-    autoCancel = AssertUtils.extractValue(dataMap, NOTIFICATION_AUTO_CANCEL);
-    buttonType = AssertUtils.extractEnum(
-            dataMap, NOTIFICATION_BUTTON_TYPE, ActionButtonType.values) ??
-        ActionButtonType.Default;
+    autoDismissible = AssertUtils.extractValue(dataMap, NOTIFICATION_AUTO_DISMISSIBLE);
+    requireInputText = AssertUtils.extractValue(dataMap, NOTIFICATION_REQUIRE_INPUT_TEXT);
+    notificationActionType = AssertUtils.extractEnum(
+        dataMap, NOTIFICATION_ACTION_TYPE, NotificationActionType.values);
 
     return this;
   }
@@ -53,8 +110,9 @@ class NotificationActionButton extends Model {
       NOTIFICATION_ICON: icon,
       NOTIFICATION_BUTTON_LABEL: label,
       NOTIFICATION_ENABLED: enabled,
-      NOTIFICATION_AUTO_CANCEL: autoCancel,
-      NOTIFICATION_BUTTON_TYPE: AssertUtils.toSimpleEnumString(buttonType)
+      NOTIFICATION_AUTO_DISMISSIBLE: autoDismissible,
+      NOTIFICATION_REQUIRE_INPUT_TEXT: requireInputText,
+      NOTIFICATION_ACTION_TYPE: AssertUtils.toSimpleEnumString(notificationActionType)
     };
   }
 
@@ -62,7 +120,6 @@ class NotificationActionButton extends Model {
   void validate() {
     assert(!AssertUtils.isNullOrEmptyOrInvalid(key, String));
     assert(!AssertUtils.isNullOrEmptyOrInvalid(label, String));
-    assert(!AssertUtils.isNullOrEmptyOrInvalid(autoCancel, bool));
 
     // For action buttons, it's only allowed resource media types
     assert(StringUtils.isNullOrEmpty(icon) ||
