@@ -16,6 +16,51 @@ public class DateUtils {
     public static TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
     public static TimeZone localTimeZone = TimeZone.getDefault();
 
+    public static Date roundSeconds(Date reference, TimeZone timeZone){
+        if(reference == null) return null;
+        if(timeZone == null) timeZone = DateUtils.localTimeZone;
+
+        Calendar calendarHelper = Calendar.getInstance();
+        calendarHelper.setTimeZone(timeZone);
+        calendarHelper.setTime(reference);
+
+        if (calendarHelper.get(Calendar.MILLISECOND) > 500){
+            calendarHelper.add(Calendar.SECOND, 1);
+        }
+        calendarHelper.set(Calendar.MILLISECOND, 0);
+
+        return calendarHelper.getTime();
+    }
+
+    public static Date ceilSeconds(Date reference, TimeZone timeZone){
+        if(reference == null) return null;
+        if(timeZone == null) timeZone = DateUtils.localTimeZone;
+
+        Calendar calendarHelper = Calendar.getInstance();
+        calendarHelper.setTimeZone(timeZone);
+        calendarHelper.setTime(reference);
+
+        if (calendarHelper.get(Calendar.MILLISECOND) > 0){
+            calendarHelper.add(Calendar.SECOND, 1);
+        }
+        calendarHelper.set(Calendar.MILLISECOND, 0);
+
+        return calendarHelper.getTime();
+    }
+
+    public static Date floorSeconds(Date reference, TimeZone timeZone){
+        if(reference == null) return null;
+        if(timeZone == null) timeZone = DateUtils.localTimeZone;
+
+        Calendar calendarHelper = Calendar.getInstance();
+        calendarHelper.setTimeZone(timeZone);
+        calendarHelper.setTime(reference);
+
+        calendarHelper.set(Calendar.MILLISECOND, 0);
+
+        return calendarHelper.getTime();
+    }
+
     public static Date stringToDate(String dateTime, String fromTimeZone) throws AwesomeNotificationException {
         try {
             TimeZone timeZone = TimeZone.getTimeZone(fromTimeZone);

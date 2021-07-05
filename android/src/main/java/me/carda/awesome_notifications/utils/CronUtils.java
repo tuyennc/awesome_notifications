@@ -30,7 +30,12 @@ public final class CronUtils {
 
         Date now, delayedNow;
         if(fixedNowDate == null){
-            now = DateUtils.getUTCDateTime();
+            try {
+                now = DateUtils.getLocalDateTime(timeZone.getID());
+            } catch (Exception e) {
+                // if timezone is invalid
+                return null;
+            }
         } else {
             now = fixedNowDate;
         }
@@ -43,6 +48,9 @@ public final class CronUtils {
             initialScheduleDay = DateUtils.stringToDate(initialDateTime, timeZone.getID());
         }
 
+        initialScheduleDay = DateUtils.floorSeconds(initialScheduleDay, timeZone);
+        now = DateUtils.floorSeconds(now, timeZone);
+
         // if initial date is a future one, show in future. Otherwise, show now
         switch (initialScheduleDay.compareTo(now)){
 
@@ -52,8 +60,8 @@ public final class CronUtils {
                 calendar.setTime(now);
                 break;
 
-            case 1: // if initial date is in future, shows in future
             case 0: // if initial date is right now, shows now
+            case 1: // if initial date is in future, shows in future
             default:
                 calendar.setTime(initialScheduleDay);
                 break;
@@ -67,7 +75,9 @@ public final class CronUtils {
                 try {
                     CronExpression cronExpression = new CronExpression(crontabRule);
                     cronExpression.setTimeZone(timeZone);
-                    Date nextSchedule = cronExpression.getNextValidTimeAfter(now);
+
+                    Date nextSchedule = cronExpression.getNextValidTimeAfter(delayedNow);
+                    nextSchedule = DateUtils.floorSeconds(nextSchedule, timeZone);
 
                     if (nextSchedule != null && nextSchedule.compareTo(delayedNow) > 0) {
                         calendar.setTime(nextSchedule);
@@ -90,10 +100,13 @@ public final class CronUtils {
 
     /// Processing time tolerance
     public static Date applyToleranceDate(Date initialScheduleDay, TimeZone timeZone) {
+
         Calendar calendarHelper = Calendar.getInstance();
         calendarHelper.setTimeZone(timeZone);
         calendarHelper.setTime(initialScheduleDay);
-        calendarHelper.set(Calendar.MILLISECOND,(calendarHelper.get(Calendar.MILLISECOND)-999));
+        calendarHelper.set(Calendar.MILLISECOND,0);
+        calendarHelper.add(Calendar.SECOND,1);
+
         Date delayedScheduleDay = calendarHelper.getTime();
         return delayedScheduleDay;
     }
