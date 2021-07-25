@@ -90,6 +90,29 @@ public class NotificationGateKeeper {
         return success;
     }
 
+    public static Boolean SendBroadcastKeepOnTopAction(Context context, ActionReceived actionReceived){
+
+        Boolean success = false;
+
+        Intent intent = new Intent(Definitions.BROADCAST_KEEP_ON_TOP);
+        intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) actionReceived.toMap());
+
+        try {
+
+            LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
+            success = broadcastManager.sendBroadcast(intent);
+
+            if(success){
+                //Log.d(TAG, "Sent created to broadcast");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return success;
+    }
+
     public static Boolean broadcastSilentData(Context context, NotificationModel notificationModel, Intent originalIntent){
 
         switch (notificationModel.content.notificationActionType){
@@ -98,8 +121,8 @@ public class NotificationGateKeeper {
             case DisabledAction:
                 return false;
 
-            case SilentBackgroundThread:
-                break;
+            /*case SilentBackgroundThread:
+                break;*/
 
             case SilentMainThread:
                 if(AwesomeNotificationsPlugin.appLifeCycle != NotificationLifeCycle.AppKilled){

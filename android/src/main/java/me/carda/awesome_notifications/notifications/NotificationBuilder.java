@@ -31,6 +31,7 @@ import androidx.core.app.RemoteInput;
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.notifications.broadcastReceivers.DismissedNotificationReceiver;
+import me.carda.awesome_notifications.notifications.broadcastReceivers.KeepOnTopActionReceiver;
 import me.carda.awesome_notifications.notifications.broadcastReceivers.SilentActionReceiver;
 import me.carda.awesome_notifications.notifications.enumerators.GroupSort;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationActionType;
@@ -105,13 +106,24 @@ public class NotificationBuilder {
         return builder.build();
     }
 
+    private Class<?> getTargetClass(Context context, NotificationActionType actionType){
+
+        switch (actionType){
+
+            case BringToForeground:
+                return getNotificationTargetActivityClass(context);
+
+            case KeepOnTopAction:
+                return KeepOnTopActionReceiver.class;
+
+            default:
+                return SilentActionReceiver.class;
+        }
+    }
+
     public Intent buildNotificationIntentFromModel(Context context, String ActionReference, NotificationModel notificationModel){
 
-        Class<?> targetClass =
-                notificationModel.content.notificationActionType == NotificationActionType.BringToForeground ?
-                        getNotificationTargetActivityClass(context) :
-                        SilentActionReceiver.class;
-
+        Class<?> targetClass = getTargetClass(context, notificationModel.content.notificationActionType);
         return buildNotificationIntentFromModel(context, ActionReference, notificationModel, targetClass);
     }
 
@@ -466,15 +478,12 @@ public class NotificationBuilder {
 
         for(NotificationButtonModel buttonProperties : notificationModel.actionButtons) {
 
-            Class<?> targetClass =
-                    buttonProperties.notificationActionType == NotificationActionType.BringToForeground ?
-                        getNotificationTargetActivityClass(context) :
-                        SilentActionReceiver.class;
+            Class<?> targetClass = getTargetClass(context, buttonProperties.notificationActionType);
 
             Intent actionIntent = buildNotificationIntentFromModel(
                 context,
                 Definitions.NOTIFICATION_BUTTON_ACTION_PREFIX + "_" + buttonProperties.key,
-                    notificationModel,
+                notificationModel,
                 targetClass
             );
 

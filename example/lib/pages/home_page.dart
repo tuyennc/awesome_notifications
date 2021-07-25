@@ -269,8 +269,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     onPressed: () => showNotificationWithoutTitle(context, 1)),
                 SimpleButton('Send not auto dismissible notification',
                     onPressed: () => sendNotAutoDismissibleNotification(context, 1)),
-                SimpleButton('Send background notification',
-                    onPressed: () => sendBackgroundNotification(context, 1)),
                 SimpleButton('Cancel the basic notification',
                     backgroundColor: Colors.red,
                     labelColor: Colors.white,
@@ -331,6 +329,67 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                 /* ******************************************************************** */
 
+                TextDivisor(title: 'Action Buttons'),
+                TextNote('Action buttons can be used in four types:'
+                    '\n\n'
+                    '* Default: after user taps, the notification bar is closed and an action event is fired.'
+                    '\n\n'
+                    '* InputField: after user taps, a input text field is displayed to capture input by the user.'
+                    '\n\n'
+                    '* DisabledAction: after user taps, the notification bar is closed, but the respective action event is not fired.'
+                    '\n\n'
+                    '* KeepOnTop: after user taps, the notification bar is not closed, but an action event is fired.'),
+                TextNote(
+                    'Since Android Nougat, icons are only displayed on media layout. The icon media needs to be a native resource type.'),
+                SimpleButton(
+                    'Show notification with\nsimple action buttons (one disabled action)',
+                    onPressed: () => showNotificationWithActionButtons(context, 3)),
+                SimpleButton(
+                    'Show notification with\nsilent action buttons (one background)',
+                    onPressed: () => showNotificationWithSilentButtons(context, 3)),
+                SimpleButton('Show notification with\nsimple Action buttons (one auto dismissible)',
+                    onPressed: () => showNotificationWithAutoDismissibleButton(context, 3)),
+                SimpleButton('Show notification with\nIcons and action buttons',
+                    onPressed: () => showNotificationWithIconsAndActionButtons(context, 3)),
+                SimpleButton('Show notification with\nreply buttons',
+                    onPressed: () => showNotificationWithReplyButtons(context, 3)),
+                SimpleButton('Show Big picture notification\nwith action Buttons',
+                    onPressed: () => showBigPictureNotificationActionButtons(context, 3)),
+                SimpleButton(
+                    'Show Big picture notification\nwith Reply and Action button',
+                    onPressed: () =>
+                        showBigPictureNotificationActionButtonsAndReply(context, 3)),
+                SimpleButton(
+                    'Show Big text notification\nwith Reply and Action button',
+                    onPressed: () => showBigTextNotificationWithActionAndReply(context, 3)),
+                SimpleButton('Cancel notification',
+                    backgroundColor: Colors.red,
+                    labelColor: Colors.white,
+                    onPressed: () => cancelNotification(3)),
+
+                /* ******************************************************************** */
+
+                TextDivisor(title: 'Notification\'s Action Types\n(Foreground or Background)'),
+                TextNote(
+                    'To send local or push locked notification, that users cannot dismiss it swiping it, set the "locked" property to true.\n\n' +
+                        "Attention: Notification's content locked property has priority over the Channel's one."),
+                SimpleButton('Send notification with BringToForeground',
+                    onPressed: () => sendBringToForegroundNotification(context, 15)),
+                SimpleButton('Send notification with SilentMainThread',
+                    onPressed: () => sendSilentMainThreadNotification(context, 15)),
+                SimpleButton('Send notification with KeepOnTopAction',
+                    onPressed: () => sendKeepOnTopActionNotification(context, 15)),
+                SimpleButton('Send notification with DisabledAction',
+                    onPressed: () => sendDisabledActionNotification(context, 15)),
+                SimpleButton('Send notification with different\naction targets for each button',
+                    onPressed: () => sendButtonActionTypesNotification(context, 15)),
+                SimpleButton('Cancel notification',
+                    backgroundColor: Colors.red,
+                    labelColor: Colors.white,
+                    onPressed: () => cancelNotification(15)),
+
+                /* ******************************************************************** */
+
                 TextDivisor(title: 'Locked Notifications (onGoing - Android)'),
                 TextNote(
                     'To send local or push locked notification, that users cannot dismiss it swiping it, set the "locked" property to true.\n\n' +
@@ -374,46 +433,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     'Display notification with NotificationImportance.None',
                     onPressed: () =>
                         showNotificationImportance(context, 3, NotificationImportance.None)),
-
-                /* ******************************************************************** */
-
-                TextDivisor(title: 'Action Buttons'),
-                TextNote('Action buttons can be used in four types:'
-                    '\n\n'
-                    '* Default: after user taps, the notification bar is closed and an action event is fired.'
-                    '\n\n'
-                    '* InputField: after user taps, a input text field is displayed to capture input by the user.'
-                    '\n\n'
-                    '* DisabledAction: after user taps, the notification bar is closed, but the respective action event is not fired.'
-                    '\n\n'
-                    '* KeepOnTop: after user taps, the notification bar is not closed, but an action event is fired.'),
-                TextNote(
-                    'Since Android Nougat, icons are only displayed on media layout. The icon media needs to be a native resource type.'),
-                SimpleButton(
-                    'Show notification with\nsimple action buttons (one disabled action)',
-                    onPressed: () => showNotificationWithActionButtons(context, 3)),
-                SimpleButton(
-                    'Show notification with\nsilent action buttons (one background)',
-                    onPressed: () => showNotificationWithSilentButtons(context, 3)),
-                SimpleButton('Show notification with\nsimple Action buttons (one auto dismissible)',
-                    onPressed: () => showNotificationWithAutoDismissibleButton(context, 3)),
-                SimpleButton('Show notification with\nIcons and action buttons',
-                    onPressed: () => showNotificationWithIconsAndActionButtons(context, 3)),
-                SimpleButton('Show notification with\nreply buttons',
-                    onPressed: () => showNotificationWithReplyButtons(context, 3)),
-                SimpleButton('Show Big picture notification\nwith action Buttons',
-                    onPressed: () => showBigPictureNotificationActionButtons(context, 3)),
-                SimpleButton(
-                    'Show Big picture notification\nwith Reply and Action button',
-                    onPressed: () =>
-                        showBigPictureNotificationActionButtonsAndReply(context, 3)),
-                SimpleButton(
-                    'Show Big text notification\nwith Reply and Action button',
-                    onPressed: () => showBigTextNotificationWithActionAndReply(context, 3)),
-                SimpleButton('Cancel notification',
-                    backgroundColor: Colors.red,
-                    labelColor: Colors.white,
-                    onPressed: () => cancelNotification(3)),
 
                 /* ******************************************************************** */
 

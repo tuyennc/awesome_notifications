@@ -127,7 +127,11 @@ Future<void> sendNotAutoDismissibleNotification(BuildContext context, int id) as
           payload: {'secret-command': 'block_user'}));
 }
 
-Future<void> sendBackgroundNotification(BuildContext context, int id) async {
+/* *********************************************
+    ACTION TYPES
+************************************************ */
+
+Future<void> sendBringToForegroundNotification(BuildContext context, int id) async {
   bool isAllowed = await requireUserNotificationPermissions(context);
   if(!isAllowed) return;
 
@@ -135,10 +139,94 @@ Future<void> sendBackgroundNotification(BuildContext context, int id) async {
       content: NotificationContent(
           id: id,
           channelKey: 'basic_channel',
-          title: 'Notification on Background',
+          title: 'Notification BringToForeground type',
+          body: 'This notification will bring the app to foreground',
+          notificationActionType: NotificationActionType.BringToForeground,
+          payload: {'secret-command': 'block_user'}));
+}
+
+Future<void> sendSilentMainThreadNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
+  await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+          id: id,
+          channelKey: 'basic_channel',
+          title: 'Notification BringToForeground type',
           body: 'This notification will be received in background',
           notificationActionType: NotificationActionType.SilentMainThread,
           payload: {'secret-command': 'block_user'}));
+}
+
+Future<void> sendKeepOnTopActionNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
+  await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+          id: id,
+          channelKey: 'basic_channel',
+          title: 'Notification KeepOnTopAction type',
+          body: 'This notification will bring the app to foreground and keep the notification status activated',
+          autoDismissible: false,
+          notificationActionType: NotificationActionType.KeepOnTopAction,
+          payload: {'secret-command': 'block_user'}));
+}
+
+Future<void> sendDisabledActionNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
+  await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+          id: id,
+          channelKey: 'basic_channel',
+          title: 'Notification DisabledAction type',
+          body: 'This notification will not fire any event, but can be canceled without bring the app to foreground',
+          autoDismissible: true,
+          notificationActionType: NotificationActionType.DisabledAction,
+          payload: {'secret-command': 'block_user'}));
+}
+
+Future<void> sendButtonActionTypesNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
+  await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+          id: id,
+          channelKey: 'basic_channel',
+          title: 'Notification buttons with action types',
+          body: 'This notification will be received in background if tapped',
+          notificationActionType: NotificationActionType.SilentMainThread,
+          payload: {'secret-command': 'block_user'}),
+      actionButtons: [
+        NotificationActionButton(
+            key: 'BRING_TO_FOREGROUND',
+            label: 'Foreground',
+            autoDismissible: false,
+            notificationActionType: NotificationActionType.BringToForeground
+        ),
+        NotificationActionButton(
+            key: 'SILENT_MAIN_THREAD',
+            label: 'Silent',
+            autoDismissible: false,
+            notificationActionType: NotificationActionType.SilentMainThread
+        ),
+        NotificationActionButton(
+            key: 'KEEP_ON_TOP_ACTION',
+            label: 'Keep',
+            autoDismissible: false,
+            notificationActionType: NotificationActionType.KeepOnTopAction
+        ),
+        NotificationActionButton(
+            key: 'DISABLED_ACTION',
+            label: 'Disabled',
+            autoDismissible: false,
+            notificationActionType: NotificationActionType.DisabledAction
+        ),
+      ]);
 }
 
 /* *********************************************
@@ -999,7 +1087,7 @@ void updateNotificationMediaPlayer(int id, MediaModel? mediaNow) {
             label: 'Previous',
             enabled: MediaPlayerCentral.hasPreviousMedia,
             autoDismissible: false,
-            notificationActionType: NotificationActionType.SilentMainThread
+            notificationActionType: NotificationActionType.KeepOnTopAction
         ),
         MediaPlayerCentral.isPlaying
             ? NotificationActionButton(
@@ -1007,7 +1095,7 @@ void updateNotificationMediaPlayer(int id, MediaModel? mediaNow) {
                 icon: 'resource://drawable/res_ic_pause',
                 label: 'Pause',
                 autoDismissible: false,
-                notificationActionType: NotificationActionType.SilentMainThread)
+                notificationActionType: NotificationActionType.KeepOnTopAction)
             : NotificationActionButton(
                 key: 'MEDIA_PLAY',
                 icon: 'resource://drawable/res_ic_play' +
@@ -1015,7 +1103,7 @@ void updateNotificationMediaPlayer(int id, MediaModel? mediaNow) {
                 label: 'Play',
                 autoDismissible: false,
                 enabled: MediaPlayerCentral.hasAnyMedia,
-                notificationActionType: NotificationActionType.SilentMainThread),
+                notificationActionType: NotificationActionType.KeepOnTopAction),
         NotificationActionButton(
             key: 'MEDIA_NEXT',
             icon: 'resource://drawable/res_ic_next' +
@@ -1023,13 +1111,13 @@ void updateNotificationMediaPlayer(int id, MediaModel? mediaNow) {
             label: 'Previous',
             autoDismissible: false,
             enabled: MediaPlayerCentral.hasNextMedia,
-            notificationActionType: NotificationActionType.SilentMainThread),
+            notificationActionType: NotificationActionType.KeepOnTopAction),
         NotificationActionButton(
             key: 'MEDIA_CLOSE',
             icon: 'resource://drawable/res_ic_close',
             label: 'Close',
             autoDismissible: true,
-            notificationActionType: NotificationActionType.SilentMainThread)
+            notificationActionType: NotificationActionType.KeepOnTopAction)
       ]);
 }
 
@@ -1367,7 +1455,7 @@ String toTwoDigitString(int value) {
   return value.toString().padLeft(2, '0');
 }
 
-void processDefaultActionReceived(BuildContext context, ReceivedAction receivedNotification) {
+void processDefaultActionReceived(BuildContext context, ReceivedAction actionReceived) {
   Fluttertoast.showToast(
       msg: 'Action received',
       textColor: Colors.black,
@@ -1376,9 +1464,11 @@ void processDefaultActionReceived(BuildContext context, ReceivedAction receivedN
   String targetPage;
 
   // Avoid to reopen the media page if is already opened
-  if (receivedNotification.channelKey == 'media_player') {
+  if (actionReceived.channelKey == 'media_player') {
     targetPage = PAGE_MEDIA_DETAILS;
-    if (Navigator.of(context).isCurrent(PAGE_MEDIA_DETAILS)) return;
+    processMediaControls(actionReceived);
+    //if (Navigator.of(context).isCurrent(PAGE_MEDIA_DETAILS))
+      return;
   } else {
     targetPage = PAGE_NOTIFICATION_DETAILS;
   }
@@ -1386,7 +1476,7 @@ void processDefaultActionReceived(BuildContext context, ReceivedAction receivedN
   // Avoid to open the notification details page over another details page already opened
   Navigator.pushNamedAndRemoveUntil(context, targetPage,
           (route) => (route.settings.name != targetPage) || route.isFirst,
-      arguments: receivedNotification);
+      arguments: actionReceived);
 }
 
 void processInputTextReceived(ReceivedAction receivedNotification) {
