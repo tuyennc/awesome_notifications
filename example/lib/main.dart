@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:awesome_notifications_example/utils/notification_util.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 //import 'package:flutter/material.dart' as Material show DateUtils;
@@ -222,6 +224,7 @@ class App extends StatefulWidget {
           textColor: Colors.white,
           fontSize: 16
       );
+      sleep(Duration(seconds:2));
     }
     debugPrint('"SilentAction": ${silentAction.toString()}');
   }
