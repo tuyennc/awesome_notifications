@@ -18,6 +18,7 @@ dependencies:
 
   platform: any
   intl: any
+  rxdart: any
 
 dev_dependencies:
   flutter_test:

@@ -37,6 +37,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.lang.System.exit;
+
 /**
  * An background execution abstraction which handles initializing a background isolate running a
  * callback dispatcher, used to invoke Dart callbacks while backgrounded.
@@ -127,6 +129,21 @@ public class DartBackgroundExecutor implements MethodCallHandler {
             @Override
             public void run() {
 
+                backgroundFlutterEngine = new FlutterEngine(applicationContext);
+
+                FlutterInjector flutterInjector = FlutterInjector.instance();
+                FlutterLoader loader = flutterInjector.flutterLoader();
+
+
+                if (!loader.initialized()) {
+                    loader.startInitialization(applicationContext);
+                }
+
+                loader.ensureInitializationComplete(
+                    applicationContext,
+                    null
+                );
+
                 FlutterCallbackInformation flutterCallback =
                         FlutterCallbackInformation.lookupCallbackInformation(callbackHandle);
 
@@ -134,13 +151,6 @@ public class DartBackgroundExecutor implements MethodCallHandler {
                     closeBackgroundIsolate();
                     return;
                 }
-
-                backgroundFlutterEngine = new FlutterEngine(applicationContext);
-
-                FlutterInjector flutterInjector = FlutterInjector.instance();
-                FlutterLoader loader = flutterInjector.flutterLoader();
-
-                loader.ensureInitializationComplete(applicationContext, null);
 
                 String appBundlePath = loader.findAppBundlePath();
                 AssetManager assets = applicationContext.getAssets();
@@ -184,6 +194,8 @@ public class DartBackgroundExecutor implements MethodCallHandler {
 
             runningInstance = null;
         }
+
+        exit(0);
     }
 
     public void dischargeNextSilentExecution(){

@@ -111,12 +111,13 @@ public class AwesomeNotificationsPlugin
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
         AttachAwesomeNotificationsPlugin(
-            flutterPluginBinding.getApplicationContext(),
-                pluginChannel != null ? pluginChannel :
-                    new MethodChannel(
-                        flutterPluginBinding.getBinaryMessenger(),
-                        Definitions.CHANNEL_FLUTTER_PLUGIN
-                    ));
+            applicationContext != null ? applicationContext :
+                flutterPluginBinding.getApplicationContext(),
+            pluginChannel != null ? pluginChannel :
+                new MethodChannel(
+                    flutterPluginBinding.getBinaryMessenger(),
+                    Definitions.CHANNEL_FLUTTER_PLUGIN
+                ));
     }
 
     private void AttachAwesomeNotificationsPlugin(Context context, MethodChannel channel) {

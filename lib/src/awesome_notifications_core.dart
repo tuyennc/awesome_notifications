@@ -29,6 +29,7 @@ import 'package:awesome_notifications/src/models/received_models/received_notifi
 import 'package:awesome_notifications/src/utils/assert_utils.dart';
 import 'package:awesome_notifications/src/utils/bitmap_utils.dart';
 import 'package:awesome_notifications/src/utils/date_utils.dart';
+import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 class AwesomeNotifications {
   static String? rootNativePath;
@@ -50,42 +51,42 @@ class AwesomeNotifications {
 */
   /// STREAM CREATION METHODS *********************************************
 
-  final StreamController<ReceivedNotification>
+  final BehaviorSubject<ReceivedNotification>
       // ignore: close_sinks
-      _createdSubject = StreamController<ReceivedNotification>();
+      _createdSubject = BehaviorSubject<ReceivedNotification>();
 
-  final StreamController<ReceivedNotification>
+  final BehaviorSubject<ReceivedNotification>
       // ignore: close_sinks
-      _displayedSubject = StreamController<ReceivedNotification>();
+      _displayedSubject = BehaviorSubject<ReceivedNotification>();
 
-  final StreamController<ReceivedAction>
+  final BehaviorSubject<ReceivedAction>
       // ignore: close_sinks
-      _actionSubject = StreamController<ReceivedAction>();
+      _actionSubject = BehaviorSubject<ReceivedAction>();
 
-  final StreamController<ReceivedAction>
+  final BehaviorSubject<ReceivedAction>
       // ignore: close_sinks
-      _dismissedSubject = StreamController<ReceivedAction>();
+      _dismissedSubject = BehaviorSubject<ReceivedAction>();
 
   /// STREAM METHODS *********************************************
 
   /// Stream to capture all created notifications
   Stream<ReceivedNotification> get createdStream {
-    return _createdSubject.stream;
+    return _createdSubject;
   }
 
   /// Stream to capture all notifications displayed on user's screen.
   Stream<ReceivedNotification> get displayedStream {
-    return _displayedSubject.stream;
+    return _displayedSubject;
   }
 
   /// Stream to capture all notifications dismissed by the user.
   Stream<ReceivedAction> get dismissedStream {
-    return _dismissedSubject.stream;
+    return _dismissedSubject;
   }
 
   /// Stream to capture all actions (tap) over notifications
   Stream<ReceivedAction> get actionStream {
-    return _actionSubject.stream;
+    return _actionSubject;
   }
 
   /// SINK METHODS *********************************************

@@ -153,8 +153,8 @@ Future<void> sendSilentMainThreadNotification(BuildContext context, int id) asyn
       content: NotificationContent(
           id: id,
           channelKey: 'basic_channel',
-          title: 'Notification BringToForeground type',
-          body: 'This notification will be received in background',
+          title: 'Notification SilentMainThread type',
+          body: 'This notification will be received without bring the app to foreground',
           notificationActionType: NotificationActionType.SilentMainThread,
           payload: {'secret-command': 'block_user'}));
 }
