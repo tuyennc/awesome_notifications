@@ -74,7 +74,9 @@ import me.carda.awesome_notifications.utils.MapUtils;
 import me.carda.awesome_notifications.utils.MediaUtils;
 import me.carda.awesome_notifications.utils.StringUtils;
 
+import static me.carda.awesome_notifications.Definitions.ACTION_HANDLE;
 import static me.carda.awesome_notifications.Definitions.NOTIFICATION_CHANNEL_KEY;
+import static me.carda.awesome_notifications.Definitions.NOTIFICATION_RECEIVED_ACTION;
 import static me.carda.awesome_notifications.Definitions.NOTIFICATION_SILENT_ACTION;
 import static me.carda.awesome_notifications.Definitions.SILENT_HANDLE;
 
@@ -319,8 +321,8 @@ public class AwesomeNotificationsPlugin
             Serializable serializable = intent.getSerializableExtra(Definitions.EXTRA_BROADCAST_MESSAGE);
             Map<String, Object> dataMap = new HashMap<>();
 
-            dataMap.put(SILENT_HANDLE, DartBackgroundService.getSilentCallbackDispatcher(applicationContext));
-            dataMap.put(NOTIFICATION_SILENT_ACTION, serializable);
+            dataMap.put(ACTION_HANDLE, DartBackgroundService.getSilentCallbackDispatcher(applicationContext));
+            dataMap.put(NOTIFICATION_RECEIVED_ACTION, serializable);
 
             pluginChannel.invokeMethod(Definitions.CHANNEL_METHOD_SILENT_ACTION, dataMap);
 
@@ -478,6 +480,10 @@ public class AwesomeNotificationsPlugin
 
                 case Definitions.CHANNEL_METHOD_INITIALIZE:
                     channelMethodInitialize(call, result);
+                    return;
+
+                case Definitions.CHANNEL_METHOD_SET_ACTION_HANDLE:
+                    channelMethodSetActionHandle(call, result);
                     return;
 
                 case Definitions.CHANNEL_METHOD_GET_DRAWABLE_DATA:
@@ -945,20 +951,17 @@ public class AwesomeNotificationsPlugin
 
         Map<String, Object> platformParameters = call.arguments();
 
-        Object callbackSilentObj = platformParameters.get(Definitions.SILENT_HANDLE);
         Object callbackDartObj = platformParameters.get(Definitions.DART_BG_HANDLE);
         Object object = platformParameters.get(Definitions.INITIALIZE_DEBUG_MODE);
         String defaultIconPath = (String) platformParameters.get(Definitions.INITIALIZE_DEFAULT_ICON);
         channelsData = (List<Object>) platformParameters.get(Definitions.INITIALIZE_CHANNELS);
 
         debug = object != null && (boolean) object;
-        long silentCallback = callbackSilentObj == null ? 0L : (Long) callbackSilentObj;
         long dartCallback = callbackDartObj == null ? 0L :(Long) callbackDartObj;
 
         setDefaultConfigurations(
             applicationContext,
             defaultIconPath,
-            silentCallback,
             dartCallback,
             channelsData
         );
@@ -966,19 +969,37 @@ public class AwesomeNotificationsPlugin
         if(AwesomeNotificationsPlugin.debug)
             Log.d(TAG, "Awesome Notifications service initialized");
 
-        if(AwesomeNotificationsPlugin.debug && silentCallback == 0L)
-            Log.e(TAG, "Attention: there is no valid method to receive silent data");
-
         if(AwesomeNotificationsPlugin.debug && dartCallback == 0L)
-            Log.e(TAG, "Attention: there is no valid dart plugin method to receive silent data");
+            Log.e(TAG, "Attention: there is no valid dart reverse method to receive silent action data");
 
         isInitialized = true;
         result.success(true);
     }
 
-    private boolean setDefaultConfigurations(Context context, String defaultIcon, long silentCallback, long dartCallback, List<Object> channelsData) throws Exception {
+    @SuppressWarnings("unchecked")
+    private void channelMethodSetActionHandle(@NonNull MethodCall call, Result result) throws Exception {
+        Map<String, Object> platformParameters = call.arguments();
+        Object callbackActionObj = platformParameters.get(ACTION_HANDLE);
 
-        setDefaults(context, defaultIcon, dartCallback, silentCallback);
+        long silentCallback = callbackActionObj == null ? 0L : (Long) callbackActionObj;
+
+        setActionHandleDefaults(
+            applicationContext,
+            silentCallback
+        );
+
+        if(AwesomeNotificationsPlugin.debug && silentCallback == 0L){
+            Log.e(TAG, "Attention: there is no valid static method to receive action data");
+            result.success(false);
+        }
+        else {
+            result.success(true);
+        }
+    }
+
+    private boolean setDefaultConfigurations(Context context, String defaultIcon, long dartCallback, List<Object> channelsData) throws Exception {
+
+        setDefaults(context, defaultIcon, dartCallback);
         setChannels(context, channelsData);
 
         recoverNotificationCreated(context);
@@ -1017,13 +1038,20 @@ public class AwesomeNotificationsPlugin
         ChannelManager.commitChanges(context);
     }
 
-    private void setDefaults(Context context, String defaultIcon, long dartCallbackHandle, long silentCallbackHandle) {
+    private void setDefaults(Context context, String defaultIcon, long dartCallbackHandle) {
 
         if (MediaUtils.getMediaSourceType(defaultIcon) != MediaSource.Resource) {
             defaultIcon = null;
         }
 
-        DefaultsManager.saveDefault(context, new DefaultsModel(defaultIcon, dartCallbackHandle, silentCallbackHandle));
+        DefaultsManager.saveDefault(context, new DefaultsModel(defaultIcon, dartCallbackHandle));
+        DefaultsManager.commitChanges(context);
+    }
+
+    private void setActionHandleDefaults(Context context, long silentCallbackHandle) {
+        DefaultsModel defaults = DefaultsManager.getDefaultByKey(context);
+        defaults.silentDataCallback = silentCallbackHandle;
+        DefaultsManager.saveDefault(context, defaults);
         DefaultsManager.commitChanges(context);
     }
 

@@ -199,7 +199,7 @@ class MediaPlayerCentral {
     _broadcastChanges();
   }
 
-  dispose() {
+  static dispose() {
     _mediaBroadcaster.sink.close();
     _mediaProgress.sink.close();
   }

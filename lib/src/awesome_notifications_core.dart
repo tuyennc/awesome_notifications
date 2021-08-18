@@ -37,6 +37,11 @@ class AwesomeNotifications {
   static String utcTimeZoneIdentifier = "UTC";
   static String localTimeZoneIdentifier = "UTC";
 
+  ActionHandler? _actionHandler;
+  ActionHandler? _dismissedHandler;
+  NotificationHandler? _createdHandler;
+  NotificationHandler? _displayedHandler;
+
   /// WEB SUPPORT METHODS *********************************************
 /*
   static void registerWith(Registrar registrar) {
@@ -70,21 +75,25 @@ class AwesomeNotifications {
   /// STREAM METHODS *********************************************
 
   /// Stream to capture all created notifications
+  @Deprecated('Use static methods instead, calling AwesomeNotifications().setListeners()')
   Stream<ReceivedNotification> get createdStream {
     return _createdSubject;
   }
 
   /// Stream to capture all notifications displayed on user's screen.
+  @Deprecated('Use static methods instead, calling AwesomeNotifications().setListeners()')
   Stream<ReceivedNotification> get displayedStream {
     return _displayedSubject;
   }
 
   /// Stream to capture all notifications dismissed by the user.
+  @Deprecated('Use static methods instead, calling AwesomeNotifications().setListeners()')
   Stream<ReceivedAction> get dismissedStream {
     return _dismissedSubject;
   }
 
   /// Stream to capture all actions (tap) over notifications
+  @Deprecated('Use static methods instead, calling AwesomeNotifications().setListeners()')
   Stream<ReceivedAction> get actionStream {
     return _actionSubject;
   }
@@ -142,14 +151,12 @@ class AwesomeNotifications {
   Future<bool> initialize(
       String? defaultIcon,
       List<NotificationChannel> channels,
-      {SilentActionHandler? onSilentActionMethod, bool debug = false}) async {
+      {bool debug = false}) async {
     WidgetsFlutterBinding.ensureInitialized();
 
     _channel.setMethodCallHandler(_handleMethod);
 
     final CallbackHandle? dartCallbackReference = PluginUtilities.getCallbackHandle(dartIsolateMain);
-    final CallbackHandle? userCallbackReference = onSilentActionMethod == null ? null :
-        PluginUtilities.getCallbackHandle(onSilentActionMethod);
 
     List<dynamic> serializedChannels = [];
     for (NotificationChannel channel in channels) {
@@ -172,8 +179,7 @@ class AwesomeNotifications {
       INITIALIZE_DEBUG_MODE: debug,
       INITIALIZE_DEFAULT_ICON: defaultIconPath,
       INITIALIZE_CHANNELS: serializedChannels,
-      DART_BG_HANDLE: dartCallbackReference!.toRawHandle(),
-      SILENT_HANDLE: userCallbackReference?.toRawHandle()
+      DART_BG_HANDLE: dartCallbackReference!.toRawHandle()
     });
 
     localTimeZoneIdentifier = await _channel
@@ -218,7 +224,7 @@ class AwesomeNotifications {
             .add(ReceivedAction().fromMap(arguments));
         return;
 
-      case CHANNEL_METHOD_ACTION_RECEIVED:
+      case CHANNEL_METHOD_RECEIVED_ACTION:
         _actionSubject.sink
             .add(ReceivedAction().fromMap(arguments));
         return;
@@ -230,6 +236,34 @@ class AwesomeNotifications {
       default:
         throw UnsupportedError('Unrecognized JSON message');
     }
+  }
+
+  StreamSubscription? _createdSubscription;
+  StreamSubscription? _displayedSubscription;
+  StreamSubscription? _actionSubscription;
+  StreamSubscription? _dismissedSubscription;
+
+  _startEventListeners(){
+
+    // Ensures that there is at most one subscription
+    _createdSubscription?.cancel();
+    _displayedSubscription?.cancel();
+    _actionSubscription?.cancel();
+    _dismissedSubscription?.cancel();
+
+    // Streams will be keept internally. They are deprecated to use outside.
+    _createdSubscription = createdStream.listen((event) {
+      if(_createdHandler != null) _createdHandler!(event);
+    });
+    _displayedSubscription = displayedStream.listen((event) {
+      if(_displayedHandler != null) _displayedHandler!(event);
+    });
+    _actionSubscription = actionStream.listen((event) {
+      if(_actionHandler != null) _actionHandler!(event);
+    });
+    _dismissedSubscription = dismissedStream.listen((event) {
+      if(_dismissedHandler != null) _dismissedHandler!(event);
+    });
   }
 
   static int get maxID => 2147483647;
@@ -465,5 +499,46 @@ class AwesomeNotifications {
   /// Cancel and dismiss all notifications and the active schedules
   Future<void> cancelAll() async {
     await _channel.invokeMethod(CHANNEL_METHOD_CANCEL_ALL_NOTIFICATIONS);
+  }
+
+  /// Defines the global or static methods that gonna receive the notification
+  /// events. OBS: Only after set at least one method, the notification's events are delivered.
+  ///
+  /// [onCreatedNotificationMethod] method that gets called when a new notification or schedule is created
+  /// [onDisplayedNotificationMethod] method that gets called when a new notification is displayed
+  /// [onActionNotificationMethod] method that receives the notifications action
+  /// [onDismissedNotificationMethod] method that receives the dismissed notifications
+  Future<bool> setListeners({
+    required ActionHandler onActionNotificationMethod,
+    NotificationHandler? onCreatedNotificationMethod,
+    NotificationHandler? onDisplayedNotificationMethod,
+    ActionHandler? onDismissedNotificationMethod
+  }) async {
+
+    if(_actionHandler != null){
+      print('static methods was already setted.');
+      return false;
+    }
+
+    final CallbackHandle? actionCallbackReference =
+      PluginUtilities.getCallbackHandle(onActionNotificationMethod);
+
+    bool result = await _channel.invokeMethod(CHANNEL_METHOD_SET_ACTION_HANDLE, {
+      ACTION_HANDLE: actionCallbackReference?.toRawHandle()
+    });
+
+    if(!result){
+      print('onActionNotificationMethod is not a valid global or static method.');
+      return false;
+    }
+
+    _actionHandler = onActionNotificationMethod;
+    _dismissedHandler = onDismissedNotificationMethod;
+    _createdHandler = onCreatedNotificationMethod;
+    _displayedHandler = onDisplayedNotificationMethod;
+
+    _startEventListeners();
+
+    return result;
   }
 }

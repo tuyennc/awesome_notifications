@@ -19,6 +19,7 @@ class ReceivedAction extends ReceivedNotification {
 
   static ReceivedAction fromNotificationContent(NotificationContent content) {
     ReceivedAction receivedAction = ReceivedAction().fromMap(content.toMap());
+
     receivedAction.actionDate ??= DateUtils.getUtcTextDate();
     receivedAction.actionLifeCycle ??= NotificationLifeCycle.Foreground;
 
@@ -34,6 +35,9 @@ class ReceivedAction extends ReceivedNotification {
 
     dismissedLifeCycle = AssertUtils.extractEnum(dataMap,
         NOTIFICATION_DISMISSED_LIFECYCLE, NotificationLifeCycle.values);
+
+    notificationActionType = AssertUtils.extractEnum<NotificationActionType>(
+        dataMap, NOTIFICATION_ACTION_TYPE, NotificationActionType.values);
 
     actionDate =
         AssertUtils.extractValue<String>(dataMap, NOTIFICATION_ACTION_DATE);
@@ -58,7 +62,9 @@ class ReceivedAction extends ReceivedNotification {
         NOTIFICATION_ACTION_DATE: actionDate,
         NOTIFICATION_DISMISSED_DATE: dismissedDate,
         NOTIFICATION_ACTION_LIFECYCLE:
-            AssertUtils.toSimpleEnumString(actionLifeCycle),
+          AssertUtils.toSimpleEnumString(actionLifeCycle),
+        NOTIFICATION_ACTION_TYPE:
+          AssertUtils.toSimpleEnumString(notificationActionType),
         NOTIFICATION_DISMISSED_LIFECYCLE:
             AssertUtils.toSimpleEnumString(dismissedLifeCycle),
         NOTIFICATION_ACTION_KEY: buttonKeyPressed,

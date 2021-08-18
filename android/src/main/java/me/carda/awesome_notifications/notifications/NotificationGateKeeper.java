@@ -17,6 +17,7 @@ import me.carda.awesome_notifications.notifications.managers.DismissedManager;
 import me.carda.awesome_notifications.notifications.models.NotificationModel;
 import me.carda.awesome_notifications.notifications.models.returnedData.ActionReceived;
 import me.carda.awesome_notifications.notifications.models.returnedData.NotificationReceived;
+import me.carda.awesome_notifications.utils.DateUtils;
 
 public class NotificationGateKeeper {
 
@@ -127,8 +128,11 @@ public class NotificationGateKeeper {
             case SilentMainThread:
                 if(AwesomeNotificationsPlugin.appLifeCycle != NotificationLifeCycle.AppKilled){
                     try {
+                        ActionReceived actionReceived = new ActionReceived(notificationModel.content);
+                        actionReceived.setActualActionAttributes();
+
                         Intent intent = new Intent(Definitions.BROADCAST_SILENT_ACTION);
-                        intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) notificationModel.toMap());
+                        intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) actionReceived.toMap());
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                         LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);

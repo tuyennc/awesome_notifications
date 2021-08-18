@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:awesome_notifications_example/common_widgets/badge_picker.dart';
 import 'package:awesome_notifications_example/common_widgets/shadow_top.dart';
+import 'package:awesome_notifications_example/main.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 //import 'package:flutter/material.dart' as Material show DateUtils;
@@ -93,56 +94,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+
+    // Necessary to get called by didChangeAppLifecycleState
     WidgetsBinding.instance!.addObserver(this);
 
+    // Necessary to request the user to send notifications
     requestNotificationPermissions();
 
-    // If you pretend to use the firebase service, you need to initialize it
-    // getting a valid token
-    /*FirebaseUtils.initializeFirebaseService(context).then((String firebaseAppToken){
-      if (!mounted) {
-        _firebaseAppToken = firebaseAppToken;
-      } else {
-        setState(() {
-          _firebaseAppToken = firebaseAppToken;
-        });
-      }
-    });*/
-
-    AwesomeNotifications().createdStream.listen((receivedNotification) {
-      String? createdSourceText =
-          AssertUtils.toSimpleEnumString(receivedNotification.createdSource);
-      Fluttertoast.showToast(
-          msg: '$createdSourceText notification created',
-          textColor: Colors.white,
-          backgroundColor: Colors.green);
-    });
-
-    AwesomeNotifications().displayedStream.listen((receivedNotification) {
-      String? createdSourceText =
-          AssertUtils.toSimpleEnumString(receivedNotification.createdSource);
-      Fluttertoast.showToast(
-          msg: '$createdSourceText notification displayed',
-          textColor: Colors.white,
-          backgroundColor: Colors.blueAccent);
-    });
-
-    AwesomeNotifications().dismissedStream.listen((receivedNotification) {
-      String? dismissedSourceText = AssertUtils.toSimpleEnumString(
-          receivedNotification.dismissedLifeCycle);
-      Fluttertoast.showToast(
-          msg: 'Notification dismissed on $dismissedSourceText',
-          textColor: Colors.white,
-          backgroundColor: Colors.red);
-    });
-
-    AwesomeNotifications().actionStream.listen((receivedNotification) {
-      if (!StringUtils.isNullOrEmpty(receivedNotification.buttonKeyInput)) {
-        processInputTextReceived(receivedNotification);
-      } else {
-        processDefaultActionReceived(context, receivedNotification);
-      }
-    });
+    // Only after set at least one method, the notification's events are delivered
+    AwesomeNotifications().setListeners(
+        onCreatedNotificationMethod:   App.onCreatedNotificationMethod,
+        onDisplayedNotificationMethod: App.onDisplayedNotificationMethod,
+        onActionNotificationMethod:    App.onActionNotificationMethod,
+        onDismissedNotificationMethod: App.onDismissedNotificationMethod
+    );
 
     // this is not part of notification system, but of the media player simulator instead
     MediaPlayerCentral.mediaStream.listen((media) {

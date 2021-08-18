@@ -32,8 +32,9 @@ class NotificationContent extends BaseNotificationContent {
   bool? locked;
 
   NotificationContent(
-      {int? id,
-      String? channelKey,
+      {
+      required int id,
+      required channelKey,
       String? title,
       String? body,
       String? summary,

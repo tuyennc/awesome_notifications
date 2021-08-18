@@ -51,20 +51,20 @@ Future<void> channelMethodIsolateCallbackHandle(MethodCall call) async {
 /// Calls the silent data method, if is a valid static one
 Future<bool> receiveSilentAction(Map<String, dynamic> arguments) async {
 
-  final CallbackHandle silentCallbackHandle = CallbackHandle.fromRawHandle(arguments[SILENT_HANDLE]);
+  final CallbackHandle actionCallbackHandle = CallbackHandle.fromRawHandle(arguments[ACTION_HANDLE]);
 
   // PluginUtilities.getCallbackFromHandle performs a lookup based on the
   // callback handle and returns a tear-off of the original callback.
-  final SilentActionHandler? onSilentDataHandle
-    = PluginUtilities.getCallbackFromHandle(silentCallbackHandle) as SilentActionHandler?;
+  final ActionHandler? onActionDataHandle
+    = PluginUtilities.getCallbackFromHandle(actionCallbackHandle) as ActionHandler?;
 
-  if (onSilentDataHandle == null) {
-    throw IsolateCallbackException('could not find silent callback');
+  if (onActionDataHandle == null) {
+    throw IsolateCallbackException('could not find action callback');
   }
 
-  Map<String, dynamic> silentMap = Map<String, dynamic>.from(arguments[NOTIFICATION_SILENT_ACTION]);
-  final SilentAction silentAction = SilentAction().fromMap(silentMap);
-  await onSilentDataHandle(silentAction);
+  Map<String, dynamic> actionMap = Map<String, dynamic>.from(arguments[CHANNEL_METHOD_RECEIVED_ACTION]);
+  final ReceivedAction receivedAction = ReceivedAction().fromMap(actionMap);
+  await onActionDataHandle(receivedAction);
 
   return true;
 }

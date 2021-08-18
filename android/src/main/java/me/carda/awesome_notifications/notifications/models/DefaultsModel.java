@@ -16,10 +16,9 @@ public class DefaultsModel extends Model {
 
     public DefaultsModel(){}
 
-    public DefaultsModel(String defaultAppIcon, long dartCallbackHandle, long silentCallbackHandle){
+    public DefaultsModel(String defaultAppIcon, long dartCallbackHandle){
         this.appIcon = defaultAppIcon;
         this.reverseDartCallback = dartCallbackHandle;
-        this.silentDataCallback = silentCallbackHandle;
     }
 
     @Override

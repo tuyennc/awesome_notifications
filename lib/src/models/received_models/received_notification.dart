@@ -15,6 +15,8 @@ class ReceivedNotification extends BaseNotificationContent {
   String? displayedDate;
   String? createdDate;
 
+  NotificationActionType? notificationActionType;
+
   ReceivedNotification fromMap(Map<String, dynamic> dataMap) {
     super.fromMap(dataMap);
 

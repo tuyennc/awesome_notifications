@@ -14,7 +14,7 @@ const DART_REVERSE_CHANNEL = 'awesome_notifications_reverse';
 
 const EXTRA_BROADCAST_MESSAGE = 'notification';
 
-const SILENT_HANDLE = 'silentHandle';
+const ACTION_HANDLE = 'actionHandle';
 const DART_BG_HANDLE = 'dartBgHandle';
 
 const INITIALIZE_DEBUG_MODE = 'debug';
@@ -55,7 +55,7 @@ const CHANNEL_METHOD_CREATE_NOTIFICATION = 'createNewNotification';
 const CHANNEL_METHOD_NOTIFICATION_CREATED = 'notificationCreated';
 const CHANNEL_METHOD_NOTIFICATION_DISPLAYED = 'notificationDisplayed';
 const CHANNEL_METHOD_NOTIFICATION_DISMISSED = 'notificationDismissed';
-const CHANNEL_METHOD_ACTION_RECEIVED = 'receivedAction';
+const CHANNEL_METHOD_RECEIVED_ACTION = 'receivedAction';
 const CHANNEL_METHOD_SILENT_ACTION = 'silentAction';
 
 const CHANNEL_METHOD_NOTIFICATION_AT_LAUNCH = 'notificationAtLaunch';
@@ -66,6 +66,7 @@ const CHANNEL_METHOD_GET_BADGE_COUNT = 'getBadgeCount';
 const CHANNEL_METHOD_SET_BADGE_COUNT = 'setBadgeCount';
 const CHANNEL_METHOD_RESET_BADGE = 'resetBadge';
 
+const CHANNEL_METHOD_SET_ACTION_HANDLE = 'setActionHandle';
 const CHANNEL_METHOD_DISMISS_NOTIFICATION = 'dismissNotification';
 const CHANNEL_METHOD_CANCEL_NOTIFICATION = 'cancelNotification';
 const CHANNEL_METHOD_CANCEL_SCHEDULE = 'cancelSchedule';

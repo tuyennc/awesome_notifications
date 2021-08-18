@@ -177,11 +177,17 @@ public class NotificationBuilder {
         if (isNormalAction || isButtonAction){
 
             ActionReceived actionModel = new ActionReceived(notificationModel.content);
-
-            actionModel.actionLifeCycle = AwesomeNotificationsPlugin.appLifeCycle;
+            actionModel.setActualActionAttributes();
 
             if (isButtonAction){
                 actionModel.actionKey = intent.getStringExtra(Definitions.NOTIFICATION_BUTTON_KEY);
+
+                for (NotificationButtonModel button: notificationModel.actionButtons)
+                    if(button.key.equals(actionModel.actionKey)){
+                        actionModel.notificationActionType = button.notificationActionType;
+                        break;
+                    }
+
                 if(intent.getBooleanExtra(Definitions.NOTIFICATION_REQUIRE_INPUT_TEXT, false)){
                     actionModel.actionInput = getButtonInputText(intent, intent.getStringExtra(Definitions.NOTIFICATION_BUTTON_KEY));
                     if(StringUtils.isNullOrEmpty(actionModel.actionInput))
@@ -193,7 +199,6 @@ public class NotificationBuilder {
             if(StringUtils.isNullOrEmpty(actionModel.displayedDate)){
                 actionModel.displayedDate = DateUtils.getUTCDate();
             }
-            actionModel.actionDate = DateUtils.getUTCDate();
 
             return actionModel;
         }

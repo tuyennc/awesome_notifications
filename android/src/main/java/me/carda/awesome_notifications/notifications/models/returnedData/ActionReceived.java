@@ -2,9 +2,11 @@ package me.carda.awesome_notifications.notifications.models.returnedData;
 
 import java.util.Map;
 
+import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
 import me.carda.awesome_notifications.notifications.models.NotificationContentModel;
+import me.carda.awesome_notifications.utils.DateUtils;
 import me.carda.awesome_notifications.utils.MapUtils;
 
 public class ActionReceived extends NotificationContentModel {
@@ -14,6 +16,7 @@ public class ActionReceived extends NotificationContentModel {
 
     public NotificationLifeCycle actionLifeCycle;
     public NotificationLifeCycle dismissedLifeCycle;
+
     public String actionDate;
     public String dismissedDate;
     public String mediaAction;
@@ -39,6 +42,8 @@ public class ActionReceived extends NotificationContentModel {
         this.ticker = contentModel.ticker;
         this.locked = contentModel.locked;
 
+        this.notificationActionType = contentModel.notificationActionType;
+
         this.notificationLayout = contentModel.notificationLayout;
 
         this.displayOnBackground = contentModel.displayOnBackground;
@@ -50,6 +55,16 @@ public class ActionReceived extends NotificationContentModel {
         this.createdSource = contentModel.createdSource;
         this.createdLifeCycle = contentModel.createdLifeCycle;
         this.createdDate = contentModel.createdDate;
+    }
+
+    public void setActualActionAttributes(){
+        this.actionDate = DateUtils.getUTCDate();
+        this.actionLifeCycle = AwesomeNotificationsPlugin.getApplicationLifeCycle();
+    }
+
+    public void setActualDismissedAttributes(){
+        this.dismissedDate = DateUtils.getUTCDate();
+        this.dismissedLifeCycle = AwesomeNotificationsPlugin.getApplicationLifeCycle();
     }
 
     @Override

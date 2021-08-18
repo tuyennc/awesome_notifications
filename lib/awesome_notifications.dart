@@ -2,7 +2,10 @@ library awesome_notifications;
 
 import 'dart:typed_data';
 
+import 'package:awesome_notifications/src/models/received_models/received_action.dart';
+import 'package:awesome_notifications/src/models/received_models/received_notification.dart';
 import 'package:awesome_notifications/src/models/received_models/silent_action.dart';
+import 'package:flutter/cupertino.dart';
 
 export 'definitions.dart';
 export 'src/awesome_notifications_core.dart';
@@ -48,9 +51,11 @@ export 'src/utils/string_utils.dart';
 export 'src/exceptions/isolate_callback_exception.dart';
 export 'src/exceptions/awesome_notifications_exception.dart';
 
-/// Method structure to receive an incoming silent action with dart, even while
-/// the app is being terminated / killed
-typedef Future<void> SilentActionHandler(SilentAction silentAction);
+/// Method structure to listen to an incoming action with dart
+typedef Future<void> ActionHandler(ReceivedAction receivedAction);
+
+/// Method structure to listen to an notification event with dart
+typedef Future<void> NotificationHandler(ReceivedNotification receivedNotification);
 
 // Pause and Play vibration sequences
 Int64List lowVibrationPattern = Int64List.fromList([0, 200, 200, 200]);

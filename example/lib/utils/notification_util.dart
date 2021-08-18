@@ -202,12 +202,12 @@ Future<void> sendButtonActionTypesNotification(BuildContext context, int id) asy
           notificationActionType: NotificationActionType.SilentMainThread,
           payload: {'secret-command': 'block_user'}),
       actionButtons: [
-        NotificationActionButton(
+        /* NotificationActionButton(
             key: 'BRING_TO_FOREGROUND',
             label: 'Foreground',
             autoDismissible: false,
             notificationActionType: NotificationActionType.BringToForeground
-        ),
+        ),*/
         NotificationActionButton(
             key: 'SILENT_MAIN_THREAD',
             label: 'Silent',
@@ -222,8 +222,8 @@ Future<void> sendButtonActionTypesNotification(BuildContext context, int id) asy
         ),
         NotificationActionButton(
             key: 'DISABLED_ACTION',
-            label: 'Disabled',
-            autoDismissible: false,
+            label: 'Disabled / Dismiss',
+            autoDismissible: true,
             notificationActionType: NotificationActionType.DisabledAction
         ),
       ]);
@@ -1490,6 +1490,7 @@ void processInputTextReceived(ReceivedAction receivedNotification) {
 
 void processMediaControls(actionReceived) {
   switch (actionReceived.buttonKeyPressed) {
+
     case 'MEDIA_CLOSE':
       MediaPlayerCentral.stop();
       break;

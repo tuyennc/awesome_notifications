@@ -60,13 +60,6 @@ class _MediaDetailsPageState extends State<MediaDetailsPage> {
     _updatePlayer(media: MediaPlayerCentral.currentMedia);
   }
 
-  @override
-  dispose() {
-    MediaPlayerCentral.mediaSink.close();
-    MediaPlayerCentral.progressSink.close();
-    super.dispose();
-  }
-
   bool computeLuminance(Color color) {
     return color.computeLuminance() > 0.5;
   }

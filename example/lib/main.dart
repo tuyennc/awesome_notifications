@@ -153,12 +153,12 @@ void main() async {
           vibrationPattern: lowVibrationPattern,
           importance: NotificationImportance.High)
     ],
-    debug: true,
-    onSilentActionMethod: App.onSilentActionMethod,
+    debug: true
   );
 
 
-
+  /// Class created to simulate an media player, there is no correlation with
+  /// notifications at all
   MediaPlayerCentral.addAll([
     MediaModel(
         diskImagePath: 'asset://assets/images/rock-disc.jpg',
@@ -204,47 +204,135 @@ void main() async {
 class App extends StatefulWidget {
   App();
 
-  static final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   static String name = 'Awesome Notifications - Example App';
   static Color mainColor = Color(0xFF9D50DD);
 
+  /// Use this method to detect when a new notification or a schedule is created
+  static Future <void> onCreatedNotificationMethod(ReceivedNotification receivedNotification) async {
+    String? createdSourceText =
+        AssertUtils.toSimpleEnumString(receivedNotification.createdSource);
+
+    Fluttertoast.showToast(
+        msg: '$createdSourceText notification created',
+        textColor: Colors.white,
+        backgroundColor: Colors.green);
+  }
+
+  /// Use this method to detect every time that a new notification is displayed
+  static Future <void> onDisplayedNotificationMethod(ReceivedNotification receivedNotification) async {
+    String? createdSourceText =
+        AssertUtils.toSimpleEnumString(receivedNotification.createdSource);
+
+    Fluttertoast.showToast(
+        msg: '$createdSourceText notification displayed',
+        textColor: Colors.white,
+        backgroundColor: Colors.blueAccent);
+  }
+
+  /// Use this method to detect if the user dismissed a notification
+  static Future <void> onDismissedNotificationMethod(ReceivedAction receivedAction) async {
+    String? dismissedSourceText = AssertUtils.toSimpleEnumString(
+        receivedAction.dismissedLifeCycle);
+
+    Fluttertoast.showToast(
+        msg: 'Notification dismissed on $dismissedSourceText',
+        textColor: Colors.white,
+        backgroundColor: Colors.red);
+  }
+
+  /// Use this method to detect when the user taps on a notification or action button
+  static Future <void> onActionNotificationMethod(ReceivedAction receivedAction) async {
+
+    String targetPage =
+        receivedAction.channelKey == 'media_player' ?
+              PAGE_MEDIA_DETAILS : PAGE_NOTIFICATION_DETAILS;
+
+    // If the user sent a message through an notification, just
+    // display the text as a example
+    if (!StringUtils.isNullOrEmpty(receivedAction.buttonKeyInput)) {
+      processInputTextReceived(receivedAction);
+      return;
+    }
+
+    switch(receivedAction.notificationActionType){
+
+      // Go to default redirect page behavior
+      case NotificationActionType.BringToForeground:
+        Fluttertoast.showToast(
+            msg: 'Action received',
+            textColor: Colors.black,
+            backgroundColor: Colors.yellow);
+        break;
+
+      // just do an remote control for media player without redirect the page
+      case NotificationActionType.KeepOnTopAction:
+        if (receivedAction.channelKey == 'media_player') {
+          processMediaControls(receivedAction);
+          return;
+        }
+        break;
+
+      // receive silent request
+      case NotificationActionType.SilentMainThread:
+        Fluttertoast.showToast(
+            msg: 'Silent action received',
+            backgroundColor: Colors.blueAccent,
+            textColor: Colors.white,
+            fontSize: 16
+        );
+
+        print('"ReceivedAction": ${receivedAction.toString()}');
+
+        // Give time to toast shows while the app is terminated
+        sleep(Duration(seconds:2));
+        return;
+
+      // disabled actions never reach this point, they die
+      // at native level.
+      case NotificationActionType.DisabledAction:
+      default:
+        break;
+    }
+
+    // Avoid to open the notification details page over another details page already opened
+    App.navigatorKey.currentState?.pushNamedAndRemoveUntil(targetPage,
+            (route) => (route.settings.name != targetPage) || route.isFirst,
+        arguments: receivedAction);
+  }
+
   @override
   _AppState createState() => _AppState();
-
-  static Future <void> onSilentActionMethod(SilentAction silentAction) async {
-    if (!StringUtils.isNullOrEmpty(
-        silentAction.buttonKeyPressed) &&
-        silentAction.buttonKeyPressed.startsWith('MEDIA_')) {
-      processMediaControls(silentAction);
-    } else {
-      Fluttertoast.showToast(
-          msg: 'Silent action received',
-          backgroundColor: Colors.blueAccent,
-          textColor: Colors.white,
-          fontSize: 16
-      );
-      sleep(Duration(seconds:2));
-    }
-    debugPrint('"SilentAction": ${silentAction.toString()}');
-  }
 }
 
 class _AppState extends State<App> {
 
   @override
+  void dispose() {
+    MediaPlayerCentral.stop();
+    MediaPlayerCentral.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: App.navKey,
+      // The navigator key is necessary to allow to navigate through static classes
+      navigatorKey: App.navigatorKey,
+
+      // These routes are declared in a separated file called routes.dart
+      initialRoute: PAGE_HOME,
+      routes: materialRoutes,
+
       title: App.name,
       color: App.mainColor,
-      initialRoute: PAGE_HOME,
-      //onGenerateRoute: generateRoute,
-      routes: materialRoutes,
+
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
         child: child ?? const SizedBox.shrink(),
       ),
+
       theme: ThemeData(
         brightness: Brightness.light,
 

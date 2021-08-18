@@ -37,6 +37,7 @@ public interface Definitions {
 
     String EXTRA_BROADCAST_MESSAGE = "notification";
 
+    String ACTION_HANDLE = "actionHandle";
     String SILENT_HANDLE = "silentHandle";
     String DART_BG_HANDLE = "dartBgHandle";
 
@@ -44,6 +45,7 @@ public interface Definitions {
     String PUSH_NOTIFICATION_SCHEDULE = "schedule";
     String PUSH_NOTIFICATION_BUTTONS = "actionButtons";
     String NOTIFICATION_SILENT_ACTION = "silentAction";
+    String NOTIFICATION_RECEIVED_ACTION = "receivedAction";
 
     String SHARED_DEFAULTS = "defaults";
     String SHARED_MANAGER = "sharedManager";
@@ -87,6 +89,7 @@ public interface Definitions {
     String CHANNEL_METHOD_NOTIFICATION_DISMISSED = "notificationDismissed";
     String CHANNEL_METHOD_RECEIVED_ACTION = "receivedAction";
     String CHANNEL_METHOD_MEDIA_BUTTON = "mediaButton";
+    String CHANNEL_METHOD_SET_ACTION_HANDLE = "setActionHandle";
 
     String CHANNEL_METHOD_LIST_ALL_SCHEDULES = "listAllSchedules";
     String CHANNEL_FORCE_UPDATE = "forceUpdate";

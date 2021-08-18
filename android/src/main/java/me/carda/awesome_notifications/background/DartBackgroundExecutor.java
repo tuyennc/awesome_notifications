@@ -258,12 +258,12 @@ public class DartBackgroundExecutor implements MethodCallHandler {
                 actionReceived = new ActionReceived(notificationModel.content);
             }
 
-            actionReceived.actionDate = DateUtils.getUTCDate();
-            actionReceived.actionLifeCycle = AwesomeNotificationsPlugin.getApplicationLifeCycle();
+            actionReceived.setActualActionAttributes();
 
-            actionReceived.createdSource = NotificationSource.Firebase;
-            actionReceived.displayedDate = actionReceived.createdDate;
-            actionReceived.displayedLifeCycle = actionReceived.createdLifeCycle;
+            if(actionReceived.displayedDate == null){
+                actionReceived.displayedDate = actionReceived.createdDate;
+                actionReceived.displayedLifeCycle = actionReceived.createdLifeCycle;
+            }
 
             final Map<String, Object> actionData = actionReceived.toMap();
 
@@ -271,8 +271,8 @@ public class DartBackgroundExecutor implements MethodCallHandler {
                     Definitions.CHANNEL_METHOD_SILENCED_CALLBACK,
                 new HashMap<String, Object>() {
                     {
-                        put(Definitions.SILENT_HANDLE, silentCallbackHandle);
-                        put(Definitions.NOTIFICATION_SILENT_ACTION, actionData);
+                        put(Definitions.ACTION_HANDLE, silentCallbackHandle);
+                        put(Definitions.NOTIFICATION_RECEIVED_ACTION, actionData);
                     }
                 },
                 dartChannelResultHandle);
