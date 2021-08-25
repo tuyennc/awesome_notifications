@@ -17,8 +17,8 @@ import 'package:awesome_notifications/src/enumerators/media_source.dart';
 /// [NotificationActionButton.DisabledAction]: after user taps, the notification bar is closed, but the respective action event is not fired.
 /// [NotificationActionButton.KeepOnTop]: after user taps, the notification bar is not closed, but an action event is fired.
 class NotificationActionButton extends Model {
-  String? key;
-  String? label;
+  String key;
+  String label;
   String? icon;
 
   bool? enabled;
@@ -28,8 +28,8 @@ class NotificationActionButton extends Model {
   NotificationActionType? notificationActionType;
 
   NotificationActionButton({
-    this.key,
-    this.label,
+    required this.key,
+    required this.label,
     this.icon,
     this.enabled = true,
     this.autoDismissible = true,

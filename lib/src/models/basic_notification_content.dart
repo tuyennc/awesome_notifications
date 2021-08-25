@@ -25,7 +25,8 @@ class BaseNotificationContent extends Model {
   NotificationPrivacy? privacy;
 
   BaseNotificationContent(
-      {this.id,
+      {
+      this.id,
       this.channelKey,
       this.title,
       this.body,

@@ -1,6 +1,7 @@
 package me.carda.awesome_notifications;
 
 import android.app.Application;
+import android.app.Application.ActivityLifecycleCallbacks;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -83,7 +84,7 @@ import static me.carda.awesome_notifications.Definitions.SILENT_HANDLE;
 /** AwesomeNotificationsPlugin **/
 public class AwesomeNotificationsPlugin
         extends BroadcastReceiver
-        implements FlutterPlugin, MethodCallHandler, PluginRegistry.NewIntentListener, ActivityAware, Application.ActivityLifecycleCallbacks {
+        implements FlutterPlugin, MethodCallHandler, PluginRegistry.NewIntentListener, ActivityAware, ActivityLifecycleCallbacks {
 
     public static Boolean debug = false;
 
@@ -91,6 +92,7 @@ public class AwesomeNotificationsPlugin
     public static String lastChannelKeyRequested = null;
     public static Boolean hasGoneToAuthorizationPage = false;
 
+    private static String mainTargetClassName;
     public static NotificationLifeCycle appLifeCycle = NotificationLifeCycle.AppKilled;
 
     private static final String TAG = "AwesomeNotificationsPlugin";
@@ -103,6 +105,10 @@ public class AwesomeNotificationsPlugin
     public static MediaSessionCompat mediaSession;
 
     public static IntentFilter intentFilter;
+
+    public static String getMainTargetClassName() {
+        return mainTargetClassName;
+    }
 
     @Override
     public boolean onNewIntent(Intent intent){

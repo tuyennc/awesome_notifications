@@ -199,7 +199,7 @@ Future<void> sendButtonActionTypesNotification(BuildContext context, int id) asy
           channelKey: 'basic_channel',
           title: 'Notification buttons with action types',
           body: 'This notification will be received in background if tapped',
-          notificationActionType: NotificationActionType.SilentMainThread,
+          notificationActionType: NotificationActionType.BringToForeground,
           payload: {'secret-command': 'block_user'}),
       actionButtons: [
         /* NotificationActionButton(
@@ -1361,6 +1361,7 @@ Future<void> showProgressNotification(BuildContext context, int id) async {
                 channelKey: 'progress_bar',
                 title: 'Download finished',
                 body: 'filename.txt',
+                summary: 'Downloaded',
                 payload: {
                   'file': 'filename.txt',
                   'path': '-rmdir c://ruwindows/system32/huehuehue'
@@ -1374,6 +1375,7 @@ Future<void> showProgressNotification(BuildContext context, int id) async {
                 title:
                     'Downloading fake file in progress ($simulatedStep of $maxStep)',
                 body: 'filename.txt',
+                summary: '10 sec left',
                 payload: {
                   'file': 'filename.txt',
                   'path': '-rmdir c://ruwindows/system32/huehuehue'
@@ -1396,6 +1398,7 @@ Future<void> showIndeterminateProgressNotification(BuildContext context, int id)
           channelKey: 'progress_bar',
           title: 'Downloading fake file...',
           body: 'filename.txt',
+          summary: 'Connecting',
           payload: {
             'file': 'filename.txt',
             'path': '-rmdir c://ruwindows/system32/huehuehue'

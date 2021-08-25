@@ -24,7 +24,7 @@ class NotificationModel extends Model {
       Map<String, dynamic> contentData =
           Map<String, dynamic>.from(mapData[NOTIFICATION_CONTENT]);
 
-      this.content = NotificationContent().fromMap(contentData);
+      this.content = NotificationContent(id: 0, channelKey: '').fromMap(contentData);
       if (content == null) return null;
 
       this.content!.validate();
@@ -50,7 +50,7 @@ class NotificationModel extends Model {
           Map<String, dynamic> actionButtonData =
               Map<String, dynamic>.from(buttonData);
 
-          NotificationActionButton button = NotificationActionButton()
+          NotificationActionButton button = NotificationActionButton(label: '', key: '')
               .fromMap(actionButtonData) as NotificationActionButton;
           button.validate();
 

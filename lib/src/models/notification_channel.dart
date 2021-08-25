@@ -17,9 +17,9 @@ import '../../definitions.dart';
 /// A representation of default settings that applies to all notifications with same channel key
 /// [soundSource] needs to be a native resource media type
 class NotificationChannel extends Model {
-  String? channelKey;
-  String? channelName;
-  String? channelDescription;
+  String channelKey;
+  String channelName;
+  String channelDescription;
   bool? channelShowBadge;
 
   NotificationImportance? importance;
@@ -49,9 +49,9 @@ class NotificationChannel extends Model {
   bool? onlyAlertOnce;
 
   NotificationChannel({
-    this.channelKey,
-    this.channelName,
-    this.channelDescription,
+    required this.channelKey,
+    required this.channelName,
+    required this.channelDescription,
     this.channelShowBadge,
     this.importance,
     this.playSound,

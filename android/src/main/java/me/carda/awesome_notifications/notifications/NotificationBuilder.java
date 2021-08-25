@@ -661,13 +661,22 @@ public class NotificationBuilder {
                 break;
 
             case ProgressBar:
-                setProgressLayout(notificationModel, builder);
+                setProgressLayout(notificationModel.content, builder);
                 break;
 
             case Default:
+                setDefaultLayout(notificationModel.content, builder);
             default:
                 break;
         }
+    }
+
+    private Boolean setDefaultLayout(NotificationContentModel contentModel, NotificationCompat.Builder builder){
+        if(!StringUtils.isNullOrEmpty(contentModel.summary)){
+            CharSequence defaultSumary = HtmlUtils.fromHtml(contentModel.summary);
+            builder.setSubText(defaultSumary);
+        }
+        return true;
     }
 
     private Boolean setBigPictureLayout(Context context, NotificationContentModel contentModel, NotificationCompat.Builder builder) {
@@ -784,7 +793,8 @@ public class NotificationBuilder {
         );
 
         if(!StringUtils.isNullOrEmpty(contentModel.summary)){
-            builder.setSubText(contentModel.summary);
+            CharSequence playerSumary = HtmlUtils.fromHtml(contentModel.summary);
+            builder.setSubText(playerSumary);
         }
 
         builder.setShowWhen(false);
@@ -792,12 +802,17 @@ public class NotificationBuilder {
         return true;
     }
 
-    private void setProgressLayout(NotificationModel notificationModel, NotificationCompat.Builder builder) {
+    private void setProgressLayout(NotificationContentModel contentModel, NotificationCompat.Builder builder) {
         builder.setProgress(
                 100,
-                Math.max(0, Math.min(100, IntegerUtils.extractInteger(notificationModel.content.progress, 0))),
-                notificationModel.content.progress == null
+                Math.max(0, Math.min(100, IntegerUtils.extractInteger(contentModel.progress, 0))),
+                contentModel.progress == null
         );
+
+        if(!StringUtils.isNullOrEmpty(contentModel.summary)){
+            CharSequence progressSumary = HtmlUtils.fromHtml(contentModel.summary);
+            builder.setSubText(progressSumary);
+        }
     }
 
 }
