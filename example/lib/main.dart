@@ -275,7 +275,7 @@ class App extends StatefulWidget {
         break;
 
       // receive silent request
-      case NotificationActionType.SilentMainThread:
+      case NotificationActionType.SilentAction:
         Fluttertoast.showToast(
             msg: 'Silent action received',
             backgroundColor: Colors.blueAccent,

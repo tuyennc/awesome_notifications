@@ -20,7 +20,6 @@ public class StringUtils {
     }
 
     public static String digestString(String reference){
-        MessageDigest md = null;
 
         try {
             reference = reference.replaceAll("\\W+", "");
@@ -30,7 +29,7 @@ public class StringUtils {
                 bytes = reference.getBytes(StandardCharsets.UTF_8);
             }
 
-            md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();
             md.update(bytes);
 

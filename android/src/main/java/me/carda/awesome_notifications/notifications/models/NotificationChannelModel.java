@@ -15,6 +15,7 @@ import me.carda.awesome_notifications.notifications.enumerators.NotificationImpo
 import me.carda.awesome_notifications.notifications.enumerators.NotificationPrivacy;
 import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificationException;
 import me.carda.awesome_notifications.utils.AudioUtils;
+import me.carda.awesome_notifications.utils.BitmapUtils;
 import me.carda.awesome_notifications.utils.BooleanUtils;
 import me.carda.awesome_notifications.utils.CompareUtils;
 import me.carda.awesome_notifications.utils.MediaUtils;
@@ -58,12 +59,35 @@ public class NotificationChannelModel extends Model {
 
     public NotificationChannelModel(){}
 
-    public String getChannelKey(){
+    public void refreshIconResource(Context context){
+        if(iconResourceId == null && icon != null){
+            if(MediaUtils.getMediaSourceType(icon) == MediaSource.Resource) {
 
-        String jsonData = toJson();
-        String hashedReference = StringUtils.digestString(jsonData);
+                int resourceIndex = BitmapUtils.getDrawableResourceId(context, icon);
+                if (resourceIndex > 0) {
+                    iconResourceId = resourceIndex;
+                } else {
+                    iconResourceId = null;
+                }
+            }
+        }
+    }
 
-        return hashedReference;
+    public String getChannelHashKey(Context context, boolean fullHashObject){
+
+        refreshIconResource(context);
+
+        if(fullHashObject){
+            String jsonData = this.toJson();
+            return StringUtils.digestString(jsonData);
+        }
+
+        NotificationChannelModel channelCopied = this.clone();
+        channelCopied.channelName = "";
+        channelCopied.channelDescription = "";
+
+        String jsonData = channelCopied.toJson();
+        return StringUtils.digestString(jsonData);
     }
 
     @Override
@@ -244,5 +268,34 @@ public class NotificationChannelModel extends Model {
         if(BooleanUtils.getValue(playSound) && !StringUtils.isNullOrEmpty(soundSource))
             if(!AudioUtils.isValidAudio(context, soundSource))
                 throw new AwesomeNotificationException("Audio media is not valid");
+    }
+
+    public NotificationChannelModel clone() {
+        NotificationChannelModel cloned = new NotificationChannelModel();
+
+        cloned.iconResourceId = this.iconResourceId;
+        cloned.defaultColor = this.defaultColor;
+        cloned.channelKey = this.channelKey;
+        cloned.channelName = this.channelName;
+        cloned.channelDescription = this.channelDescription;
+        cloned.channelShowBadge = this.channelShowBadge;
+        cloned.importance = this.importance;
+        cloned.playSound = this.playSound;
+        cloned.soundSource = this.soundSource;
+        cloned.enableVibration = this.enableVibration;
+        cloned.vibrationPattern = this.vibrationPattern;
+        cloned.enableLights = this.enableLights;
+        cloned.ledColor = this.ledColor;
+        cloned.ledOnMs = this.ledOnMs;
+        cloned.ledOffMs = this.ledOffMs;
+        cloned.groupKey = this.groupKey;
+        cloned.locked = this.locked;
+        cloned.onlyAlertOnce = this.onlyAlertOnce;
+        cloned.defaultPrivacy = this.defaultPrivacy;
+        cloned.defaultRingtoneType = this.defaultRingtoneType;
+        cloned.groupSort = this.groupSort;
+        cloned.groupAlertBehavior = this.groupAlertBehavior;
+
+        return cloned;
     }
 }

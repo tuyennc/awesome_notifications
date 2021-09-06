@@ -54,7 +54,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = true,
     this.requireInputText = false,
-    this.notificationActionType = NotificationActionType.SilentMainThread,
+    this.notificationActionType = NotificationActionType.SilentAction,
   });
 
   NotificationActionButton.asDisabledAction({
@@ -74,7 +74,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = false,
     this.requireInputText = false,
-    this.notificationActionType = NotificationActionType.SilentMainThread,
+    this.notificationActionType = NotificationActionType.SilentAction,
   });
 
   NotificationActionButton.asInputText({

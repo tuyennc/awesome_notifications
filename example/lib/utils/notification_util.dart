@@ -145,7 +145,7 @@ Future<void> sendBringToForegroundNotification(BuildContext context, int id) asy
           payload: {'secret-command': 'block_user'}));
 }
 
-Future<void> sendSilentMainThreadNotification(BuildContext context, int id) async {
+Future<void> sendSilentActionNotification(BuildContext context, int id) async {
   bool isAllowed = await requireUserNotificationPermissions(context);
   if(!isAllowed) return;
 
@@ -153,9 +153,9 @@ Future<void> sendSilentMainThreadNotification(BuildContext context, int id) asyn
       content: NotificationContent(
           id: id,
           channelKey: 'basic_channel',
-          title: 'Notification SilentMainThread type',
+          title: 'Notification SilentAction type',
           body: 'This notification will be received without bring the app to foreground',
-          notificationActionType: NotificationActionType.SilentMainThread,
+          notificationActionType: NotificationActionType.SilentAction,
           payload: {'secret-command': 'block_user'}));
 }
 
@@ -212,7 +212,7 @@ Future<void> sendButtonActionTypesNotification(BuildContext context, int id) asy
             key: 'SILENT_MAIN_THREAD',
             label: 'Silent',
             autoDismissible: false,
-            notificationActionType: NotificationActionType.SilentMainThread
+            notificationActionType: NotificationActionType.SilentAction
         ),
         NotificationActionButton(
             key: 'KEEP_ON_TOP_ACTION',
@@ -316,7 +316,7 @@ Future<void> showNotificationWithSilentButtons(BuildContext context, int id) asy
             notificationActionType: NotificationActionType.BringToForeground),
         NotificationActionButton(
             key: 'SILENT_KEY', label: 'Do in Background', autoDismissible: true,
-            notificationActionType: NotificationActionType.SilentMainThread)
+            notificationActionType: NotificationActionType.SilentAction)
       ]);
 }
 
@@ -338,7 +338,7 @@ Future<void> showNotificationWithAutoDismissibleButton(BuildContext context, int
             key: 'DISMISS',
             label: 'Dismiss',
             autoDismissible: true,
-            notificationActionType: NotificationActionType.SilentMainThread
+            notificationActionType: NotificationActionType.SilentAction
         )
       ]);
 }
@@ -386,7 +386,7 @@ Future<void> showNotificationWithReplyButtons(BuildContext context, int id) asyn
           label: 'Reply in Background',
           autoDismissible: true,
           requireInputText: true,
-          notificationActionType: NotificationActionType.SilentMainThread,
+          notificationActionType: NotificationActionType.SilentAction,
         ),
       ]);
 }
@@ -1170,7 +1170,7 @@ Future<void> showInboxNotification(int id) async {
             key: 'DISMISS',
             label: 'Dismiss',
             autoDismissible: true,
-            notificationActionType: NotificationActionType.SilentMainThread,
+            notificationActionType: NotificationActionType.SilentAction,
             icon: 'resource://drawable/res_ic_close'),
         NotificationActionButton(
           key: 'READ',

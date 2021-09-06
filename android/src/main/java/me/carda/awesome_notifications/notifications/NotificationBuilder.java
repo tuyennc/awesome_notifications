@@ -1,6 +1,7 @@
 package me.carda.awesome_notifications.notifications;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 
@@ -50,6 +51,7 @@ import me.carda.awesome_notifications.utils.BooleanUtils;
 import me.carda.awesome_notifications.utils.DateUtils;
 import me.carda.awesome_notifications.utils.HtmlUtils;
 import me.carda.awesome_notifications.utils.IntegerUtils;
+import me.carda.awesome_notifications.utils.JsonUtils;
 import me.carda.awesome_notifications.utils.ListUtils;
 import me.carda.awesome_notifications.utils.StringUtils;
 
@@ -285,8 +287,13 @@ public class NotificationBuilder {
         if(!isSummary)
             setBadge(context, channel, builder);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            builder.setChannelId(channel.getChannelKey());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel androidChannel = ChannelManager.getAndroidChannel(context, channel);
+            if(androidChannel == null){
+                throw new AwesomeNotificationException("The notification channel '"+channel.channelKey+"' does not exist or is disabled");
+            }
+            builder.setChannelId(androidChannel.getId());
+        }
 
         builder.setContentIntent(pendingIntent);
         if(!isSummary){
@@ -813,6 +820,10 @@ public class NotificationBuilder {
             CharSequence progressSumary = HtmlUtils.fromHtml(contentModel.summary);
             builder.setSubText(progressSumary);
         }
+    }
+
+    public static NotificationManagerCompat getAndroidNotificationManager(Context context) {
+        return NotificationManagerCompat.from(context);
     }
 
 }

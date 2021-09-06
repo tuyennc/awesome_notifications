@@ -125,7 +125,7 @@ public class NotificationGateKeeper {
             /*case SilentBackgroundThread:
                 break;*/
 
-            case SilentMainThread:
+            case silentAction:
                 if(AwesomeNotificationsPlugin.appLifeCycle != NotificationLifeCycle.AppKilled){
                     try {
                         ActionReceived actionReceived = new ActionReceived(notificationModel.content);

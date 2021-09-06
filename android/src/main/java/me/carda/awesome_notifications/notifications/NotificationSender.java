@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
@@ -13,7 +12,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
 
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
-import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationSource;
 import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificationException;
@@ -211,7 +209,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
                     notificationManager.notify(notificationModel.content.id, notification);
                 }
                 else {
-                    NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
+                    NotificationManagerCompat notificationManagerCompat = NotificationBuilder.getAndroidNotificationManager(context);
                     notificationManagerCompat.notify(notificationModel.content.id.toString(), notificationModel.content.id, notification);
                 }
             }
@@ -224,32 +222,30 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
         return null;
     }
 
-    private static NotificationManagerCompat getNotificationManager(Context context) {
-        return NotificationManagerCompat.from(context);
-    }
-
     public static void dismissNotification(Context context, Integer id) {
         if(context != null){
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationManagerCompat notificationManager = getNotificationManager(context);
+                NotificationManagerCompat notificationManager = NotificationBuilder.getAndroidNotificationManager(context);
 
+                // Necessary to remove the first notification marked as group description;
                 dismissOrphanGroupDescription(context, notificationManager, id);
 
                 notificationManager.cancel(id.toString(), id);
                 notificationManager.cancel(id);
             }
-
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(id.toString(), id);
-            notificationManager.cancel(id);
+            else {
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancel(id.toString(), id);
+                notificationManager.cancel(id);
+            }
         }
     }
 
     public static boolean dismissAllNotifications(Context context) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManagerCompat notificationManager = getNotificationManager(context);
+            NotificationManagerCompat notificationManager = NotificationBuilder.getAndroidNotificationManager(context);
             notificationManager.cancelAll();
         }
         else {
@@ -296,7 +292,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
                 if(activeNotification.getId() == id){
                     String groupKey = activeNotification.getGroupKey();
                     if(!StringUtils.isNullOrEmpty(groupKey)) {
-                        Integer otherId = 0, count = 0;
+                        int otherId = 0, count = 0;
                         for (StatusBarNotification otherNotification : currentActiveNotifications) {
                             if(otherNotification.getGroupKey().equals(groupKey)) {
                                 count++;
@@ -305,7 +301,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
                             }
                         }
                         if(count <= 2){
-                            notificationManager.cancel(otherId.toString(), otherId);
+                            notificationManager.cancel(Integer.toString(otherId), otherId);
                             notificationManager.cancel(otherId);
                             break;
                         }

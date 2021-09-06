@@ -78,8 +78,6 @@ import me.carda.awesome_notifications.utils.StringUtils;
 import static me.carda.awesome_notifications.Definitions.ACTION_HANDLE;
 import static me.carda.awesome_notifications.Definitions.NOTIFICATION_CHANNEL_KEY;
 import static me.carda.awesome_notifications.Definitions.NOTIFICATION_RECEIVED_ACTION;
-import static me.carda.awesome_notifications.Definitions.NOTIFICATION_SILENT_ACTION;
-import static me.carda.awesome_notifications.Definitions.SILENT_HANDLE;
 
 /** AwesomeNotificationsPlugin **/
 public class AwesomeNotificationsPlugin
@@ -889,7 +887,7 @@ public class AwesomeNotificationsPlugin
         }
 
         if(!isChannelEnabled(applicationContext, notificationModel.content.channelKey)){
-            throw new AwesomeNotificationException("The notification channel '"+ notificationModel.content.channelKey+"' do not exist or is disabled");
+            throw new AwesomeNotificationException("The notification channel '"+ notificationModel.content.channelKey+"' does not exist or is disabled");
         }
 
         if(notificationModel.schedule == null){
@@ -936,10 +934,8 @@ public class AwesomeNotificationsPlugin
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            NotificationManagerCompat manager = NotificationManagerCompat.from(context);
-            NotificationChannel channel = manager.getNotificationChannel(channelModel.getChannelKey());
-            return channel != null && channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+            NotificationChannel androidChannel = ChannelManager.getAndroidChannel(context, channelModel);
+            return (androidChannel != null && androidChannel.getImportance() != NotificationManager.IMPORTANCE_NONE);
         }
 
         return true;
