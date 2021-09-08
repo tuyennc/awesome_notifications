@@ -290,9 +290,6 @@ class App extends StatefulWidget {
               textColor: Colors.white,
               fontSize: 16
           );
-
-          // Give time to toast shows if the app is terminated
-          sleep(Duration(seconds:2));
         }
         return;
 

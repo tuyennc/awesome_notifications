@@ -164,7 +164,6 @@ public class AwesomeNotificationsPlugin
     public void onActivityStarted(Activity activity) {
 
         Context globalContext = activity.getApplicationContext();
-        mediaSession = new MediaSessionCompat(globalContext, "PUSH_MEDIA");
 
         if(intentFilter == null){
 
@@ -179,9 +178,11 @@ public class AwesomeNotificationsPlugin
 
             LocalBroadcastManager manager = LocalBroadcastManager.getInstance(globalContext);
             manager.registerReceiver(this, intentFilter);
-        }
+            
+            mediaSession = new MediaSessionCompat(globalContext, "PUSH_MEDIA");
 
-        Log.d(TAG, "Awesome Notifications broadcasters initialized");
+            Log.d(TAG, "Awesome Notifications broadcasters initialized");
+        }
 
         getApplicationLifeCycle();
     }
