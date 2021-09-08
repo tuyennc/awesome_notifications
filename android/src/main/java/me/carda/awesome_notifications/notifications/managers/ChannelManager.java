@@ -76,7 +76,9 @@ public class ChannelManager {
     public static NotificationChannelModel getChannelByKey(Context context, String channelKey){
 
         NotificationChannelModel channelModel = shared.get(context, Definitions.SHARED_CHANNELS, channelKey);
-        channelModel.refreshIconResource(context);
+        if(channelModel != null){
+            channelModel.refreshIconResource(context);
+        }
 
         return channelModel;
     }

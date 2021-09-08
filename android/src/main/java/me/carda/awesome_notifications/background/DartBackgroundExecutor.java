@@ -1,7 +1,11 @@
 package me.carda.awesome_notifications.background;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -16,6 +20,7 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.dart.DartExecutor;
 import io.flutter.embedding.engine.dart.DartExecutor.DartCallback;
 import io.flutter.embedding.engine.loader.FlutterLoader;
+import io.flutter.embedding.engine.plugins.shim.ShimPluginRegistry;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -26,11 +31,13 @@ import io.flutter.view.FlutterCallbackInformation;
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.notifications.NotificationBuilder;
+import me.carda.awesome_notifications.notifications.broadcastReceivers.SilentActionReceiver;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationSource;
 import me.carda.awesome_notifications.notifications.models.NotificationModel;
 import me.carda.awesome_notifications.notifications.models.returnedData.ActionReceived;
 import me.carda.awesome_notifications.utils.DateUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
@@ -60,8 +67,6 @@ public class DartBackgroundExecutor implements MethodCallHandler {
     private final long silentCallbackHandle;
 
     private static DartBackgroundExecutor runningInstance;
-    private Runnable dartBgRunnable;
-    private Handler handler;
 
     public static void runBackgroundExecutor(
         Context context,
@@ -75,9 +80,29 @@ public class DartBackgroundExecutor implements MethodCallHandler {
                     dartCallbackHandle,
                     silentCallbackHandle
             );
+        }
+
+        if(!runningInstance.isRunning.get()){
             runningInstance.startExecute(context);
         }
     }
+
+    private static io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback
+            pluginRegistrantCallback;
+
+    /**
+     * Sets the {@code io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback} used to
+     * register plugins with the newly spawned isolate.
+     *
+     * <p>Note: this is only necessary for applications using the V1 engine embedding API as plugins
+     * are automatically registered via reflection in the V2 engine embedding API. If not set,
+     * background message callbacks will not be able to utilize functionality from other plugins.
+     */
+    public static void setPluginRegistrant(
+            io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback callback) {
+        pluginRegistrantCallback = callback;
+    }
+
 
     public DartBackgroundExecutor(long dartCallbackHandle, long silentCallbackHandle){
         this.dartCallbackHandle = dartCallbackHandle;
@@ -125,51 +150,56 @@ public class DartBackgroundExecutor implements MethodCallHandler {
             return;
         }
 
-        dartBgRunnable = new Runnable() {
-            @Override
-            public void run() {
+        // giving time to debug attach (only for tests)
+//        try {
+//            Thread.sleep(4000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
-                backgroundFlutterEngine = new FlutterEngine(applicationContext);
+        Handler handler = new Handler(Looper.getMainLooper());
+        Runnable dartBgRunnable =
+            () -> {
 
-                FlutterInjector flutterInjector = FlutterInjector.instance();
-                FlutterLoader loader = flutterInjector.flutterLoader();
+                Log.i(TAG, "Initializing Flutter global instance.");
 
+                FlutterInjector.instance().flutterLoader().startInitialization(applicationContext.getApplicationContext());
+                FlutterInjector.instance().flutterLoader().ensureInitializationCompleteAsync(
+                        applicationContext.getApplicationContext(),
+                        null,
+                        handler,
+                        () -> {
+                            String appBundlePath = FlutterInjector.instance().flutterLoader().findAppBundlePath();
+                            AssetManager assets = applicationContext.getApplicationContext().getAssets();
 
-                if (!loader.initialized()) {
-                    loader.startInitialization(applicationContext);
-                }
+                            Log.i(TAG, "Creating background FlutterEngine instance.");
+                            backgroundFlutterEngine =
+                                    new FlutterEngine(applicationContext.getApplicationContext());
 
-                loader.ensureInitializationComplete(
-                    applicationContext,
-                    null
-                );
+                            // We need to create an instance of `FlutterEngine` before looking up the
+                            // callback. If we don't, the callback cache won't be initialized and the
+                            // lookup will fail.
+                            FlutterCallbackInformation flutterCallback =
+                                    FlutterCallbackInformation.lookupCallbackInformation(callbackHandle);
 
-                FlutterCallbackInformation flutterCallback =
-                        FlutterCallbackInformation.lookupCallbackInformation(callbackHandle);
+                            DartExecutor executor = backgroundFlutterEngine.getDartExecutor();
+                            initializeReverseMethodChannel(executor);
 
-                if(flutterCallback == null){
-                    closeBackgroundIsolate();
-                    return;
-                }
+                            // The pluginRegistrantCallback should only be set in the V1 embedding as
+                            // plugin registration is done via reflection in the V2 embedding.
+                            if (pluginRegistrantCallback != null) {
+                                pluginRegistrantCallback.registerWith(
+                                        new ShimPluginRegistry(backgroundFlutterEngine));
+                            }
 
-                String appBundlePath = loader.findAppBundlePath();
-                AssetManager assets = applicationContext.getAssets();
-                DartExecutor executor = backgroundFlutterEngine.getDartExecutor();
+                            Log.i(TAG, "Executing background FlutterEngine instance.");
+                            DartCallback dartCallback =
+                                    new DartCallback(assets, appBundlePath, flutterCallback);
+                            executor.executeDartCallback(dartCallback);
+                        });
 
-                initializeReverseMethodChannel(executor);
+            };
 
-                DartCallback dartCallback =
-                        new DartCallback(assets, appBundlePath, flutterCallback);
-                executor.executeDartCallback(dartCallback);
-            }
-        };
-
-        // TODO run dart code in background thread, instead of the main one
-        /* HandlerThread bgThread = new HandlerThread("BackgroundSilentThread");
-        bgThread.start();
-        handler = new Handler(bgThread.getLooper());*/
-//
-        handler = new Handler(Looper.getMainLooper());
         handler.post(dartBgRunnable);
     }
 
@@ -180,22 +210,25 @@ public class DartBackgroundExecutor implements MethodCallHandler {
 
     public void closeBackgroundIsolate() {
         if (!isNotRunning()) {
+
             isRunning.set(false);
-
-            if(backgroundFlutterEngine != null){
-                backgroundFlutterEngine.destroy();
-                backgroundFlutterEngine = null;
-            }
-
-            if(handler != null){
-                handler.removeCallbacks(dartBgRunnable);
-                handler = null;
-            }
-
             runningInstance = null;
-        }
 
-        exit(0);
+            Handler handler = new Handler(Looper.getMainLooper());
+            Runnable dartBgRunnable =
+                    () -> {
+
+                        Log.i(TAG, "Shutting down background FlutterEngine instance.");
+
+                        if(backgroundFlutterEngine != null){
+                            backgroundFlutterEngine.destroy();
+                            backgroundFlutterEngine = null;
+                        }
+
+                    };
+
+            handler.post(dartBgRunnable);
+        }
     }
 
     public void dischargeNextSilentExecution(){

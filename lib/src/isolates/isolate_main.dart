@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -23,6 +24,10 @@ void dartIsolateMain() {
         await channelMethodIsolateCallbackHandle(call);
         break;
 
+      case CHANNEL_METHOD_ISOLATE_SHUTDOWN:
+        await channelMethodIsolateShutdown(call);
+        break;
+
       default:
         throw UnimplementedError("${call.method} has not been implemented");
     }
@@ -30,6 +35,17 @@ void dartIsolateMain() {
 
   // for last, the native channel is initialize to allow to call CHANNEL_METHOD_SILENCED_CALLBACK
   _channel.invokeMethod<void>(CHANNEL_METHOD_INITIALIZE);
+}
+
+/// This method handle the silent callback as a flutter plugin
+Future<void> channelMethodIsolateShutdown(MethodCall call) async {
+  try {
+
+  } catch (e) {
+    print(
+        "Awesome Notifications FCM: An error occurred in your background messaging handler:");
+    print(e);
+  }
 }
 
 /// This method handle the silent callback as a flutter plugin
@@ -64,7 +80,14 @@ Future<bool> receiveSilentAction(Map<String, dynamic> arguments) async {
 
   Map<String, dynamic> actionMap = Map<String, dynamic>.from(arguments[CHANNEL_METHOD_RECEIVED_ACTION]);
   final ReceivedAction receivedAction = ReceivedAction().fromMap(actionMap);
-  await onActionDataHandle(receivedAction);
+
+  try {
+    onActionDataHandle(receivedAction);
+  } catch (e, stacktrace) {
+    print( "Got an unknown Silent Action callback error: ${e.toString()}");
+    print(stacktrace);
+    return false;
+  }
 
   return true;
 }

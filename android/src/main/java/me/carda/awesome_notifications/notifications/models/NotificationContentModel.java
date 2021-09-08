@@ -9,6 +9,7 @@ import java.util.Random;
 
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
+import me.carda.awesome_notifications.notifications.NotificationBuilder;
 import me.carda.awesome_notifications.notifications.enumerators.MediaSource;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationActionType;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLayout;

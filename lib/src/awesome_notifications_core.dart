@@ -29,6 +29,7 @@ import 'package:awesome_notifications/src/models/received_models/received_notifi
 import 'package:awesome_notifications/src/utils/assert_utils.dart';
 import 'package:awesome_notifications/src/utils/bitmap_utils.dart';
 import 'package:awesome_notifications/src/utils/date_utils.dart';
+import 'package:awesome_notifications/src/utils/assert_utils.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 class AwesomeNotifications {
@@ -202,8 +203,10 @@ class AwesomeNotifications {
     return result2;
   }
 
+  String silentBGActionTypeKey = AssertUtils.toSimpleEnumString(NotificationActionType.SilentBackgroundAction)!;
+
   Future<dynamic> _handleMethod(MethodCall call) async {
-    Map<String, dynamic> arguments = Map<String, dynamic>.from(call.arguments);
+    Map<String, dynamic> arguments = (call.arguments as Map).cast<String, dynamic>();
 
     switch (call.method) {
 
@@ -212,7 +215,11 @@ class AwesomeNotifications {
         return;
 
       case CHANNEL_METHOD_SILENT_ACTION:
-        receiveSilentAction((call.arguments as Map).cast<String, dynamic>());
+        if(arguments[CHANNEL_METHOD_RECEIVED_ACTION][NOTIFICATION_ACTION_TYPE] == silentBGActionTypeKey) {
+          compute(receiveSilentAction, arguments);
+        } else {
+          receiveSilentAction(arguments);
+        }
         return;
 
       case CHANNEL_METHOD_NOTIFICATION_DISPLAYED:

@@ -24,7 +24,6 @@ const INITIALIZE_CHANNELS = 'initializeChannels';
 const NOTIFICATION_CONTENT = 'content';
 const NOTIFICATION_SCHEDULE = 'schedule';
 const NOTIFICATION_BUTTONS = 'actionButtons';
-const NOTIFICATION_SILENT_ACTION = 'silentAction';
 
 const APP_LIFECYCLE_FOREGROUND = 'FOREGROUND';
 const APP_LIFECYCLE_BACKGROUND = 'BACKGROUND';
@@ -81,6 +80,7 @@ const CHANNEL_METHOD_GET_LOCAL_TIMEZONE_IDENTIFIER =
     'getLocalTimeZoneIdentifier';
 
 const CHANNEL_METHOD_ISOLATE_CALLBACK = 'isolateCallbackReference';
+const CHANNEL_METHOD_ISOLATE_SHUTDOWN = 'isolateShutdown';
 const CHANNEL_METHOD_DART_CALLBACK = 'dartCallbackReference';
 
 const DRAWABLE_RESOURCE_REFERENCE = 'drawable';

@@ -156,6 +156,22 @@ Future<void> sendSilentActionNotification(BuildContext context, int id) async {
           title: 'Notification SilentAction type',
           body: 'This notification will be received without bring the app to foreground',
           notificationActionType: NotificationActionType.SilentAction,
+          autoDismissible: false,
+          payload: {'secret-command': 'block_user'}));
+}
+
+Future<void> sendSilentBackgroundActionNotification(BuildContext context, int id) async {
+  bool isAllowed = await requireUserNotificationPermissions(context);
+  if(!isAllowed) return;
+
+  await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+          id: id,
+          channelKey: 'basic_channel',
+          title: 'Notification SilentBackgroundAction type',
+          body: 'This notification will run on BG thread without UI and without bring the app to foreground',
+          notificationActionType: NotificationActionType.SilentBackgroundAction,
+          autoDismissible: false,
           payload: {'secret-command': 'block_user'}));
 }
 

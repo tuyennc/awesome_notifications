@@ -19,8 +19,7 @@ enum NotificationActionType {
   /// Do not forces the app to go foreground, but runs on main thread, accept visual elements and can be interrupt if main app gets terminated.
   SilentAction,
 
-  // TODO missing implementation. Flutter engine does not accept to run on background thread (yet).
   /// Do not forces the app to go foreground and runs on background, not accepting any visual elements. The execution is totally
   /// apart from app lifecycle and will not be interrupt if the app goes terminated / killed.
-  // SilentBackgroundThread
+  SilentBackgroundAction
 }

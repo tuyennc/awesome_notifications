@@ -276,17 +276,24 @@ class App extends StatefulWidget {
 
       // receive silent request
       case NotificationActionType.SilentAction:
-        Fluttertoast.showToast(
-            msg: 'Silent action received',
-            backgroundColor: Colors.blueAccent,
-            textColor: Colors.white,
-            fontSize: 16
-        );
+      case NotificationActionType.SilentBackgroundAction:
 
+        // Prints the action received on console for debug
         print('"ReceivedAction": ${receivedAction.toString()}');
 
-        // Give time to toast shows while the app is terminated
-        sleep(Duration(seconds:2));
+        // SilentBackgroundAction does not accept UI elements
+        if(receivedAction.notificationActionType == NotificationActionType.SilentAction){
+          // Show some visual on screen to the user
+          Fluttertoast.showToast(
+              msg: 'Silent action received',
+              backgroundColor: Colors.blueAccent,
+              textColor: Colors.white,
+              fontSize: 16
+          );
+
+          // Give time to toast shows if the app is terminated
+          sleep(Duration(seconds:2));
+        }
         return;
 
       // disabled actions never reach this point, they die

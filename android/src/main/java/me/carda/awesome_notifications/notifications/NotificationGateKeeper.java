@@ -17,7 +17,6 @@ import me.carda.awesome_notifications.notifications.managers.DismissedManager;
 import me.carda.awesome_notifications.notifications.models.NotificationModel;
 import me.carda.awesome_notifications.notifications.models.returnedData.ActionReceived;
 import me.carda.awesome_notifications.notifications.models.returnedData.NotificationReceived;
-import me.carda.awesome_notifications.utils.DateUtils;
 
 public class NotificationGateKeeper {
 
@@ -93,7 +92,7 @@ public class NotificationGateKeeper {
 
     public static Boolean SendBroadcastKeepOnTopAction(Context context, ActionReceived actionReceived){
 
-        Boolean success = false;
+        boolean success = false;
 
         Intent intent = new Intent(Definitions.BROADCAST_KEEP_ON_TOP);
         intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) actionReceived.toMap());
@@ -122,10 +121,8 @@ public class NotificationGateKeeper {
             case DisabledAction:
                 return false;
 
-            /*case SilentBackgroundThread:
-                break;*/
-
-            case silentAction:
+            case SilentAction:
+            case SilentBackgroundAction:
                 if(AwesomeNotificationsPlugin.appLifeCycle != NotificationLifeCycle.AppKilled){
                     try {
                         ActionReceived actionReceived = new ActionReceived(notificationModel.content);
@@ -142,7 +139,6 @@ public class NotificationGateKeeper {
                     }
                 }
                 break;
-
         }
 
         Intent serviceIntent =
@@ -161,20 +157,5 @@ public class NotificationGateKeeper {
             serviceIntent);
 
         return true;
-/*
-        Intent intent = new Intent(Definitions.BROADCAST_KEEP_ON_TOP);
-        intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) notificationModel.toMap());
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        try {
-
-            LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
-            success = broadcastManager.sendBroadcast(intent);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return success;*/
     }
 }

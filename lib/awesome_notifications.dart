@@ -4,8 +4,6 @@ import 'dart:typed_data';
 
 import 'package:awesome_notifications/src/models/received_models/received_action.dart';
 import 'package:awesome_notifications/src/models/received_models/received_notification.dart';
-import 'package:awesome_notifications/src/models/received_models/silent_action.dart';
-import 'package:flutter/cupertino.dart';
 
 export 'definitions.dart';
 export 'src/awesome_notifications_core.dart';
@@ -35,7 +33,6 @@ export 'src/models/notification_schedule.dart';
 export 'src/models/notification_calendar.dart';
 export 'src/models/notification_interval.dart';
 
-export 'src/models/received_models/silent_action.dart';
 export 'src/models/received_models/received_action.dart';
 export 'src/models/received_models/notification_model.dart';
 export 'src/models/received_models/received_notification.dart';

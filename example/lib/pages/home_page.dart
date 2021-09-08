@@ -342,6 +342,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     onPressed: () => sendBringToForegroundNotification(context, 15)),
                 SimpleButton('Send notification with SilentAction',
                     onPressed: () => sendSilentActionNotification(context, 15)),
+                SimpleButton('Send notification with SilentBackgroundAction',
+                    onPressed: () => sendSilentBackgroundActionNotification(context, 15)),
                 SimpleButton('Send notification with KeepOnTopAction',
                     onPressed: () => sendKeepOnTopActionNotification(context, 15)),
                 SimpleButton('Send notification with DisabledAction',

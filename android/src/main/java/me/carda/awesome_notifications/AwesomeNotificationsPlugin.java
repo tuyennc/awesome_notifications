@@ -96,13 +96,13 @@ public class AwesomeNotificationsPlugin
     private static final String TAG = "AwesomeNotificationsPlugin";
 
     private static boolean isInitialized = false;
+
     private Activity initialActivity;
     private MethodChannel pluginChannel;
     private Context applicationContext;
+    private IntentFilter intentFilter;
 
     public static MediaSessionCompat mediaSession;
-
-    public static IntentFilter intentFilter;
 
     public static String getMainTargetClassName() {
         return mainTargetClassName;
@@ -117,9 +117,9 @@ public class AwesomeNotificationsPlugin
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
         AttachAwesomeNotificationsPlugin(
-            applicationContext != null ? applicationContext :
+            //applicationContext != null ? applicationContext :
                 flutterPluginBinding.getApplicationContext(),
-            pluginChannel != null ? pluginChannel :
+            //pluginChannel != null ? pluginChannel :
                 new MethodChannel(
                     flutterPluginBinding.getBinaryMessenger(),
                     Definitions.CHANNEL_FLUTTER_PLUGIN
@@ -133,24 +133,6 @@ public class AwesomeNotificationsPlugin
         pluginChannel = channel;
         pluginChannel.setMethodCallHandler(this);
 
-        mediaSession = new MediaSessionCompat(applicationContext, "PUSH_MEDIA");
-
-        if(intentFilter == null){
-
-            intentFilter = new IntentFilter();
-
-            intentFilter.addAction(Definitions.BROADCAST_CREATED_NOTIFICATION);
-            intentFilter.addAction(Definitions.BROADCAST_DISPLAYED_NOTIFICATION);
-            intentFilter.addAction(Definitions.BROADCAST_DISMISSED_NOTIFICATION);
-            intentFilter.addAction(Definitions.BROADCAST_SILENT_ACTION);
-            intentFilter.addAction(Definitions.BROADCAST_KEEP_ON_TOP);
-            intentFilter.addAction(Definitions.BROADCAST_MEDIA_BUTTON);
-
-            LocalBroadcastManager manager = LocalBroadcastManager.getInstance(applicationContext);
-            manager.registerReceiver(this, intentFilter);
-
-        }
-
         NotificationScheduler.refreshScheduleNotifications(context);
 
         if(AwesomeNotificationsPlugin.debug)
@@ -159,7 +141,16 @@ public class AwesomeNotificationsPlugin
 
     private void detachAwesomeNotificationsPlugin(Context context) {
 
-        applicationContext = null;
+        pluginChannel.setMethodCallHandler(null);
+        pluginChannel = null;
+
+        if(intentFilter != null) {
+            LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+            manager.unregisterReceiver(this);
+            intentFilter = null;
+        }
+
+        mediaSession = null;
 
         if (AwesomeNotificationsPlugin.debug)
             Log.d(TAG, "Awesome Notifications detached from Android " + Build.VERSION.SDK_INT);
@@ -171,6 +162,27 @@ public class AwesomeNotificationsPlugin
 
     @Override
     public void onActivityStarted(Activity activity) {
+
+        Context globalContext = activity.getApplicationContext();
+        mediaSession = new MediaSessionCompat(globalContext, "PUSH_MEDIA");
+
+        if(intentFilter == null){
+
+            intentFilter = new IntentFilter();
+
+            intentFilter.addAction(Definitions.BROADCAST_CREATED_NOTIFICATION);
+            intentFilter.addAction(Definitions.BROADCAST_DISPLAYED_NOTIFICATION);
+            intentFilter.addAction(Definitions.BROADCAST_DISMISSED_NOTIFICATION);
+            intentFilter.addAction(Definitions.BROADCAST_KEEP_ON_TOP);
+
+            intentFilter.addAction(Definitions.BROADCAST_SILENT_ACTION);
+
+            LocalBroadcastManager manager = LocalBroadcastManager.getInstance(globalContext);
+            manager.registerReceiver(this, intentFilter);
+        }
+
+        Log.d(TAG, "Awesome Notifications broadcasters initialized");
+
         getApplicationLifeCycle();
     }
 
