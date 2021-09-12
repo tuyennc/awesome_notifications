@@ -22,6 +22,10 @@ public enum Definitions {
     public static let  BROADCAST_KEEP_ON_TOP = "broadcast.awesome_notifications.KEEP_ON_TOP"
     public static let  EXTRA_BROADCAST_MESSAGE = "notification"
 
+    public static let  ACTION_HANDLE = "actionHandle"
+    public static let  SILENT_HANDLE = "silentHandle"
+    public static let  DART_BG_HANDLE = "dartBgHandle"
+    
     public static let  PUSH_NOTIFICATION_CONTENT = "content"
     public static let  PUSH_NOTIFICATION_SCHEDULE = "schedule"
     public static let  PUSH_NOTIFICATION_BUTTONS = "actionButtons"
@@ -61,6 +65,7 @@ public enum Definitions {
     public static let  CHANNEL_METHOD_NEW_FCM_TOKEN = "newTokenReceived"
     public static let  CHANNEL_METHOD_IS_FCM_AVAILABLE = "isFirebaseAvailable"
 
+    public static let  CHANNEL_METHOD_SET_ACTION_HANDLE = "setActionHandle"
     public static let  CHANNEL_METHOD_SET_NOTIFICATION_CHANNEL = "setNotificationChannel"
     public static let  CHANNEL_METHOD_REMOVE_NOTIFICATION_CHANNEL = "removeNotificationChannel"
 

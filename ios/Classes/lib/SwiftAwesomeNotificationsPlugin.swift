@@ -46,7 +46,6 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 debugPrint("Received an invalid awesome notification action content. Notification action ignored.")
             }
             
-            
             if(originalUserCenterDelegate != nil && originalDelegateHasDidReceive){
                 originalUserCenterDelegate!.userNotificationCenter!(center, didReceive: response, withCompletionHandler: completionHandler)
             }
@@ -529,6 +528,10 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     try channelMethodInitialize(call: call, result: result)
 					return
 				
+                case Definitions.CHANNEL_METHOD_SET_ACTION_HANDLE:
+                    try channelMethodSetActionHandle(call: call, result: result)
+                    return
+                    
 				case Definitions.CHANNEL_METHOD_GET_DRAWABLE_DATA:
                     try channelMethodGetDrawableData(call: call, result: result)
 					return;
@@ -748,11 +751,13 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     private func channelMethodInitialize(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
 	
 		let platformParameters:[String:Any?] = call.arguments as? [String:Any?] ?? [:]
+        let dartBgHandle:Int64? = platformParameters[Definitions.DART_BG_HANDLE] as? Int64 ?? 0
 		let defaultIconPath:String? = platformParameters[Definitions.DEFAULT_ICON] as? String
 		let channelsData:[Any] = platformParameters[Definitions.INITIALIZE_CHANNELS] as? [Any] ?? []
 
 		try setDefaultConfigurations(
 			defaultIconPath,
+            dartBgHandle,
 			channelsData
 		)
         
@@ -761,6 +766,16 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 		fireBackgroundLostEvents()
 		
 		result(true)
+    }
+
+    private func channelMethodSetActionHandle(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
+        
+        let platformParameters:[String:Any?] = call.arguments as? [String:Any?] ?? [:]
+        let actionHandle:Int64? = platformParameters[Definitions.ACTION_HANDLE] as? Int64 ?? 0
+        
+        DefaultManager.setActionCallback(actionHandle)
+            
+        result(true)
     }
 
     private func channelMethodGetDrawableData(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
@@ -1052,7 +1067,9 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 #endif
     
-    private func setDefaultConfigurations(_ defaultIconPath:String?, _ channelsData:[Any]) throws {
+    private func setDefaultConfigurations(_ defaultIconPath:String?,_ dartBgHandle:Int64?,_ channelsData:[Any]) throws {
+        
+        DefaultManager.setDartBgCallback(dartBgHandle)
         
         for anyData in channelsData {
             if let channelData = anyData as? [String : Any?] {
