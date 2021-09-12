@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // Necessary to get called by didChangeAppLifecycleState
     WidgetsBinding.instance!.addObserver(this);
 
-    // Necessary to request the user to send notifications
+    // Necessary to request the user permission to send notifications
     requestNotificationPermissions();
 
     // Only after set at least one method, the notification's events are delivered
@@ -160,7 +160,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    AwesomeNotifications().dispose();
     WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }

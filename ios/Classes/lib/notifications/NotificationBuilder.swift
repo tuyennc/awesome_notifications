@@ -339,38 +339,33 @@ public class NotificationBuilder {
             for button in pushNotification.actionButtons! {
                 
                 let action:UNNotificationAction?
-                                
-                switch button.buttonType {
                 
-                    case .InputField:
-                        action = UNTextInputNotificationAction(
-                            identifier: button.key!,
-                            title: button.label!,
-                            options: [.foreground]
-                        )
+                var options:UNNotificationActionOptions = []
+
+                switch button.notificationActionType {
+
+                    case .BringToForeground:
+                        options = [.foreground]
                         break
-                        
-                    case .Default:
-                        action = UNNotificationAction(
-                            identifier: button.key!,
-                            title: button.label!,
-                            options: [.foreground]
-                        )
-                        
+
                     case .DisabledAction:
-                        action = UNNotificationAction(
-                            identifier: button.key!,
-                            title: button.label!,
-                            options: []
-                        )
-                    
-                    default:
-                        action = UNNotificationAction(
-                            identifier: button.key!,
-                            title: button.label!,
-                            options: [.foreground]
-                        )
+                        options = [.destructive]
                         break
+                }
+
+                if button.requireInputText {
+                    action = UNTextInputNotificationAction(
+                        identifier: button.key!,
+                        title: button.label!,
+                        options: options
+                    )
+                }
+                else {
+                    action = UNNotificationAction(
+                        identifier: button.key!,
+                        title: button.label!,
+                        options: options
+                    )
                 }
                 
                 temporaryCategory.append(button.key!)

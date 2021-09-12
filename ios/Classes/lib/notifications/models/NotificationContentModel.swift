@@ -25,7 +25,7 @@ public class NotificationContentModel : AbstractModel {
     public var largeIcon: String?
     public var bigPicture: String?
     public var hideLargeIconOnExpand: Bool?
-    public var autoCancel: Bool?
+    public var autoDismissible: Bool?
     public var displayOnForeground: Bool?
     public var displayOnBackground: Bool?
     public var defaultColor: Int64?
@@ -36,6 +36,7 @@ public class NotificationContentModel : AbstractModel {
     public var privacy: NotificationPrivacy?
     public var privateMessage: String?
 
+    public var notificationActionType: NotificationActionType?
     public var notificationLayout: NotificationLayout?
 
     public var createdSource: NotificationSource?
@@ -62,7 +63,7 @@ public class NotificationContentModel : AbstractModel {
         self.largeIcon             = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_LARGE_ICON, arguments: arguments)
         self.bigPicture            = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BIG_PICTURE, arguments: arguments)
         self.hideLargeIconOnExpand = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_HIDE_LARGE_ICON_ON_EXPAND, arguments: arguments)
-        self.autoCancel            = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_AUTO_CANCEL, arguments: arguments)
+        self.autoDismissible       = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_AUTO_DISMISSIBLE, arguments: arguments)
         self.displayOnForeground   = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_DISPLAY_ON_FOREGROUND, arguments: arguments)
         self.displayOnBackground   = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_DISPLAY_ON_BACKGROUND, arguments: arguments)
         self.defaultColor          = MapUtils<Int64>.getValueOrDefault(reference: Definitions.NOTIFICATION_DEFAULT_COLOR, arguments: arguments)
@@ -73,6 +74,7 @@ public class NotificationContentModel : AbstractModel {
         self.privacy            = EnumUtils<NotificationPrivacy>.getEnumOrDefault(reference: Definitions.NOTIFICATION_PRIVACY, arguments: arguments)
         self.privateMessage     = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_PRIVATE_MESSAGE, arguments: arguments)
         
+        self.notificationActionType = EnumUtils<NotificationActionType>.getEnumOrDefault(reference: Definitions.NOTIFICATION_ACTION_TYPE, arguments: arguments)
         self.notificationLayout = EnumUtils<NotificationLayout>.getEnumOrDefault(reference: Definitions.NOTIFICATION_LAYOUT, arguments: arguments)
         
         self.createdSource      = EnumUtils<NotificationSource>.getEnumOrDefault(reference: Definitions.NOTIFICATION_CREATED_SOURCE, arguments: arguments)
@@ -102,7 +104,7 @@ public class NotificationContentModel : AbstractModel {
         if(self.locked != nil){ mapData[Definitions.NOTIFICATION_LOCKED] = self.locked }
         if(self.bigPicture != nil){ mapData[Definitions.NOTIFICATION_BIG_PICTURE] = self.bigPicture }
         if(self.hideLargeIconOnExpand != nil){ mapData[Definitions.NOTIFICATION_HIDE_LARGE_ICON_ON_EXPAND] = self.hideLargeIconOnExpand }
-        if(self.autoCancel != nil){ mapData[Definitions.NOTIFICATION_AUTO_CANCEL] = self.autoCancel }
+        if(self.autoDismissible != nil){ mapData[Definitions.NOTIFICATION_AUTO_DISMISSIBLE] = self.autoDismissible }
         if(self.displayOnForeground != nil){ mapData[Definitions.NOTIFICATION_DISPLAY_ON_FOREGROUND] = self.displayOnForeground }
         if(self.displayOnBackground != nil){ mapData[Definitions.NOTIFICATION_DISPLAY_ON_BACKGROUND] = self.displayOnBackground }
         if(self.defaultColor != nil){ mapData[Definitions.NOTIFICATION_DEFAULT_COLOR] = self.defaultColor }
@@ -111,6 +113,7 @@ public class NotificationContentModel : AbstractModel {
         if(self.ticker != nil){ mapData[Definitions.NOTIFICATION_TICKER] = self.ticker }
         if(self.privacy != nil){ mapData[Definitions.NOTIFICATION_PRIVACY] = self.privacy?.rawValue }
         if(self.privateMessage != nil){ mapData[Definitions.NOTIFICATION_PRIVATE_MESSAGE] = self.privateMessage }
+        if(self.notificationActionType != nil){ mapData[Definitions.NOTIFICATION_ACTION_TYPE] = self.notificationActionType?.rawValue }
         if(self.notificationLayout != nil){ mapData[Definitions.NOTIFICATION_LAYOUT] = self.notificationLayout?.rawValue }
         if(self.createdSource != nil){ mapData[Definitions.NOTIFICATION_CREATED_SOURCE] = self.createdSource?.rawValue }
         if(self.createdLifeCycle != nil){ mapData[Definitions.NOTIFICATION_CREATED_LIFECYCLE] = self.createdLifeCycle?.rawValue }

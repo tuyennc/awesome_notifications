@@ -316,6 +316,7 @@ class _AppState extends State<App> {
   void dispose() {
     MediaPlayerCentral.stop();
     MediaPlayerCentral.dispose();
+    AwesomeNotifications().dispose();
     super.dispose();
   }
 
@@ -327,10 +328,10 @@ class _AppState extends State<App> {
 
       // These routes are declared in a separated file called routes.dart
       initialRoute: PAGE_HOME,
-      routes: materialRoutes,
+        routes: materialRoutes,
 
-      title: App.name,
-      color: App.mainColor,
+        title: App.name,
+        color: App.mainColor,
 
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),

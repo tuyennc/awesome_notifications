@@ -12,22 +12,27 @@ public class NotificationButtonModel : AbstractModel {
     var key:String?
     var icon:String?
     var label:String?
+
     var enabled:Bool?
-    var autoCancel:Bool?
-    var buttonType:ActionButtonType?
+    var autoDismissible:Bool?
+    var requireInputText:Bool?
+    var notificationActionType:NotificationActionType?
     
     public init(){}
     
     public func fromMap(arguments: [String : Any?]?) -> AbstractModel? {
         if(arguments == nil){ return self }
        
-        self.key        = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BUTTON_KEY, arguments: arguments)
-        self.icon       = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BUTTON_ICON, arguments: arguments)
-        self.label      = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BUTTON_LABEL, arguments: arguments)
-        self.enabled    = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_ENABLED, arguments: arguments)
-        self.autoCancel = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_AUTO_CANCEL, arguments: arguments)
+        self.key   = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BUTTON_KEY, arguments: arguments)
+        self.icon  = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BUTTON_ICON, arguments: arguments)
+        self.label = MapUtils<String>.getValueOrDefault(reference: Definitions.NOTIFICATION_BUTTON_LABEL, arguments: arguments)
+
+        self.enabled          = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_ENABLED, arguments: arguments)
+        self.autoDismissible  = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_AUTO_DISMISSIBLE, arguments: arguments)
+        self.requireInputText = MapUtils<Bool>.getValueOrDefault(reference: Definitions.NOTIFICATION_REQUIRE_INPUT_TEXT, arguments: arguments)
         
-        self.buttonType = EnumUtils<ActionButtonType>.getEnumOrDefault(reference: Definitions.NOTIFICATION_BUTTON_TYPE, arguments: arguments)
+        self.notificationActionType = EnumUtils<NotificationActionType>.getEnumOrDefault(
+            reference: Definitions.NOTIFICATION_ACTION_TYPE, arguments: arguments)
         
         return self
     }
@@ -38,10 +43,12 @@ public class NotificationButtonModel : AbstractModel {
         if(key != nil) {mapData[Definitions.NOTIFICATION_BUTTON_KEY] = self.key}
         if(icon != nil) {mapData[Definitions.NOTIFICATION_BUTTON_ICON] = self.icon}
         if(label != nil) {mapData[Definitions.NOTIFICATION_BUTTON_LABEL] = self.label}
+
         if(enabled != nil) {mapData[Definitions.NOTIFICATION_ENABLED] = self.enabled}
-        if(autoCancel != nil) {mapData[Definitions.NOTIFICATION_AUTO_CANCEL] = self.autoCancel}
+        if(autoDismissible != nil) {mapData[Definitions.NOTIFICATION_AUTO_DISMISSIBLE] = self.autoDismissible}
+        if(requireInputText != nil) {mapData[Definitions.NOTIFICATION_REQUIRE_INPUT_TEXT] = self.requireInputText}
         
-        if(buttonType != nil) {mapData[Definitions.NOTIFICATION_BUTTON_TYPE] = self.buttonType?.rawValue}
+        if(notificationActionType != nil) {mapData[Definitions.NOTIFICATION_ACTION_TYPE] = self.notificationActionType?.rawValue}
         
         return mapData
     }
