@@ -33,7 +33,6 @@ import 'package:awesome_notifications/src/utils/assert_utils.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 class AwesomeNotifications {
-  static String? rootNativePath;
 
   static String utcTimeZoneIdentifier = "UTC";
   static String localTimeZoneIdentifier = "UTC";
@@ -137,11 +136,10 @@ class AwesomeNotifications {
 
   factory AwesomeNotifications() => _instance;
 
-  @visibleForTesting
-  AwesomeNotifications.private(MethodChannel channel) : _channel = channel;
+  AwesomeNotifications._private(MethodChannel channel) : _channel = channel;
 
   static final AwesomeNotifications _instance =
-      AwesomeNotifications.private(const MethodChannel(CHANNEL_FLUTTER_PLUGIN));
+      AwesomeNotifications._private(const MethodChannel(CHANNEL_FLUTTER_PLUGIN));
 
   /// INITIALIZING METHODS *********************************************
 
@@ -203,7 +201,7 @@ class AwesomeNotifications {
     return result2;
   }
 
-  String silentBGActionTypeKey = AssertUtils.toSimpleEnumString(NotificationActionType.SilentBackgroundAction)!;
+  String _silentBGActionTypeKey = AssertUtils.toSimpleEnumString(NotificationActionType.SilentBackgroundAction)!;
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     Map<String, dynamic> arguments = (call.arguments as Map).cast<String, dynamic>();
@@ -215,7 +213,7 @@ class AwesomeNotifications {
         return;
 
       case CHANNEL_METHOD_SILENT_ACTION:
-        if(arguments[CHANNEL_METHOD_RECEIVED_ACTION][NOTIFICATION_ACTION_TYPE] == silentBGActionTypeKey) {
+        if(arguments[CHANNEL_METHOD_RECEIVED_ACTION][NOTIFICATION_ACTION_TYPE] == _silentBGActionTypeKey) {
           compute(receiveSilentAction, arguments);
         } else {
           receiveSilentAction(arguments);

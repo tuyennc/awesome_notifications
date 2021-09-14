@@ -123,22 +123,30 @@ public class NotificationBuilder {
         }
     }
 
-    public Intent buildNotificationIntentFromModel(Context context, String ActionReference, NotificationModel notificationModel){
-
+    public Intent buildNotificationIntentFromModel(Context context, String actionReference, NotificationModel notificationModel){
         Class<?> targetClass = getTargetClass(context, notificationModel.content.notificationActionType);
-        return buildNotificationIntentFromModel(context, ActionReference, notificationModel, targetClass);
+        return buildNotificationIntentFromModel(context, actionReference, notificationModel, notificationModel.content.notificationActionType.toString(), targetClass);
     }
 
-    public Intent buildNotificationIntentFromModel(Context context, String ActionReference, NotificationModel notificationModel, Class<?> targetClass){
+    public Intent buildNotificationIntentFromModel(Context context, String actionReference, NotificationModel notificationModel, String notificationActionType){
+        Class<?> targetClass = getTargetClass(context, notificationModel.content.notificationActionType);
+        return buildNotificationIntentFromModel(context, actionReference, notificationModel, notificationActionType, targetClass);
+    }
+
+    public Intent buildNotificationIntentFromModel(Context context, String actionReference, NotificationModel notificationModel, Class<?> targetClass){
+        return buildNotificationIntentFromModel(context, actionReference, notificationModel, notificationModel.content.notificationActionType.toString(), targetClass) ;
+    }
+
+    public Intent buildNotificationIntentFromModel(Context context, String actionReference, NotificationModel notificationModel, String notificationActionType, Class<?> targetClass){
         Intent intent = new Intent(context, targetClass);
 
-        intent.setAction(ActionReference);
+        intent.setAction(actionReference);
 
         String jsonData = notificationModel.toJson();
         intent.putExtra(Definitions.NOTIFICATION_JSON, jsonData);
         intent.putExtra(Definitions.NOTIFICATION_ID, notificationModel.content.id);
         intent.putExtra(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, notificationModel.content.autoDismissible);
-        intent.putExtra(Definitions.NOTIFICATION_ACTION_TYPE, notificationModel.content.notificationActionType.toString());
+        intent.putExtra(Definitions.NOTIFICATION_ACTION_TYPE, notificationActionType);
 
         return intent;
     }
@@ -181,14 +189,13 @@ public class NotificationBuilder {
             ActionReceived actionModel = new ActionReceived(notificationModel.content);
             actionModel.setActualActionAttributes();
 
+            String notificationActionTypeText = intent.getStringExtra(Definitions.NOTIFICATION_ACTION_TYPE);
+            actionModel.notificationActionType =
+                    notificationActionTypeText == null ? NotificationActionType.BringToForeground :
+                            NotificationActionType.valueOf(notificationActionTypeText);
+
             if (isButtonAction){
                 actionModel.actionKey = intent.getStringExtra(Definitions.NOTIFICATION_BUTTON_KEY);
-
-                for (NotificationButtonModel button: notificationModel.actionButtons)
-                    if(button.key.equals(actionModel.actionKey)){
-                        actionModel.notificationActionType = button.notificationActionType;
-                        break;
-                    }
 
                 if(intent.getBooleanExtra(Definitions.NOTIFICATION_REQUIRE_INPUT_TEXT, false)){
                     actionModel.actionInput = getButtonInputText(intent, intent.getStringExtra(Definitions.NOTIFICATION_BUTTON_KEY));
@@ -496,6 +503,7 @@ public class NotificationBuilder {
                 context,
                 Definitions.NOTIFICATION_BUTTON_ACTION_PREFIX + "_" + buttonProperties.key,
                 notificationModel,
+                buttonProperties.notificationActionType.toString(),
                 targetClass
             );
 

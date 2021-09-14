@@ -1,6 +1,6 @@
-# awesome_notifications_example
+# simple_awesome_example
 
-Demonstrates how to use the awesome_notifications plugin.
+A simple example of how to use Awesome Notifications
 
 ## Getting Started
 

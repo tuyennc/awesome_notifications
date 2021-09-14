@@ -57,6 +57,16 @@ class NotificationActionButton extends Model {
     this.notificationActionType = NotificationActionType.SilentAction,
   });
 
+  NotificationActionButton.asDefaultSilentBackgroundAction({
+    required this.key,
+    required this.label,
+    required this.icon,
+    this.enabled = true,
+    this.autoDismissible = true,
+    this.requireInputText = false,
+    this.notificationActionType = NotificationActionType.SilentBackgroundAction,
+  });
+
   NotificationActionButton.asDisabledAction({
     required this.key,
     required this.label,
@@ -74,7 +84,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = false,
     this.requireInputText = false,
-    this.notificationActionType = NotificationActionType.SilentAction,
+    this.notificationActionType = NotificationActionType.KeepOnTopAction,
   });
 
   NotificationActionButton.asInputText({

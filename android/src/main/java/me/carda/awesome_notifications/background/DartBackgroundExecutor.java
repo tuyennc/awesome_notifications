@@ -240,6 +240,9 @@ public class DartBackgroundExecutor implements MethodCallHandler {
                 e.printStackTrace();
             }
         }
+        else {
+            closeBackgroundIsolate();
+        }
     }
 
     private void finishDartBackgroundExecution(){

@@ -14,6 +14,7 @@ public class SilentActionReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
 
         NotificationModel notificationModel = NotificationBuilder.buildNotificationModelFromIntent(intent);
+
         NotificationBuilder.finalizeNotificationIntent(context, notificationModel, intent);
 
         if(NotificationBuilder.notificationIntentDisabledAction(intent)){

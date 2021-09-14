@@ -12,6 +12,7 @@ import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.background.DartBackgroundExecutor;
 import me.carda.awesome_notifications.background.DartBackgroundService;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationActionType;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
 import me.carda.awesome_notifications.notifications.managers.DismissedManager;
 import me.carda.awesome_notifications.notifications.models.NotificationModel;
@@ -115,7 +116,9 @@ public class NotificationGateKeeper {
 
     public static Boolean broadcastSilentData(Context context, NotificationModel notificationModel, Intent originalIntent){
 
-        switch (notificationModel.content.notificationActionType){
+        ActionReceived actionReceived = NotificationBuilder.buildNotificationActionFromNotificationModel(context, notificationModel, originalIntent);
+
+        switch (actionReceived.notificationActionType){
 
             case BringToForeground:
             case DisabledAction:
@@ -125,9 +128,6 @@ public class NotificationGateKeeper {
             case SilentBackgroundAction:
                 if(AwesomeNotificationsPlugin.appLifeCycle != NotificationLifeCycle.AppKilled){
                     try {
-                        ActionReceived actionReceived = new ActionReceived(notificationModel.content);
-                        actionReceived.setActualActionAttributes();
-
                         Intent intent = new Intent(Definitions.BROADCAST_SILENT_ACTION);
                         intent.putExtra(Definitions.EXTRA_BROADCAST_MESSAGE, (Serializable) actionReceived.toMap());
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
