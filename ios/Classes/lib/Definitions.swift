@@ -56,7 +56,8 @@ public enum Definitions {
     public static let  NOTIFICATION_SCHEDULE_REPEATS = "repeats"
     
     public static let  CHANNEL_FLUTTER_PLUGIN = "awesome_notifications"
-
+    public static let CHANNEL_METHOD_DART_CALLBACK = "dartCallbackReference"
+    
     public static let  CHANNEL_METHOD_INITIALIZE = "initialize"
     public static let  CHANNEL_METHOD_GET_DRAWABLE_DATA = "getDrawableData"
     public static let  CHANNEL_METHOD_CREATE_NOTIFICATION = "createNewNotification"
@@ -66,6 +67,7 @@ public enum Definitions {
     public static let  CHANNEL_METHOD_IS_FCM_AVAILABLE = "isFirebaseAvailable"
 
     public static let  CHANNEL_METHOD_SET_ACTION_HANDLE = "setActionHandle"
+    public static let  CHANNEL_METHOD_SILENCED_CALLBACK = "isolateCallbackReference"
     public static let  CHANNEL_METHOD_SET_NOTIFICATION_CHANNEL = "setNotificationChannel"
     public static let  CHANNEL_METHOD_REMOVE_NOTIFICATION_CHANNEL = "removeNotificationChannel"
 
@@ -125,12 +127,15 @@ public enum Definitions {
     public static let  NOTIFICATION_ACTION_KEY = "actionKey"
     public static let  NOTIFICATION_ACTION_INPUT = "actionInput"
     public static let  NOTIFICATION_JSON = "notificationJson"
+    public static let  NOTIFICATION_ACTION_TYPE = "notificationActionType"
 
     public static let  NOTIFICATION_ACTION_BUTTONS = "actionButtons"
     public static let  NOTIFICATION_BUTTON_KEY = "key"
     public static let  NOTIFICATION_BUTTON_ICON = "icon"
     public static let  NOTIFICATION_BUTTON_LABEL = "label"
-    public static let  NOTIFICATION_BUTTON_TYPE = "buttonType"
+    public static let  NOTIFICATION_AUTO_DISMISSIBLE = "autoDismissible"
+    public static let  NOTIFICATION_REQUIRE_INPUT_TEXT = "requireInputText"
+    public static let  NOTIFICATION_INPUT_TEXT = "inputText"
 
     public static let  NOTIFICATION_PAYLOAD = "payload"
     public static let  NOTIFICATION_INITIAL_FIXED_DATE = "fixedDate"
@@ -196,7 +201,7 @@ public enum Definitions {
         Definitions.NOTIFICATION_HIDE_LARGE_ICON_ON_EXPAND: false,
         Definitions.NOTIFICATION_ENABLED: true,
         Definitions.NOTIFICATION_SHOW_WHEN: true,
-        Definitions.NOTIFICATION_BUTTON_TYPE: ActionButtonType.Default,
+        Definitions.NOTIFICATION_ACTION_TYPE: NotificationActionType.BringToForeground,
         Definitions.NOTIFICATION_PAYLOAD: nil,
         Definitions.NOTIFICATION_ENABLE_VIBRATION: true,
         Definitions.NOTIFICATION_DEFAULT_COLOR: 0x000000,
