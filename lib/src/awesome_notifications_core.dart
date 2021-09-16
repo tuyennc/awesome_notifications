@@ -491,6 +491,12 @@ class AwesomeNotifications {
     await _channel.invokeMethod(CHANNEL_METHOD_CANCEL_SCHEDULE, id);
   }
 
+  /// Dismiss all active notifications with the same channel key,
+  /// without cancel the active respective schedules
+  Future<void>  dismissAllNotificationsByChannelKey(String channelKey) async {
+    await _channel.invokeMethod(CHANNEL_METHOD_DISMISS_NOTIFICATION_BY_CHANNEL_KEY, channelKey);
+  }
+
   /// Dismiss all active notifications, without cancel the active respective schedules
   Future<void> dismissAllNotifications() async {
     await _channel.invokeMethod(CHANNEL_METHOD_DISMISS_ALL_NOTIFICATIONS);

@@ -13,6 +13,8 @@ import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificati
 public class NotificationModel extends Model {
 
     public boolean groupSummary = false;
+    public String remoteHistory;
+
     public NotificationContentModel content;
     public NotificationScheduleModel schedule;
     public List<NotificationButtonModel> actionButtons;
@@ -28,13 +30,13 @@ public class NotificationModel extends Model {
     @Override
     public NotificationModel fromMap(Map<String, Object> parameters){
 
-        content = extractNotificationContent(Definitions.PUSH_NOTIFICATION_CONTENT, parameters);
+        content = extractNotificationContent(Definitions.NOTIFICATION_CONTENT, parameters);
 
         // required
         if(content == null) return null;
 
-        schedule = extractNotificationSchedule(Definitions.PUSH_NOTIFICATION_SCHEDULE, parameters);
-        actionButtons = extractNotificationButtons(Definitions.PUSH_NOTIFICATION_BUTTONS, parameters);
+        schedule = extractNotificationSchedule(Definitions.NOTIFICATION_SCHEDULE, parameters);
+        actionButtons = extractNotificationButtons(Definitions.NOTIFICATION_ACTION_BUTTONS, parameters);
 
         return this;
     }
@@ -45,17 +47,17 @@ public class NotificationModel extends Model {
         if(content == null) return null;
         Map<String, Object> dataMap = new HashMap<String, Object>();
 
-        dataMap.put(Definitions.PUSH_NOTIFICATION_CONTENT, content.toMap());
+        dataMap.put(Definitions.NOTIFICATION_CONTENT, content.toMap());
 
         if(schedule != null)
-            dataMap.put(Definitions.PUSH_NOTIFICATION_SCHEDULE, schedule.toMap());
+            dataMap.put(Definitions.NOTIFICATION_SCHEDULE, schedule.toMap());
 
         if(actionButtons != null && !actionButtons.isEmpty()){
             List<Object> buttonsData = new ArrayList<>();
             for(NotificationButtonModel button : actionButtons){
                 buttonsData.add(button.toMap());
             }
-            dataMap.put(Definitions.PUSH_NOTIFICATION_BUTTONS, buttonsData);
+            dataMap.put(Definitions.NOTIFICATION_ACTION_BUTTONS, buttonsData);
         }
 
         return dataMap;

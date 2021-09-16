@@ -53,7 +53,6 @@ import static java.lang.System.exit;
 public class DartBackgroundExecutor implements MethodCallHandler {
     private static final String TAG = "DartBackgroundExec";
 
-    public static final NotificationBuilder notificationBuilder = new NotificationBuilder();
     private static final BlockingQueue<Intent> silentDataQueue = new LinkedBlockingDeque<Intent>();
 
     public static Context applicationContext;

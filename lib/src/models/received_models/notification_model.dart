@@ -34,7 +34,7 @@ class NotificationModel extends Model {
             Map<String, dynamic>.from(mapData[NOTIFICATION_SCHEDULE]);
 
         if (scheduleData.containsKey(NOTIFICATION_SCHEDULE_INTERVAL)) {
-          schedule = NotificationInterval().fromMap(scheduleData);
+          schedule = NotificationInterval(interval: 0).fromMap(scheduleData);
         } else {
           schedule = NotificationCalendar().fromMap(scheduleData);
         }

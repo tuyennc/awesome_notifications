@@ -9,7 +9,7 @@ class NotificationInterval extends NotificationSchedule {
   /// Notification Schedule based on calendar components. At least one date parameter is required.
   /// [timeZone] time zone identifier as reference of this schedule date. (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
   NotificationInterval({
-    this.interval,
+    required this.interval,
     String? timeZone,
     bool allowWhileIdle = false,
     bool repeats = false,

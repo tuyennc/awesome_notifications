@@ -41,9 +41,9 @@ public interface Definitions {
     String SILENT_HANDLE = "silentHandle";
     String DART_BG_HANDLE = "dartBgHandle";
 
-    String PUSH_NOTIFICATION_CONTENT = "content";
-    String PUSH_NOTIFICATION_SCHEDULE = "schedule";
-    String PUSH_NOTIFICATION_BUTTONS = "actionButtons";
+    String NOTIFICATION_CONTENT = "content";
+    String NOTIFICATION_SCHEDULE = "schedule";
+    String NOTIFICATION_ACTION_BUTTONS = "actionButtons";
     String NOTIFICATION_SILENT_ACTION = "silentAction";
     String NOTIFICATION_RECEIVED_ACTION = "receivedAction";
 
@@ -76,6 +76,7 @@ public interface Definitions {
     String CHANNEL_METHOD_GET_NEXT_DATE = "getNextDate";
     String CHANNEL_METHOD_RESET_BADGE = "resetBadge";
     String CHANNEL_METHOD_DISMISS_NOTIFICATION = "dismissNotification";
+    String CHANNEL_METHOD_DISMISS_NOTIFICATION_BY_CHANNEL_KEY = "dismissNotificationByChannelKey";
     String CHANNEL_METHOD_CANCEL_NOTIFICATION = "cancelNotification";
     String CHANNEL_METHOD_CANCEL_SCHEDULE = "cancelSchedule";
     String CHANNEL_METHOD_DISMISS_ALL_NOTIFICATIONS = "dismissAllNotifications";
@@ -135,6 +136,8 @@ public interface Definitions {
     String NOTIFICATION_LAYOUT = "notificationLayout";
     String NOTIFICATION_TITLE = "title";
     String NOTIFICATION_BODY = "body";
+    String NOTIFICATION_MESSAGE = "message";
+    String NOTIFICATION_TIMESTAMP = "timestamp";
     String NOTIFICATION_SUMMARY = "summary";
     String NOTIFICATION_SHOW_WHEN = "showWen";
     String NOTIFICATION_ACTION_KEY = "actionKey";
@@ -142,7 +145,7 @@ public interface Definitions {
     String NOTIFICATION_JSON = "notificationJson";
     String NOTIFICATION_ACTION_TYPE = "notificationActionType";
 
-    String NOTIFICATION_ACTION_BUTTONS = "actionButtons";
+    String NOTIFICATION_MESSAGES = "messages";
     String NOTIFICATION_BUTTON_KEY = "key";
     String NOTIFICATION_BUTTON_ICON = "icon";
     String NOTIFICATION_BUTTON_LABEL = "label";
@@ -173,6 +176,7 @@ public interface Definitions {
     String NOTIFICATION_PRIVATE_MESSAGE = "privateMessage";
     String NOTIFICATION_ONLY_ALERT_ONCE = "onlyAlertOnce";
     String NOTIFICATION_CHANNEL_KEY = "channelKey";
+    String NOTIFICATION_CHANNEL_HASH_KEY = "channelHashKey";
     String NOTIFICATION_CHANNEL_NAME = "channelName";
     String NOTIFICATION_CHANNEL_DESCRIPTION = "channelDescription";
     String NOTIFICATION_CHANNEL_SHOW_BADGE = "channelShowBadge";

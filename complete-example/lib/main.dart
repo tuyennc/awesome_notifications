@@ -251,7 +251,7 @@ class App extends StatefulWidget {
 
     // If the user sent a message through an notification, just
     // display the text as a example
-    if (!StringUtils.isNullOrEmpty(receivedAction.buttonKeyInput)) {
+    if (!StringUtils.isNullOrEmpty(receivedAction.actionInput)) {
       processInputTextReceived(receivedAction);
       return;
     }

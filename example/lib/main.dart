@@ -19,6 +19,14 @@ void main() {
           defaultColor: MyApp.mainColor
       ),
       NotificationChannel(
+          channelKey: 'jhonny_group',
+          channelName: 'Jhonny chat group',
+          channelDescription: 'This is a simple example channel of a chat group',
+          channelShowBadge: true,
+          importance: NotificationImportance.Max,
+          defaultColor: MyApp.mainColor
+      ),
+      NotificationChannel(
           channelKey: 'background_channel',
           channelName: 'Background Channel',
           channelDescription: 'This channel is silent and do not increment badge counter',
@@ -40,33 +48,35 @@ class MyApp extends StatelessWidget {
   static const String name = 'Awesome Notifications - Example App';
   static const Color mainColor = Colors.deepPurple;
 
+  static String _toSimpleEnum(NotificationLifeCycle lifeCycle) => lifeCycle.toString().split('.').last;
+
   /// Use this method to detect when a new notification or a schedule is created
   static Future <void> onCreatedNotificationMethod(ReceivedNotification receivedNotification) async {
     Fluttertoast.showToast(
-        msg: 'Notification created on ${receivedNotification.createdLifeCycle.toString().split('.').last}',
+        msg: 'Notification created on ${_toSimpleEnum(receivedNotification.createdLifeCycle!)}',
         toastLength: Toast.LENGTH_SHORT,
         backgroundColor: MyApp.mainColor,
-        gravity: ToastGravity.CENTER
+        gravity: ToastGravity.BOTTOM
     );
   }
 
   /// Use this method to detect every time that a new notification is displayed
   static Future <void> onDisplayedNotificationMethod(ReceivedNotification receivedNotification) async {
     Fluttertoast.showToast(
-        msg: 'Notification displayed on ${receivedNotification.displayedLifeCycle.toString().split('.').last}',
+        msg: 'Notification displayed on ${_toSimpleEnum(receivedNotification.displayedLifeCycle!)}',
         toastLength: Toast.LENGTH_SHORT,
         backgroundColor: MyApp.mainColor,
-        gravity: ToastGravity.CENTER
+        gravity: ToastGravity.BOTTOM
     );
   }
 
   /// Use this method to detect if the user dismissed a notification
   static Future <void> onDismissedNotificationMethod(ReceivedAction receivedAction) async {
     Fluttertoast.showToast(
-        msg: 'Notification dismissed on ${receivedAction.dismissedLifeCycle.toString().split('.').last}',
+        msg: 'Notification dismissed on ${_toSimpleEnum(receivedAction.dismissedLifeCycle!)}',
         toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        gravity: ToastGravity.CENTER
+        backgroundColor: Colors.orange,
+        gravity: ToastGravity.BOTTOM
     );
   }
 
@@ -79,10 +89,10 @@ class MyApp extends StatelessWidget {
     // Default Notification behavior, that brings the app to foreground
       case NotificationActionType.BringToForeground:
         Fluttertoast.showToast(
-            msg: 'Action received on ${receivedAction.actionLifeCycle.toString().split('.').last}',
+            msg: 'Action received on ${_toSimpleEnum(receivedAction.actionLifeCycle!)}',
             toastLength: Toast.LENGTH_SHORT,
             backgroundColor: MyApp.mainColor,
-            gravity: ToastGravity.CENTER
+            gravity: ToastGravity.BOTTOM
         );
         break;
 
@@ -92,14 +102,28 @@ class MyApp extends StatelessWidget {
 
     // Receive silent notification actions without bring the app to foreground
       case NotificationActionType.SilentAction: // Runs on main thread
+
+        if(
+          receivedAction.channelKey == 'jhonny_group' &&
+          receivedAction.actionKey == 'REPLY'
+        ){
+            NotificationUtils.createMessagingNotification(
+              channelKey: 'jhonny_group',
+              chatName: 'Jhonny\'s Group',
+              username: 'You',
+              largeIcon: 'asset://assets/images/remix-disc.jpg',
+              message: receivedAction.actionInput,
+            );
+        }
+
         Fluttertoast.showToast(
             msg:
-              ( receivedAction.buttonKeyInput.isEmpty ) ?
-                'Silent Notification Received on ${receivedAction.actionLifeCycle.toString().split('.').last}' :
-                'MSG: ${receivedAction.buttonKeyInput}',
+              ( receivedAction.actionInput.isEmpty ) ?
+                'Silent Notification Received on ${_toSimpleEnum(receivedAction.actionLifeCycle!)}' :
+                'MSG: ${receivedAction.actionInput}',
             toastLength: Toast.LENGTH_SHORT,
-            backgroundColor: MyApp.mainColor,
-            gravity: ToastGravity.CENTER
+            backgroundColor: Colors.lightBlue,
+            gravity: ToastGravity.BOTTOM
         );
         debugPrint('$receivedAction');
         return;
@@ -175,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
 
-    requestPermissionToSendNotifications();
+    NotificationUtils.requestPermissionToSendNotifications();
 
     AwesomeNotifications().setListeners(
         onCreatedNotificationMethod: MyApp.onCreatedNotificationMethod,
@@ -186,147 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  int createUniqueID(int maxValue){
-    Random random = new Random();
-    return random.nextInt(maxValue);
-  }
-
-  Future<bool> requestPermissionToSendNotifications() async {
-    bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
-    if(!isAllowed){
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Allow Notifications'),
-            content: Text('Our app would like to send you notifications'),
-            actions: [
-              TextButton(
-                  onPressed: () async {
-                    isAllowed = await AwesomeNotifications().requestPermissionToSendNotifications();
-                  },
-                  child: Text(
-                    'Allow',
-                    style: TextStyle(color: MyApp.mainColor, fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-              ),
-              TextButton(
-                  onPressed: (){ Navigator.pop(context); },
-                  child: Text(
-                    'Dont\'t Allow',
-                    style: TextStyle(color: Colors.grey, fontSize: 18),
-                  )
-              )
-            ],
-          )
-      );
-    }
-    return isAllowed;
-  }
-
-  void createSimpleNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed) =>
-            !isAllowed ? false :
-            AwesomeNotifications().createNotification(
-                content: NotificationContent(
-                    id: createUniqueID(AwesomeNotifications.maxID),
-                    channelKey: 'simple_channel',
-                    title: 'Simple Notification',
-                    body: 'This is a simple notification'
-                )
-            ));
-  }
-
-  void createBigPictureNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed){
-          if(isAllowed){
-
-            String randomBigPicture = 'https://picsum.photos/id/${createUniqueID(1000)}/200/300';
-            String randomLargeIcon = 'https://picsum.photos/id/${createUniqueID(1000)}/50';
-
-            AwesomeNotifications().createNotification(
-                content: NotificationContent(
-                    id: createUniqueID(AwesomeNotifications.maxID),
-                    channelKey: 'simple_channel',
-                    title: 'Big Picture Notification',
-                    body: 'This is a notification with a big picture',
-                    bigPicture: randomBigPicture,
-                    largeIcon: randomLargeIcon,
-                    notificationLayout: NotificationLayout.BigPicture
-                )
-            );
-          }
-        });
-  }
-
-  void createSilentNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed) =>
-            !isAllowed ? false :
-            AwesomeNotifications().createNotification(
-                content: NotificationContent(
-                    id: createUniqueID(AwesomeNotifications.maxID),
-                    channelKey: 'background_channel',
-                    title: 'Silent Notification',
-                    body: 'This is a silent notification to receive notification without bring the app to foreground',
-                ),
-                actionButtons: [
-                  NotificationActionButton(
-                      key: 'DISMISS',
-                      label: 'Cancel',
-                      notificationActionType: NotificationActionType.DisabledAction,
-                      autoDismissible: true
-                  ),
-                  NotificationActionButton(
-                    key: 'EXECUTE',
-                    label: 'Execute Now',
-                    notificationActionType: NotificationActionType.SilentAction,
-                  ),
-                  NotificationActionButton(
-                    key: 'REPLY',
-                    label: 'Reply',
-                    requireInputText: true,
-                    notificationActionType: NotificationActionType.SilentAction,
-                  ),
-                ]
-            ));
-  }
-
-  void createSilentBackgroundNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed) =>
-            !isAllowed ? false :
-            AwesomeNotifications().createNotification(
-                content: NotificationContent(
-                    id: createUniqueID(AwesomeNotifications.maxID),
-                    channelKey: 'background_channel',
-                    title: 'Silent Notification',
-                    body: 'This is a silent notification to run on background without UI'
-                ),
-                actionButtons: [
-                  NotificationActionButton(
-                      key: 'CANCEL',
-                      label: 'Cancel',
-                      notificationActionType: NotificationActionType.DisabledAction,
-                      autoDismissible: true
-                  ),
-                  NotificationActionButton(
-                      key: 'EXECUTE',
-                      label: 'Execute',
-                      notificationActionType: NotificationActionType.SilentBackgroundAction,
-                  ),
-                ]
-            ));
-  }
-
-  void dismissAllNotifications(){
-    AwesomeNotifications().dismissAllNotifications();
-  }
-
-  void cancelAllNotifications(){
-    AwesomeNotifications().cancelAll();
-  }
+  int _messageIncrement = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -340,29 +224,66 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: EdgeInsets.all(20),
         children: <Widget>[
           ElevatedButton(
-            onPressed: () => createSimpleNotification(),
+            onPressed: () => NotificationUtils.createSimpleNotification(),
             child: Text('Create simple notification'),
           ),
           ElevatedButton(
-            onPressed: () => createBigPictureNotification(),
+            onPressed: () => NotificationUtils.createBigPictureNotification(),
             child: Text('Create notification with big picture'),
           ),
           ElevatedButton(
-            onPressed: () => createSilentNotification(),
+            onPressed: () => NotificationUtils.createBigTextNotification(),
+            child: Text('Create notification with big text'),
+          ),
+          ElevatedButton(
+            onPressed: () =>
+              _messageIncrement++ % 4 < 2 ?
+                NotificationUtils.createMessagingNotification(
+                    channelKey: 'jhonny_group',
+                    chatName: 'Jhonny\'s Group',
+                    username: 'Jhonny',
+                    largeIcon: 'asset://assets/images/80s-disc.jpg',
+                    message: 'Jhonny\'s message $_messageIncrement',
+                ):
+                NotificationUtils.createMessagingNotification(
+                    channelKey: 'jhonny_group',
+                    chatName: 'Michael\'s Group',
+                    username: 'Michael',
+                  largeIcon: 'asset://assets/images/dj-disc.jpg',
+                    message: 'Michael\'s message $_messageIncrement',
+                ),
+            child: Text('Create messaging notification'),
+          ),
+          ElevatedButton(
+            onPressed: () => NotificationUtils.createSilentNotification(),
             child: Text('Create silent notification'),
           ),
           ElevatedButton(
-            onPressed: () => createSilentBackgroundNotification(),
+            onPressed: () => NotificationUtils.createSilentBackgroundNotification(),
             child: Text('Create silent background notification'),
           ),
           SizedBox(height: 40),
           ElevatedButton(
-            onPressed: () => dismissAllNotifications(),
+            onPressed: () => NotificationUtils.createScheduledNotification(),
+            child: Text('Create single scheduled notification'),
+          ),
+          ElevatedButton(
+            onPressed: () => NotificationUtils.createScheduleRepeatedNotification(),
+            child: Text('Create repeated scheduled notification'),
+          ),
+          SizedBox(height: 40),
+          ElevatedButton(
+            onPressed: () => NotificationUtils.dismissAllNotifications(),
             style: ElevatedButton.styleFrom(primary: Colors.red, textStyle: TextStyle(color: Colors.white)),
             child: Text('Dismiss all notifications from statusbar'),
           ),
           ElevatedButton(
-            onPressed: () => cancelAllNotifications(),
+            onPressed: () => NotificationUtils.dismissAllNotificationsByChannelKey('simple_channel'),
+            style: ElevatedButton.styleFrom(primary: Colors.red, textStyle: TextStyle(color: Colors.white)),
+            child: Text('Dismiss all notifications with same channel key'),
+          ),
+          ElevatedButton(
+            onPressed: () => NotificationUtils.cancelAllNotifications(),
             style: ElevatedButton.styleFrom(primary: Colors.red, textStyle: TextStyle(color: Colors.white)),
             child: Text('Cancel all notifications'),
           ),
@@ -405,5 +326,258 @@ class MyNotificationPage extends StatelessWidget {
         )
       ),
     );
+  }
+}
+
+class NotificationUtils {
+
+
+  static int createUniqueID(int maxValue){
+    Random random = new Random();
+    return random.nextInt(maxValue);
+  }
+
+  static Future<bool> requestPermissionToSendNotifications() async {
+    bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+    if(!isAllowed){
+      showDialog(
+          context: MyApp.navigatorKey.currentContext!,
+          builder: (context) => AlertDialog(
+            title: Text('Allow Notifications'),
+            content: Text('Our app would like to send you notifications'),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  isAllowed = await AwesomeNotifications().requestPermissionToSendNotifications();
+                },
+                child: Text(
+                  'Allow',
+                  style: TextStyle(color: MyApp.mainColor, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              TextButton(
+                  onPressed: (){ Navigator.pop(context); },
+                  child: Text(
+                    'Dont\'t Allow',
+                    style: TextStyle(color: Colors.grey, fontSize: 18),
+                  )
+              )
+            ],
+          )
+      );
+    }
+    return isAllowed;
+  }
+
+  static void createSimpleNotification(){
+    requestPermissionToSendNotifications()
+        .then((isAllowed) =>
+    !isAllowed ? false :
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: createUniqueID(AwesomeNotifications.maxID),
+            channelKey: 'simple_channel',
+            title: 'Simple Notification',
+            body: 'This is a simple notification'
+        )
+    ));
+  }
+
+  static void createMessagingNotification({
+    required String channelKey,
+    required String chatName,
+    required String username,
+    required String message,
+    String? largeIcon
+  }){
+    requestPermissionToSendNotifications()
+        .then((isAllowed) =>
+    !isAllowed ? false :
+    AwesomeNotifications().createNotification(
+        content:
+        NotificationContent(
+            id: createUniqueID(AwesomeNotifications.maxID),
+            channelKey: channelKey,
+            summary: chatName,
+            title: username,
+            body: message,
+            largeIcon: largeIcon,
+            notificationLayout: NotificationLayout.Messaging
+        ),
+        actionButtons: [
+          NotificationActionButton(
+            key: 'REPLY',
+            label: 'Reply',
+            requireInputText: true,
+            autoDismissible: true,
+            notificationActionType: NotificationActionType.SilentAction,
+          ),
+          NotificationActionButton(
+            key: 'READ',
+            label: 'Mark as Read',
+            autoDismissible: true,
+            notificationActionType: NotificationActionType.SilentAction,
+          )
+        ]
+    ));
+  }
+
+  static void createBigPictureNotification(){
+    requestPermissionToSendNotifications()
+        .then((isAllowed){
+      if(isAllowed){
+
+        AwesomeNotifications().createNotification(
+            content: NotificationContent(
+                id: createUniqueID(AwesomeNotifications.maxID),
+                channelKey: 'simple_channel',
+                title: 'Big Picture Notification',
+                body: 'This is a notification with a big picture',
+                bigPicture: 'asset://assets/images/balloons-in-sky.jpg',
+                largeIcon: 'asset://assets/images/80s-disc.jpg',
+                notificationLayout: NotificationLayout.BigPicture
+            )
+        );
+      }
+    });
+  }
+
+  static void createBigTextNotification(){
+    requestPermissionToSendNotifications()
+        .then((isAllowed){
+      if(isAllowed){
+
+        AwesomeNotifications().createNotification(
+            content: NotificationContent(
+                id: createUniqueID(AwesomeNotifications.maxID),
+                channelKey: 'simple_channel',
+                title: '<b>Big Picture</b> Notification',
+                body: '<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, '
+                    'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<br><br>'
+                    'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris '
+                    'nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in '
+                    'reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla '
+                    'pariatur',
+                notificationLayout: NotificationLayout.BigText
+            )
+        );
+      }
+    });
+  }
+
+  static void createSilentNotification(){
+    requestPermissionToSendNotifications()
+        .then((isAllowed) =>
+    !isAllowed ? false :
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: createUniqueID(AwesomeNotifications.maxID),
+          channelKey: 'background_channel',
+          title: 'Silent Notification',
+          body: 'This is a silent notification to receive notification without bring the app to foreground',
+        ),
+        actionButtons: [
+          NotificationActionButton(
+              key: 'DISMISS',
+              label: 'Cancel',
+              notificationActionType: NotificationActionType.DisabledAction,
+              autoDismissible: true
+          ),
+          NotificationActionButton(
+            key: 'EXECUTE',
+            label: 'Execute Now',
+            notificationActionType: NotificationActionType.SilentAction,
+          ),
+          NotificationActionButton(
+            key: 'REPLY',
+            label: 'Reply',
+            requireInputText: true,
+            notificationActionType: NotificationActionType.SilentAction,
+          ),
+        ]
+    ));
+  }
+
+  static void createSilentBackgroundNotification(){
+    requestPermissionToSendNotifications()
+        .then((isAllowed) =>
+    !isAllowed ? false :
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: createUniqueID(AwesomeNotifications.maxID),
+            channelKey: 'background_channel',
+            title: 'Silent Notification',
+            body: 'This is a silent notification to run on background without UI'
+        ),
+        actionButtons: [
+          NotificationActionButton(
+              key: 'CANCEL',
+              label: 'Cancel',
+              notificationActionType: NotificationActionType.DisabledAction,
+              autoDismissible: true
+          ),
+          NotificationActionButton(
+            key: 'EXECUTE',
+            label: 'Execute',
+            notificationActionType: NotificationActionType.SilentBackgroundAction,
+          ),
+        ]
+    ));
+  }
+
+  static void createScheduledNotification(){
+    requestPermissionToSendNotifications()
+        .then((isAllowed){
+      if(isAllowed){
+        int id = createUniqueID(AwesomeNotifications.maxID);
+        DateTime targetDate = DateTime.now();
+        targetDate = targetDate.add(Duration(minutes: 5));
+
+        AwesomeNotifications().createNotification(
+            content: NotificationContent(
+                id: id,
+                channelKey: 'simple_channel',
+                title: 'Notification Scheduled ($id)',
+                body: 'This notification was scheduled to be delivered at ${targetDate.toLocal().toIso8601String()}'
+            ),
+            schedule: NotificationCalendar.fromDate(
+                date: targetDate
+            )
+        );
+      }
+    });
+  }
+
+  static void createScheduleRepeatedNotification(){
+    requestPermissionToSendNotifications()
+        .then((isAllowed){
+      if(isAllowed){
+        int id = createUniqueID(AwesomeNotifications.maxID);
+        AwesomeNotifications().createNotification(
+            content: NotificationContent(
+                id: id,
+                channelKey: 'simple_channel',
+                title: 'Repeated Schedule ($id)',
+                body: 'This notification was scheduled to repeat every 10 seconds'
+            ),
+            schedule: NotificationInterval(
+                interval: 10,
+                repeats: true
+            )
+        );
+      }
+    });
+  }
+
+  static void dismissAllNotifications(){
+    AwesomeNotifications().dismissAllNotifications();
+  }
+
+  static void dismissAllNotificationsByChannelKey(String channelKey){
+    AwesomeNotifications().dismissAllNotificationsByChannelKey(channelKey);
+  }
+
+  static void cancelAllNotifications(){
+    AwesomeNotifications().cancelAll();
   }
 }

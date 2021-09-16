@@ -2,6 +2,7 @@ package me.carda.awesome_notifications.notifications.models;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -20,11 +21,14 @@ import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificati
 import me.carda.awesome_notifications.notifications.managers.ChannelManager;
 import me.carda.awesome_notifications.utils.BitmapUtils;
 import me.carda.awesome_notifications.utils.DateUtils;
+import me.carda.awesome_notifications.utils.ListUtils;
 import me.carda.awesome_notifications.utils.MapUtils;
 import me.carda.awesome_notifications.utils.StringUtils;
 
 @SuppressWarnings("unchecked")
 public class NotificationContentModel extends Model {
+
+    public boolean isRefreshNotification = false;
 
     public Integer id;
     public String channelKey;
@@ -32,7 +36,7 @@ public class NotificationContentModel extends Model {
     public String body;
     public String summary;
     public Boolean showWhen;
-    public List<Object> actionButtons;
+    public List<NotificationMessageModel> messages;
     public Map<String, String> payload;
     public String icon;
     public String largeIcon;
@@ -122,8 +126,6 @@ public class NotificationContentModel extends Model {
         largeIcon  = getValueOrDefault(arguments, Definitions.NOTIFICATION_LARGE_ICON, String.class);
         bigPicture = getValueOrDefault(arguments, Definitions.NOTIFICATION_BIG_PICTURE, String.class);
 
-        actionButtons = getValueOrDefault(arguments, Definitions.NOTIFICATION_ACTION_BUTTONS, List.class);
-
         payload = getValueOrDefault(arguments, Definitions.NOTIFICATION_PAYLOAD, Map.class);
 
         autoDismissible = getValueOrDefault(arguments, Definitions.NOTIFICATION_AUTO_DISMISSIBLE, Boolean.class);
@@ -132,7 +134,23 @@ public class NotificationContentModel extends Model {
 
         ticker = getValueOrDefault(arguments, Definitions.NOTIFICATION_TICKER, String.class);
 
+        messages = mapToMessages(arguments);
+
         return this;
+    }
+
+    public static List<NotificationMessageModel> mapToMessages(Map<String, Object> arguments){
+        List<NotificationMessageModel> messages = new ArrayList<>();
+        if(arguments != null && arguments.containsKey(Definitions.NOTIFICATION_MESSAGES)){
+            List<Map> messagesData = (List<Map>) arguments.get(Definitions.NOTIFICATION_MESSAGES);
+            if(!ListUtils.isNullOrEmpty(messagesData))
+                for(Map messageData : messagesData){
+                    NotificationMessageModel messageModel =
+                            new NotificationMessageModel().fromMap(messageData);
+                    messages.add(messageModel);
+                }
+        }
+        return messages;
     }
 
     @Override
@@ -172,8 +190,8 @@ public class NotificationContentModel extends Model {
         returnedObject.put(Definitions.NOTIFICATION_DISPLAYED_DATE, this.displayedDate);
         returnedObject.put(Definitions.NOTIFICATION_CREATED_DATE, this.createdDate);
 
-        if(this.actionButtons != null)
-            returnedObject.put(Definitions.NOTIFICATION_ACTION_BUTTONS, this.actionButtons);
+        if(this.messages != null)
+            returnedObject.put(Definitions.NOTIFICATION_MESSAGES, this.messages);
 
         if(this.autoDismissible != null)
             returnedObject.put(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, this.autoDismissible);
@@ -278,7 +296,7 @@ public class NotificationContentModel extends Model {
 
     private void validateLargeIcon(Context context) throws AwesomeNotificationException {
         if(
-                (!StringUtils.isNullOrEmpty(largeIcon) && !BitmapUtils.isValidBitmap(context, largeIcon))
+            (!StringUtils.isNullOrEmpty(largeIcon) && !BitmapUtils.isValidBitmap(context, largeIcon))
         )
             throw new AwesomeNotificationException("Invalid large icon '"+largeIcon+"'");
     }

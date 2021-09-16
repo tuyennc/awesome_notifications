@@ -1501,14 +1501,14 @@ void processDefaultActionReceived(BuildContext context, ReceivedAction actionRec
 void processInputTextReceived(ReceivedAction receivedNotification) {
   Future.delayed(const Duration(seconds: 2), () =>
     Fluttertoast.showToast(
-        msg: 'Msg: ' + receivedNotification.buttonKeyInput,
+        msg: 'Msg: ' + receivedNotification.actionKey,
         backgroundColor: App.mainColor,
         textColor: Colors.white,
     ));
 }
 
-void processMediaControls(actionReceived) {
-  switch (actionReceived.buttonKeyPressed) {
+void processMediaControls(ReceivedAction actionReceived) {
+  switch (actionReceived.actionKey) {
 
     case 'MEDIA_CLOSE':
       MediaPlayerCentral.stop();
@@ -1533,7 +1533,7 @@ void processMediaControls(actionReceived) {
 
   Fluttertoast.showToast(
       msg: 'Media: ' +
-          actionReceived.buttonKeyPressed.replaceFirst('MEDIA_', ''),
+          actionReceived.actionKey.replaceFirst('MEDIA_', ''),
       backgroundColor: App.mainColor,
       textColor: Colors.white);
 }

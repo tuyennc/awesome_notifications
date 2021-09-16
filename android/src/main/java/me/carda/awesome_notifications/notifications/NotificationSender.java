@@ -8,10 +8,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
 
+import java.util.List;
+
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
 
 import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
+import me.carda.awesome_notifications.Definitions;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
 import me.carda.awesome_notifications.notifications.enumerators.NotificationSource;
 import me.carda.awesome_notifications.notifications.exceptions.AwesomeNotificationException;
@@ -36,8 +39,6 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
 
     private Boolean created = false;
     private Boolean displayed = false;
-
-    private NotificationBuilder notificationBuilder = new NotificationBuilder();
 
     public static void send(
             Context context,
@@ -184,6 +185,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
         return  pushSummary;
     }
 
+    private boolean executionLocked = false;
     public NotificationModel showNotification(Context context, NotificationModel notificationModel) {
 
         try {
@@ -195,14 +197,21 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
                 (lifeCycle == NotificationLifeCycle.Foreground && notificationModel.content.displayOnForeground) ||
                 (lifeCycle == NotificationLifeCycle.Background && notificationModel.content.displayOnBackground)
             ){
-                Notification notification = notificationBuilder.createNotification(context, notificationModel);
+//                if(notificationModel.content.notificationLayout == NotificationLayout.Messaging){
+//                    if(!NotificationBuilder.builderLockWait()){
+//                        throw new AwesomeNotificationException("MessagingLayout was not available to use");
+//                    }
+//                    executionLocked = true;
+//                }
+
+                Notification notification = NotificationBuilder.createNotification(context, notificationModel);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
                     if(notificationModel.groupSummary){
                         NotificationModel pushSummary = _buildSummaryGroupNotification(notificationModel);
-                        Notification summaryNotification = notificationBuilder.createNotification(context, pushSummary, true);
+                        Notification summaryNotification = NotificationBuilder.createNotification(context, pushSummary, true);
                         notificationManager.notify(pushSummary.content.id, summaryNotification);
                     }
 
@@ -212,12 +221,22 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
                     NotificationManagerCompat notificationManagerCompat = NotificationBuilder.getAndroidNotificationManager(context);
                     notificationManagerCompat.notify(notificationModel.content.id.toString(), notificationModel.content.id, notification);
                 }
+
+                if(executionLocked){
+                    executionLocked = false;
+                    NotificationBuilder.builderUnlockWait();
+                }
             }
 
             return notificationModel;
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            if(executionLocked){
+                executionLocked = false;
+                NotificationBuilder.builderUnlockWait();
+            }
         }
         return null;
     }
@@ -238,6 +257,17 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.cancel(id.toString(), id);
                 notificationManager.cancel(id);
+            }
+        }
+    }
+
+    public static void dismissNotificationsByChannelKey(Context context, String channelKey) {
+        List<Notification> notificationList = NotificationBuilder.getAllAndroidActiveNotifications(context, channelKey);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            for(Notification notification : notificationList){
+                int id = notification.extras.getInt(Definitions.NOTIFICATION_ID);
+                NotificationSender.dismissNotification(context, id);
             }
         }
     }

@@ -9,8 +9,18 @@ class ReceivedAction extends ReceivedNotification {
   NotificationLifeCycle? actionLifeCycle;
   NotificationLifeCycle? dismissedLifeCycle;
 
-  String buttonKeyPressed = '';
-  String buttonKeyInput = '';
+  @Deprecated("Use actionKey instead")
+  String get buttonKeyPressed => actionKey;
+  @Deprecated("Use actionKey instead")
+  set buttonKeyPressed(String value) => actionKey = value;
+
+  @Deprecated("Use actionInput instead")
+  String get buttonKeyInput => actionInput;
+  @Deprecated("Use actionInput instead")
+  set buttonKeyInput(String value) => actionInput = value;
+
+  String actionKey = '';
+  String actionInput = '';
 
   String? actionDate;
   String? dismissedDate;
@@ -44,10 +54,10 @@ class ReceivedAction extends ReceivedNotification {
     dismissedDate =
         AssertUtils.extractValue<String>(dataMap, NOTIFICATION_DISMISSED_DATE);
 
-    buttonKeyPressed =
+    actionKey =
         AssertUtils.extractValue<String>(dataMap, NOTIFICATION_ACTION_KEY) ??
             '';
-    buttonKeyInput =
+    actionInput =
         AssertUtils.extractValue<String>(dataMap, NOTIFICATION_ACTION_INPUT) ??
             '';
 
@@ -67,8 +77,8 @@ class ReceivedAction extends ReceivedNotification {
           AssertUtils.toSimpleEnumString(notificationActionType),
         NOTIFICATION_DISMISSED_LIFECYCLE:
             AssertUtils.toSimpleEnumString(dismissedLifeCycle),
-        NOTIFICATION_ACTION_KEY: buttonKeyPressed,
-        NOTIFICATION_ACTION_INPUT: buttonKeyInput
+        NOTIFICATION_ACTION_KEY: actionKey,
+        NOTIFICATION_ACTION_INPUT: actionInput
       });
   }
 }

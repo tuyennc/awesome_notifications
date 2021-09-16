@@ -563,6 +563,10 @@ public class AwesomeNotificationsPlugin
                     channelMethodDismissNotification(call, result);
                     return;
 
+                case Definitions.CHANNEL_METHOD_DISMISS_NOTIFICATION_BY_CHANNEL_KEY:
+                    channelMethodDismissNotificationByChannelKey(call, result);
+                    return;
+
                 case Definitions.CHANNEL_METHOD_CANCEL_NOTIFICATION:
                     channelMethodCancelNotification(call, result);
                     return;
@@ -631,7 +635,7 @@ public class AwesomeNotificationsPlugin
         assert data != null;
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> scheduleData = (Map<String, Object>) data.get(Definitions.PUSH_NOTIFICATION_SCHEDULE);
+        Map<String, Object> scheduleData = (Map<String, Object>) data.get(Definitions.NOTIFICATION_SCHEDULE);
         String fixedDateString = (String) data.get(Definitions.NOTIFICATION_INITIAL_FIXED_DATE);
 
         assert scheduleData != null;
@@ -775,6 +779,20 @@ public class AwesomeNotificationsPlugin
 
         if(AwesomeNotificationsPlugin.debug)
             Log.d(TAG, "Notification id "+notificationId+" dismissed");
+
+        result.success(true);
+    }
+
+    private void channelMethodDismissNotificationByChannelKey(@NonNull MethodCall call, Result result) throws Exception {
+
+        String channelKey = call.arguments();
+        if(StringUtils.isNullOrEmpty(channelKey))
+            throw new AwesomeNotificationException("Invalid channel key");
+
+        NotificationSender.dismissNotificationsByChannelKey(applicationContext, channelKey);
+
+        if(AwesomeNotificationsPlugin.debug)
+            Log.d(TAG, "Notifications from channel "+channelKey+" dismissed");
 
         result.success(true);
     }

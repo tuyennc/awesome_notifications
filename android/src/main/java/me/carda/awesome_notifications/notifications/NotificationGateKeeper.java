@@ -103,9 +103,9 @@ public class NotificationGateKeeper {
             LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
             success = broadcastManager.sendBroadcast(intent);
 
-            if(success){
-                //Log.d(TAG, "Sent created to broadcast");
-            }
+//            if(success){
+//                Log.d(TAG, "Sent created to broadcast");
+//            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,7 +142,7 @@ public class NotificationGateKeeper {
         }
 
         Intent serviceIntent =
-            DartBackgroundExecutor.notificationBuilder.buildNotificationIntentFromModel(
+            NotificationBuilder.buildNotificationIntentFromModel(
                 context,
                 originalIntent.getAction(),
                 notificationModel,
