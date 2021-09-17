@@ -28,7 +28,7 @@ public class NotificationMessageModel extends Model {
     public NotificationMessageModel fromMap(Map<String, Object> arguments) {
 
         title   = getValueOrDefault(arguments, Definitions.NOTIFICATION_TITLE, String.class);
-        message = getValueOrDefault(arguments, Definitions.NOTIFICATION_MESSAGE, String.class);
+        message = getValueOrDefault(arguments, Definitions.NOTIFICATION_MESSAGES, String.class);
         largeIcon = getValueOrDefault(arguments, Definitions.NOTIFICATION_LARGE_ICON, String.class);
         timestamp = getValueOrDefault(arguments, Definitions.NOTIFICATION_TIMESTAMP, Long.class);
 
@@ -40,7 +40,7 @@ public class NotificationMessageModel extends Model {
         Map<String, Object> returnedObject = new HashMap<>();
 
         returnedObject.put(Definitions.NOTIFICATION_TITLE, title);
-        returnedObject.put(Definitions.NOTIFICATION_MESSAGE, message);
+        returnedObject.put(Definitions.NOTIFICATION_MESSAGES, message);
         returnedObject.put(Definitions.NOTIFICATION_LARGE_ICON, largeIcon);
         returnedObject.put(Definitions.NOTIFICATION_TIMESTAMP, timestamp);
 

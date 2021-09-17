@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.carda.simple_awesome_example">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
    <application
         android:label="simple_awesome_example"
         android:icon="@mipmap/ic_launcher">

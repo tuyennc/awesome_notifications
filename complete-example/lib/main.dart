@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:awesome_notifications_example/utils/notification_util.dart';
 import 'package:flutter/material.dart' hide DateUtils;

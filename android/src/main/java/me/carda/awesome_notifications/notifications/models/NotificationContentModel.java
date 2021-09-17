@@ -134,23 +134,9 @@ public class NotificationContentModel extends Model {
 
         ticker = getValueOrDefault(arguments, Definitions.NOTIFICATION_TICKER, String.class);
 
-        messages = mapToMessages(arguments);
+        messages = mapToMessages(getValueOrDefault(arguments, Definitions.NOTIFICATION_MESSAGES, List.class));
 
         return this;
-    }
-
-    public static List<NotificationMessageModel> mapToMessages(Map<String, Object> arguments){
-        List<NotificationMessageModel> messages = new ArrayList<>();
-        if(arguments != null && arguments.containsKey(Definitions.NOTIFICATION_MESSAGES)){
-            List<Map> messagesData = (List<Map>) arguments.get(Definitions.NOTIFICATION_MESSAGES);
-            if(!ListUtils.isNullOrEmpty(messagesData))
-                for(Map messageData : messagesData){
-                    NotificationMessageModel messageModel =
-                            new NotificationMessageModel().fromMap(messageData);
-                    messages.add(messageModel);
-                }
-        }
-        return messages;
     }
 
     @Override
@@ -190,9 +176,6 @@ public class NotificationContentModel extends Model {
         returnedObject.put(Definitions.NOTIFICATION_DISPLAYED_DATE, this.displayedDate);
         returnedObject.put(Definitions.NOTIFICATION_CREATED_DATE, this.createdDate);
 
-        if(this.messages != null)
-            returnedObject.put(Definitions.NOTIFICATION_MESSAGES, this.messages);
-
         if(this.autoDismissible != null)
             returnedObject.put(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, this.autoDismissible);
 
@@ -228,7 +211,31 @@ public class NotificationContentModel extends Model {
         if(this.privateMessage != null)
             returnedObject.put(Definitions.NOTIFICATION_PRIVATE_MESSAGE, this.privateMessage);
 
+        if(this.messages != null)
+            returnedObject.put(Definitions.NOTIFICATION_MESSAGES, messagesToMap(this.messages));
+
         return returnedObject;
+    }
+
+    public static List<Map> messagesToMap(List<NotificationMessageModel> messages){
+        List<Map> returnedMessages = new ArrayList<>();
+        if(!ListUtils.isNullOrEmpty(messages)){
+            for (NotificationMessageModel messageModel : messages) {
+                returnedMessages.add(messageModel.toMap());
+            }
+        }
+        return returnedMessages;
+    }
+
+    public static List<NotificationMessageModel> mapToMessages(List<Map> messagesData){
+        List<NotificationMessageModel> messages = new ArrayList<>();
+        if(!ListUtils.isNullOrEmpty(messagesData))
+            for(Map<String, Object> messageData : messagesData){
+                NotificationMessageModel messageModel =
+                        new NotificationMessageModel().fromMap(messageData);
+                messages.add(messageModel);
+            }
+        return messages;
     }
 
     @Override

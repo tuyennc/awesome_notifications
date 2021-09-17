@@ -107,12 +107,13 @@ class MyApp extends StatelessWidget {
           receivedAction.channelKey == 'jhonny_group' &&
           receivedAction.actionKey == 'REPLY'
         ){
-            NotificationUtils.createMessagingNotification(
+            await NotificationUtils.createMessagingNotification(
               channelKey: 'jhonny_group',
               chatName: 'Jhonny\'s Group',
               username: 'You',
               largeIcon: 'asset://assets/images/remix-disc.jpg',
               message: receivedAction.actionInput,
+              checkPermission: false
             );
         }
 
@@ -325,7 +326,6 @@ class MyNotificationPage extends StatelessWidget {
 
 class NotificationUtils {
 
-
   static int createUniqueID(int maxValue){
     Random random = new Random();
     return random.nextInt(maxValue);
@@ -363,65 +363,66 @@ class NotificationUtils {
     return isAllowed;
   }
 
-  static void createSimpleNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed) =>
-    !isAllowed ? false :
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: createUniqueID(AwesomeNotifications.maxID),
-            channelKey: 'simple_channel',
-            title: 'Simple Notification',
-            body: 'This is a simple notification'
-        )
-    ));
+  static Future<void> createSimpleNotification({
+    bool checkPermission = true
+  }) async {
+    bool isAllowed = !checkPermission || await requestPermissionToSendNotifications();
+    if (isAllowed)
+      await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+              id: createUniqueID(AwesomeNotifications.maxID),
+              channelKey: 'simple_channel',
+              title: 'Simple Notification',
+              body: 'This is a simple notification'
+          )
+      );
   }
 
-  static void createMessagingNotification({
+  static Future<void> createMessagingNotification({
     required String channelKey,
     required String chatName,
     required String username,
     required String message,
-    String? largeIcon
-  }){
-    requestPermissionToSendNotifications()
-        .then((isAllowed) =>
-    !isAllowed ? false :
-    AwesomeNotifications().createNotification(
-        content:
-        NotificationContent(
-            id: createUniqueID(AwesomeNotifications.maxID),
-            channelKey: channelKey,
-            summary: chatName,
-            title: username,
-            body: message,
-            largeIcon: largeIcon,
-            notificationLayout: NotificationLayout.Messaging
-        ),
-        actionButtons: [
-          NotificationActionButton(
-            key: 'REPLY',
-            label: 'Reply',
-            requireInputText: true,
-            autoDismissible: false,
-            notificationActionType: NotificationActionType.SilentAction,
+    String? largeIcon,
+    bool checkPermission = true
+  }) async {
+    bool isAllowed = !checkPermission || await requestPermissionToSendNotifications();
+    if (isAllowed)
+      await AwesomeNotifications().createNotification(
+          content:
+          NotificationContent(
+              id: createUniqueID(AwesomeNotifications.maxID),
+              channelKey: channelKey,
+              summary: chatName,
+              title: username,
+              body: message,
+              largeIcon: largeIcon,
+              notificationLayout: NotificationLayout.Messaging
           ),
-          NotificationActionButton(
-            key: 'READ',
-            label: 'Mark as Read',
-            autoDismissible: true,
-            notificationActionType: NotificationActionType.SilentAction,
-          )
-        ]
-    ));
+          actionButtons: [
+            NotificationActionButton(
+              key: 'REPLY',
+              label: 'Reply',
+              requireInputText: true,
+              autoDismissible: false,
+              notificationActionType: NotificationActionType.SilentAction,
+            ),
+            NotificationActionButton(
+              key: 'READ',
+              label: 'Mark as Read',
+              autoDismissible: true,
+              notificationActionType: NotificationActionType.SilentAction,
+            )
+          ]
+      );
   }
 
-  static void createBigPictureNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed){
-      if(isAllowed){
-
-        AwesomeNotifications().createNotification(
+  static Future<void> createBigPictureNotification({
+    bool checkPermission = true
+  }) async {
+    bool isAllowed = !checkPermission || await requestPermissionToSendNotifications();
+    if (isAllowed)
+      await AwesomeNotifications().createNotification(
             content: NotificationContent(
                 id: createUniqueID(AwesomeNotifications.maxID),
                 channelKey: 'simple_channel',
@@ -432,16 +433,14 @@ class NotificationUtils {
                 notificationLayout: NotificationLayout.BigPicture
             )
         );
-      }
-    });
   }
 
-  static void createBigTextNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed){
-      if(isAllowed){
-
-        AwesomeNotifications().createNotification(
+  static Future<void> createBigTextNotification({
+    bool checkPermission = true
+  }) async {
+    bool isAllowed = !checkPermission || await requestPermissionToSendNotifications();
+    if (isAllowed)
+      await AwesomeNotifications().createNotification(
             content: NotificationContent(
                 id: createUniqueID(AwesomeNotifications.maxID),
                 channelKey: 'simple_channel',
@@ -455,123 +454,124 @@ class NotificationUtils {
                 notificationLayout: NotificationLayout.BigText
             )
         );
-      }
-    });
   }
 
-  static void createSilentNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed) =>
-    !isAllowed ? false :
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: createUniqueID(AwesomeNotifications.maxID),
-          channelKey: 'background_channel',
-          title: 'Silent Notification',
-          body: 'This is a silent notification to receive notification without bring the app to foreground',
-        ),
-        actionButtons: [
-          NotificationActionButton(
-              key: 'DISMISS',
-              label: 'Cancel',
-              notificationActionType: NotificationActionType.DisabledAction,
-              autoDismissible: true
-          ),
-          NotificationActionButton(
-            key: 'EXECUTE',
-            label: 'Execute Now',
-            notificationActionType: NotificationActionType.SilentAction,
-          ),
-          NotificationActionButton(
-            key: 'REPLY',
-            label: 'Reply',
-            requireInputText: true,
-            notificationActionType: NotificationActionType.SilentAction,
-          ),
-        ]
-    ));
-  }
-
-  static void createSilentBackgroundNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed) =>
-    !isAllowed ? false :
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
+  static Future<void> createSilentNotification({
+    bool checkPermission = true
+  }) async {
+    bool isAllowed = !checkPermission || await requestPermissionToSendNotifications();
+    if (isAllowed)
+      await AwesomeNotifications().createNotification(
+          content: NotificationContent(
             id: createUniqueID(AwesomeNotifications.maxID),
             channelKey: 'background_channel',
             title: 'Silent Notification',
-            body: 'This is a silent notification to run on background without UI'
-        ),
-        actionButtons: [
-          NotificationActionButton(
-              key: 'CANCEL',
-              label: 'Cancel',
-              notificationActionType: NotificationActionType.DisabledAction,
-              autoDismissible: true
+            body: 'This is a silent notification to receive notification without bring the app to foreground',
           ),
-          NotificationActionButton(
-            key: 'EXECUTE',
-            label: 'Execute',
-            notificationActionType: NotificationActionType.SilentBackgroundAction,
+          actionButtons: [
+            NotificationActionButton(
+                key: 'DISMISS',
+                label: 'Cancel',
+                notificationActionType: NotificationActionType.DisabledAction,
+                autoDismissible: true
+            ),
+            NotificationActionButton(
+              key: 'EXECUTE',
+              label: 'Execute Now',
+              notificationActionType: NotificationActionType.SilentAction,
+            ),
+            NotificationActionButton(
+              key: 'REPLY',
+              label: 'Reply',
+              requireInputText: true,
+              notificationActionType: NotificationActionType.SilentAction,
+            ),
+          ]
+      );
+  }
+
+  static Future<void> createSilentBackgroundNotification({
+    bool checkPermission = true
+  }) async {
+    bool isAllowed = !checkPermission || await requestPermissionToSendNotifications();
+    if (isAllowed)
+      await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+              id: createUniqueID(AwesomeNotifications.maxID),
+              channelKey: 'background_channel',
+              title: 'Silent Notification',
+              body: 'This is a silent notification to run on background without UI'
           ),
-        ]
-    ));
-  }
-
-  static void createScheduledNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed){
-      if(isAllowed){
-        int id = createUniqueID(AwesomeNotifications.maxID);
-        DateTime targetDate = DateTime.now();
-        targetDate = targetDate.add(Duration(minutes: 5));
-
-        AwesomeNotifications().createNotification(
-            content: NotificationContent(
-                id: id,
-                channelKey: 'simple_channel',
-                title: 'Notification Scheduled ($id)',
-                body: 'This notification was scheduled to be delivered at ${targetDate.toLocal().toIso8601String()}'
+          actionButtons: [
+            NotificationActionButton(
+                key: 'CANCEL',
+                label: 'Cancel',
+                notificationActionType: NotificationActionType.DisabledAction,
+                autoDismissible: true
             ),
-            schedule: NotificationCalendar.fromDate(
-                date: targetDate
-            )
-        );
-      }
-    });
-  }
-
-  static void createScheduleRepeatedNotification(){
-    requestPermissionToSendNotifications()
-        .then((isAllowed){
-      if(isAllowed){
-        int id = createUniqueID(AwesomeNotifications.maxID);
-        AwesomeNotifications().createNotification(
-            content: NotificationContent(
-                id: id,
-                channelKey: 'simple_channel',
-                title: 'Repeated Schedule ($id)',
-                body: 'This notification was scheduled to repeat every 10 seconds'
+            NotificationActionButton(
+              key: 'EXECUTE',
+              label: 'Execute',
+              notificationActionType: NotificationActionType.SilentBackgroundAction,
             ),
-            schedule: NotificationInterval(
-                interval: 10,
-                repeats: true
-            )
-        );
-      }
-    });
+          ]
+      );
   }
 
-  static void dismissAllNotifications(){
-    AwesomeNotifications().dismissAllNotifications();
+  static Future<void> createScheduledNotification({
+    bool checkPermission = true
+  }) async {
+    bool isAllowed = !checkPermission || await requestPermissionToSendNotifications();
+    if (isAllowed) {
+      int id = createUniqueID(AwesomeNotifications.maxID);
+      DateTime targetDate = DateTime.now();
+      targetDate = targetDate.add(Duration(minutes: 5));
+
+      await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+              id: id,
+              channelKey: 'simple_channel',
+              title: 'Notification Scheduled ($id)',
+              body: 'This notification was scheduled to be delivered at ${targetDate
+                  .toLocal().toIso8601String()}'
+          ),
+          schedule: NotificationCalendar.fromDate(
+              date: targetDate
+          )
+      );
+    }
   }
 
-  static void dismissAllNotificationsByChannelKey(String channelKey){
-    AwesomeNotifications().dismissAllNotificationsByChannelKey(channelKey);
+  static Future<void> createScheduleRepeatedNotification({
+    bool checkPermission = true
+  }) async {
+    bool isAllowed = !checkPermission || await requestPermissionToSendNotifications();
+    if (isAllowed){
+      int id = createUniqueID(AwesomeNotifications.maxID);
+      await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+              id: id,
+              channelKey: 'simple_channel',
+              title: 'Repeated Schedule ($id)',
+              body: 'This notification was scheduled to repeat every 10 seconds'
+          ),
+          schedule: NotificationInterval(
+              interval: 10,
+              repeats: true
+          )
+      );
+    }
   }
 
-  static void cancelAllNotifications(){
-    AwesomeNotifications().cancelAll();
+  static Future<void> dismissAllNotifications() async {
+    await AwesomeNotifications().dismissAllNotifications();
+  }
+
+  static Future<void> dismissAllNotificationsByChannelKey(String channelKey) async {
+    await AwesomeNotifications().dismissAllNotificationsByChannelKey(channelKey);
+  }
+
+  static Future<void> cancelAllNotifications() async {
+    await AwesomeNotifications().cancelAll();
   }
 }

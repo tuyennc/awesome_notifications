@@ -136,7 +136,6 @@ public interface Definitions {
     String NOTIFICATION_LAYOUT = "notificationLayout";
     String NOTIFICATION_TITLE = "title";
     String NOTIFICATION_BODY = "body";
-    String NOTIFICATION_MESSAGE = "message";
     String NOTIFICATION_TIMESTAMP = "timestamp";
     String NOTIFICATION_SUMMARY = "summary";
     String NOTIFICATION_SHOW_WHEN = "showWen";

@@ -125,9 +125,10 @@ public class NotificationBuilder {
 
             if(!ListUtils.isNullOrEmpty(notificationModel.content.messages)) {
                 Map<String, Object> contentData = notificationModel.content.toMap();
+                List<Map> contentMessageData = (List<Map>) contentData.get(Definitions.NOTIFICATION_MESSAGES);
                 finalNotification.extras.putSerializable(
-                        Definitions.NOTIFICATION_MESSAGE,
-                        (Serializable) contentData.get(Definitions.NOTIFICATION_MESSAGE));
+                        Definitions.NOTIFICATION_MESSAGES,
+                        (Serializable) contentMessageData);
             }
         }
 
@@ -918,6 +919,7 @@ public class NotificationBuilder {
     }
 
     private static final ConcurrentHashMap<String, NotificationContentModel> messagingQueue = new ConcurrentHashMap<String, NotificationContentModel>();
+    @SuppressWarnings("unchecked")
     private static Boolean setMessagingLayout(Context context, boolean isGrouping, NotificationContentModel contentModel, NotificationCompat.Builder builder) throws AwesomeNotificationException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
@@ -948,15 +950,17 @@ public class NotificationBuilder {
                     messagingQueue.remove(messageQueueKey);
                 }
                 // For terminated app cases
-                else if(messageQueueKey.isEmpty() && currentNotification != null){
+                else if(!messagingQueue.containsKey(messageQueueKey) && currentNotification != null){
                     Serializable messagesData = currentNotification.extras.getSerializable(
                             Definitions.NOTIFICATION_MESSAGES);
-                    if(messagesData != null){
-                        List<NotificationMessageModel> messages = NotificationContentModel.mapToMessages((Map<String, Object>) messagesData);
-                        if(ListUtils.isNullOrEmpty(messages)){
-                            contentModel.messages.addAll(messages);
-                        }
+                    if(messagesData != null ){
+                        contentModel.messages = NotificationContentModel.mapToMessages((List<Map>) messagesData);
+                    } else {
+                        contentModel.messages = new ArrayList<>();
                     }
+                    contentModel.id = currentNotification.extras.getInt(
+                            Definitions.NOTIFICATION_ID);
+                    messagingQueue.put(messageQueueKey, contentModel);
                 }
 
                 NotificationMessageModel currentMessage = new NotificationMessageModel(
