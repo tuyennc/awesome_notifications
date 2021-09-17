@@ -312,18 +312,12 @@ class MyNotificationPage extends StatelessWidget {
         title: const Text('Notification Page'),
         brightness: Brightness.dark,
       ),
-      body: Center(
-        child: Padding(
+      body: ListView(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('ActionReceived:'),
-              Text('$receivedAction'),
-            ],
-          ),
-        )
+          children: [
+            Text('ActionReceived:'),
+            Text('$receivedAction'),
+          ],
       ),
     );
   }
@@ -409,7 +403,7 @@ class NotificationUtils {
             key: 'REPLY',
             label: 'Reply',
             requireInputText: true,
-            autoDismissible: true,
+            autoDismissible: false,
             notificationActionType: NotificationActionType.SilentAction,
           ),
           NotificationActionButton(

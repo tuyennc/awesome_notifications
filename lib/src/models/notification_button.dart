@@ -22,7 +22,14 @@ class NotificationActionButton extends Model {
   String? icon;
 
   bool? enabled;
+
+  @Deprecated('Use autoDismissible instead')
+  bool? get autoCancel => autoDismissible;
+  @Deprecated('Use autoDismissible instead')
+  set autoCancel(bool? value) => autoDismissible = value;
+
   bool? autoDismissible;
+
   bool? requireInputText;
 
   NotificationActionType? notificationActionType;

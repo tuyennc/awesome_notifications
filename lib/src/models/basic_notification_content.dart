@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../definitions.dart';
 
 class BaseNotificationContent extends Model {
+
   int? id;
   String? channelKey;
   String? title;
@@ -15,10 +16,17 @@ class BaseNotificationContent extends Model {
   String? summary;
   bool? showWhen;
   Map<String, String>? payload;
+
   String? icon;
   String? largeIcon;
   String? bigPicture;
   String? soundSource;
+
+  @Deprecated('Use autoDismissible instead')
+  bool? get autoCancel => autoDismissible;
+  @Deprecated('Use autoDismissible instead')
+  set autoCancel(bool? value) => autoDismissible = value;
+
   bool? autoDismissible;
   Color? defaultColor;
   Color? backgroundColor;
