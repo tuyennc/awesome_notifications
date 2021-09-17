@@ -1,5 +1,5 @@
 //
-//  PushNotification.swift
+//  NotificationModel.swift
 //  awesome_notifications
 //
 //  Created by Rafael Setragni on 05/09/20.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class PushNotification : AbstractModel {
+public class NotificationModel : AbstractModel {
         
     public var content:NotificationContentModel?
     public var actionButtons:[NotificationButtonModel]?

@@ -11,7 +11,7 @@ open class AwesomeServiceExtension: UNNotificationServiceExtension {
     var contentHandler: ((UNNotificationContent) -> Void)?
     var content: UNMutableNotificationContent?
     //var fcmService: FCMService?
-    var pushNotification: PushNotification?
+    var notificationModel: NotificationModel?
     
 
     public override func didReceive(
@@ -36,21 +36,21 @@ open class AwesomeServiceExtension: UNNotificationServiceExtension {
                 
                 if content.userInfo[Definitions.PUSH_NOTIFICATION_CONTENT] == nil {
                     
-                    pushNotification = PushNotification()
-                    pushNotification!.content = NotificationContentModel()
+                    notificationModel = NotificationModel()
+                    notificationModel!.content = NotificationContentModel()
                     
-                    pushNotification!.content!.id = Int.random(in: 1..<2147483647)
-                    pushNotification!.content!.channelKey = "basic_channel"
-                    pushNotification!.content!.title = title
-                    pushNotification!.content!.body = body
-                    pushNotification!.content!.playSound = true
+                    notificationModel!.content!.id = Int.random(in: 1..<2147483647)
+                    notificationModel!.content!.channelKey = "basic_channel"
+                    notificationModel!.content!.title = title
+                    notificationModel!.content!.body = body
+                    notificationModel!.content!.playSound = true
                     
                     if !StringUtils.isNullOrEmpty(image) {
-                        pushNotification!.content!.notificationLayout = NotificationLayout.BigPicture
-                        pushNotification!.content!.bigPicture = image
+                        notificationModel!.content!.notificationLayout = NotificationLayout.BigPicture
+                        notificationModel!.content!.bigPicture = image
                     }
                     else {
-                        pushNotification!.content!.notificationLayout = NotificationLayout.Default
+                        notificationModel!.content!.notificationLayout = NotificationLayout.Default
                     }
                 }
                 else {
@@ -61,20 +61,20 @@ open class AwesomeServiceExtension: UNNotificationServiceExtension {
                     mapData[Definitions.PUSH_NOTIFICATION_SCHEDULE] = JsonUtils.fromJson(content.userInfo[Definitions.PUSH_NOTIFICATION_SCHEDULE] as? String)
                     mapData[Definitions.PUSH_NOTIFICATION_BUTTONS]  = JsonUtils.fromJsonArr(content.userInfo[Definitions.PUSH_NOTIFICATION_BUTTONS] as? String)
                     
-                    pushNotification = PushNotification().fromMap(arguments: mapData) as? PushNotification
+                    notificationModel = NotificationModel().fromMap(arguments: mapData) as? NotificationModel
                     
                 }
                 
-                NotificationBuilder.setUserInfoContent(pushNotification: pushNotification!, content: content)
+                NotificationBuilder.setUserInfoContent(notificationModel: notificationModel!, content: content)
                 
-                content.title = pushNotification?.content?.title ?? ""
-                content.body = pushNotification?.content?.body ?? ""
+                content.title = notificationModel?.content?.title ?? ""
+                content.body = notificationModel?.content?.body ?? ""
                 
-                if let pushNotification = pushNotification {
+                if let notificationModel = notificationModel {
                     do {
                         try NotificationSenderAndScheduler().send(
                             createdSource: NotificationSource.Firebase,
-                            pushNotification: pushNotification,
+                            notificationModel: notificationModel,
                             content: content,
                             completion: { sent, newContent ,error  in
                                 

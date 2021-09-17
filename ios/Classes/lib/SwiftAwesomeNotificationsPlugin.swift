@@ -63,10 +63,9 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         receiveAction(
             jsonData: jsonData,
             actionKey: response.actionIdentifier,
-            userText: userText
+            userText: userText,
+            withCompletionHandler: completionHandler
         )
-        
-        completionHandler()
     }
     
     public func attachNotificationCenterDelegate(){
@@ -128,7 +127,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             }
         }
         
-        guard let pushNotification:PushNotification = NotificationBuilder.jsonDataToPushNotification(jsonData: arguments)
+        guard let notificationModel:NotificationModel = NotificationBuilder.jsonDataToNotificationModel(jsonData: arguments)
         else {
             if(SwiftAwesomeNotificationsPlugin.debug){
                 Log.d("receiveNotification","Awesome notification data is invalid. Display threatment ignored.")
@@ -146,7 +145,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         /*
         if(content.userInfo["updated"] == nil){
             
-            let pushData = pushNotification.toMap()
+            let pushData = notificationModel.toMap()
             let updatedJsonData = JsonUtils.toJson(pushData)
             
             let content:UNMutableNotificationContent =
@@ -155,7 +154,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             content.userInfo[Definitions.NOTIFICATION_JSON] = updatedJsonData
             content.userInfo["updated"] = true
             
-            let request = UNNotificationRequest(identifier: pushNotification!.content!.id!.description, content: content, trigger: nil)
+            let request = UNNotificationRequest(identifier: notificationModel!.content!.id!.description, content: content, trigger: nil)
             
             UNUserNotificationCenter.current().add(request)
             {
@@ -171,12 +170,12 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
         */
     
-        let notificationReceived:NotificationReceived? = NotificationReceived(pushNotification.content)
+        let notificationReceived:NotificationReceived? = NotificationReceived(notificationModel.content)
         if(notificationReceived != nil){
             
-            pushNotification.content!.displayedLifeCycle = SwiftAwesomeNotificationsPlugin.appLifeCycle
+            notificationModel.content!.displayedLifeCycle = SwiftAwesomeNotificationsPlugin.appLifeCycle
                         
-            let channel:NotificationChannelModel? = ChannelManager.getChannelByKey(channelKey: pushNotification.content!.channelKey!)
+            let channel:NotificationChannelModel? = ChannelManager.getChannelByKey(channelKey: notificationModel.content!.channelKey!)
             
             alertOnlyOnceNotification(
                 channel?.onlyAlertOnce,
@@ -193,12 +192,12 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             SwiftAwesomeNotificationsPlugin.displayEvent(notificationReceived: notificationReceived!)
             
             /*
-            if(pushNotification.schedule != nil){
+            if(notificationModel.schedule != nil){
                                 
                 do {
                     try NotificationSenderAndScheduler().send(
-                        createdSource: pushNotification.content!.createdSource!,
-                        pushNotification: pushNotification,
+                        createdSource: notificationModel.content!.createdSource!,
+                        notificationModel: notificationModel,
                         completion: { sent, content, error in
                         
                         }
@@ -256,7 +255,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
     
 #if !ACTION_EXTENSION
-    private func receiveAction(jsonData: String?, actionKey:String?, userText:String?){
+    private func receiveAction(jsonData: String?, actionKey:String?, userText:String?, withCompletionHandler completionHandler: @escaping () -> Void){
 		
         if(SwiftAwesomeNotificationsPlugin.appLifeCycle == .AppKilled){
             fireBackgroundLostEvents()
@@ -264,6 +263,16 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         
         if #available(iOS 10.0, *) {
             let actionReceived:ActionReceived? = NotificationBuilder.buildNotificationActionFromJson(jsonData: jsonData, actionKey: actionKey, userText: userText)
+            
+            if(SwiftAwesomeNotificationsPlugin.appLifeCycle == .AppKilled && actionReceived != nil &&
+                (
+                    actionReceived!.notificationActionType == .SilentAction ||
+                    actionReceived!.notificationActionType == .SilentBackgroundAction
+                )
+            ){
+                DartBackgroundService.enqueueSilentDataProcessing(actionReceived: actionReceived!, handler: completionHandler)
+                return
+            }
             
             if actionReceived?.dismissedDate == nil {
 
@@ -279,9 +288,9 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 				}
                 flutterChannel?.invokeMethod(Definitions.CHANNEL_METHOD_NOTIFICATION_DISMISSED, arguments: actionReceived?.toMap())
             }
-        } else {
-            // Fallback on earlier versions
-        }
+            
+        }        
+        completionHandler()
     }
 #endif
     
@@ -437,16 +446,16 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 let schedules = ScheduleManager.listSchedules()
                 
                 if(!ListUtils.isEmptyLists(schedules)){
-                    for pushNotification in schedules {
+                    for notificationModel in schedules {
                         var founded = false
                         for activeSchedule in activeSchedules {
-                            if activeSchedule.identifier != String(pushNotification.content!.id!) {
+                            if activeSchedule.identifier != String(notificationModel.content!.id!) {
                                 founded = true
                                 break;
                             }
                         }
                         if(!founded){
-                            ScheduleManager.cancelScheduled(id: pushNotification.content!.id!)
+                            ScheduleManager.cancelScheduled(id: notificationModel.content!.id!)
                         }
                     }
                 }
@@ -460,24 +469,24 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let referenceDate = Date()
         
         let lostSchedules = ScheduleManager.listPendingSchedules(referenceDate: referenceDate)
-        for pushNotification in lostSchedules {
+        for notificationModel in lostSchedules {
             
             do {
-                let hasNextValidDate:Bool = (pushNotification.schedule?.hasNextValidDate() ?? false)
-                if  pushNotification.schedule?.createdDate == nil || !hasNextValidDate {
+                let hasNextValidDate:Bool = (notificationModel.schedule?.hasNextValidDate() ?? false)
+                if  notificationModel.schedule?.createdDate == nil || !hasNextValidDate {
                     throw AwesomeNotificationsException.notificationExpired
                 }
                 
                 if #available(iOS 10.0, *) {
                     try NotificationSenderAndScheduler().send(
-                        createdSource: pushNotification.content!.createdSource!,
-                        pushNotification: pushNotification,
+                        createdSource: notificationModel.content!.createdSource!,
+                        notificationModel: notificationModel,
                         completion: { sent, content, error in
                         }
                     )
                 }
             } catch {
-                let _ = ScheduleManager.removeSchedule(id: pushNotification.content!.id!)
+                let _ = ScheduleManager.removeSchedule(id: notificationModel.content!.id!)
             }
         }
         
@@ -683,18 +692,18 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 let schedules = ScheduleManager.listSchedules()
                 
                 if(!ListUtils.isEmptyLists(schedules)){
-                    for pushNotification in schedules {
+                    for notificationModel in schedules {
                         var founded = false
                         for activeSchedule in activeSchedules {
-                            if activeSchedule.identifier == String(pushNotification.content!.id!) {
+                            if activeSchedule.identifier == String(notificationModel.content!.id!) {
                                 founded = true
-                                let serialized:[String:Any?] = pushNotification.toMap()
+                                let serialized:[String:Any?] = notificationModel.toMap()
                                 serializeds.append(serialized)
                                 break;
                             }
                         }
                         if(!founded){
-                            ScheduleManager.cancelScheduled(id: pushNotification.content!.id!)
+                            ScheduleManager.cancelScheduled(id: notificationModel.content!.id!)
                         }
                     }
                 }
@@ -751,7 +760,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     private func channelMethodInitialize(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
 	
 		let platformParameters:[String:Any?] = call.arguments as? [String:Any?] ?? [:]
-        let dartBgHandle:Int64? = platformParameters[Definitions.DART_BG_HANDLE] as? Int64 ?? 0
+        let dartBgHandle:Int64 = platformParameters[Definitions.DART_BG_HANDLE] as? Int64 ?? 0
 		let defaultIconPath:String? = platformParameters[Definitions.DEFAULT_ICON] as? String
 		let channelsData:[Any] = platformParameters[Definitions.INITIALIZE_CHANNELS] as? [Any] ?? []
 
@@ -771,7 +780,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     private func channelMethodSetActionHandle(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
         
         let platformParameters:[String:Any?] = call.arguments as? [String:Any?] ?? [:]
-        let actionHandle:Int64? = platformParameters[Definitions.ACTION_HANDLE] as? Int64 ?? 0
+        let actionHandle:Int64 = platformParameters[Definitions.ACTION_HANDLE] as? Int64 ?? 0
         
         DefaultManager.setActionCallback(actionHandle)
             
@@ -1001,14 +1010,14 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     private func channelMethodCreateNotification(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
         
 		let pushData:[String:Any?] = call.arguments as? [String:Any?] ?? [:]
-		let pushNotification:PushNotification? = PushNotification().fromMap(arguments: pushData) as? PushNotification
+		let notificationModel:NotificationModel? = NotificationModel().fromMap(arguments: pushData) as? NotificationModel
 		
-		if(pushNotification != nil){
+		if(notificationModel != nil){
 				
 			if #available(iOS 10.0, *) {
 				try NotificationSenderAndScheduler().send(
 					createdSource: NotificationSource.Local,
-					pushNotification: pushNotification,
+					notificationModel: notificationModel,
 					completion: { sent, content, error in
 					
 						if error != nil {
@@ -1067,7 +1076,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 #endif
     
-    private func setDefaultConfigurations(_ defaultIconPath:String?,_ dartBgHandle:Int64?,_ channelsData:[Any]) throws {
+    private func setDefaultConfigurations(_ defaultIconPath:String?,_ dartBgHandle:Int64,_ channelsData:[Any]) throws {
         
         DefaultManager.setDartBgCallback(dartBgHandle)
         

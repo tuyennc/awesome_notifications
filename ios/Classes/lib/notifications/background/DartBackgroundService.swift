@@ -10,11 +10,10 @@ import Foundation
 class DartBackgroundService {
     private static let TAG:String = "DartBackgroundService"
     
-    private static var dartBackgroundExecutor:DartBackgroundExecutor?
-    
+    private static var instance:DartBackgroundService?
     static var shared: DartBackgroundService = {
-        let instance = DartBackgroundService()
-        return instance
+        instance = instance ?? DartBackgroundService()
+        return instance!
     }()
 
     private init() {}
@@ -23,13 +22,13 @@ class DartBackgroundService {
         actionReceived:ActionReceived,
         handler: @escaping () -> ()
     ){
-        dartBackgroundExecutor?.requestQueue.add(SilentDataRequest(
+        DartBackgroundExecutor.shared.silentDataQueue.add(SilentDataRequest(
             actionReceived: actionReceived, handler: handler
         ))
         
-        if !(DartBackgroundService.dartBackgroundExecutor?.isRunning ?? true) {
+        if !(DartBackgroundExecutor.shared.isRunning) {
             Log.i(TAG, "Dart background service has started")
-            dartBackgroundExecutor?.run()
+            DartBackgroundExecutor.shared.run()
         }
     }
 }
