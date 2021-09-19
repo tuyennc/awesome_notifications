@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
   static String _toSimpleEnum(NotificationLifeCycle lifeCycle) => lifeCycle.toString().split('.').last;
 
   /// Use this method to detect when a new notification or a schedule is created
-  static Future <void> onCreatedNotificationMethod(ReceivedNotification receivedNotification) async {
+  static Future <void> onNotificationCreatedMethod(ReceivedNotification receivedNotification) async {
     Fluttertoast.showToast(
         msg: 'Notification created on ${_toSimpleEnum(receivedNotification.createdLifeCycle!)}',
         toastLength: Toast.LENGTH_SHORT,
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
   }
 
   /// Use this method to detect every time that a new notification is displayed
-  static Future <void> onDisplayedNotificationMethod(ReceivedNotification receivedNotification) async {
+  static Future <void> onNotificationDisplayedMethod(ReceivedNotification receivedNotification) async {
     Fluttertoast.showToast(
         msg: 'Notification displayed on ${_toSimpleEnum(receivedNotification.displayedLifeCycle!)}',
         toastLength: Toast.LENGTH_SHORT,
@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
   }
 
   /// Use this method to detect if the user dismissed a notification
-  static Future <void> onDismissedNotificationMethod(ReceivedAction receivedAction) async {
+  static Future <void> onDismissActionReceivedMethod(ReceivedAction receivedAction) async {
     Fluttertoast.showToast(
         msg: 'Notification dismissed on ${_toSimpleEnum(receivedAction.dismissedLifeCycle!)}',
         toastLength: Toast.LENGTH_SHORT,
@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
   }
 
   /// Use this method to detect when the user taps on a notification or action button
-  static Future <void> onActionNotificationMethod(ReceivedAction receivedAction) async {
+  static Future <void> onActionReceivedMethod(ReceivedAction receivedAction) async {
     /// This replaces actionStream
 
     switch(receivedAction.notificationActionType){
@@ -199,16 +199,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    super.initState();
 
+    // Necessary to request the user permission to send notifications
     NotificationUtils.requestPermissionToSendNotifications();
 
+    // Only after at least the action method is set, the notification events are delivered
     AwesomeNotifications().setListeners(
-        onCreatedNotificationMethod: MyApp.onCreatedNotificationMethod,
-        onDismissedNotificationMethod: MyApp.onDismissedNotificationMethod,
-        onActionNotificationMethod: MyApp.onActionNotificationMethod,
-        onDisplayedNotificationMethod: MyApp.onDisplayedNotificationMethod
+        onActionReceivedMethod:         MyApp.onActionReceivedMethod,
+        onNotificationCreatedMethod:    MyApp.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod:  MyApp.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod:  MyApp.onDismissActionReceivedMethod
     );
-    super.initState();
   }
 
   int _messageIncrement = 0;

@@ -209,7 +209,7 @@ class App extends StatefulWidget {
   static Color mainColor = Color(0xFF9D50DD);
 
   /// Use this method to detect when a new notification or a schedule is created
-  static Future <void> onCreatedNotificationMethod(ReceivedNotification receivedNotification) async {
+  static Future <void> onNotificationCreatedMethod(ReceivedNotification receivedNotification) async {
     String? createdSourceText =
         AssertUtils.toSimpleEnumString(receivedNotification.createdSource);
 
@@ -220,7 +220,7 @@ class App extends StatefulWidget {
   }
 
   /// Use this method to detect every time that a new notification is displayed
-  static Future <void> onDisplayedNotificationMethod(ReceivedNotification receivedNotification) async {
+  static Future <void> onNotificationDisplayedMethod(ReceivedNotification receivedNotification) async {
     String? createdSourceText =
         AssertUtils.toSimpleEnumString(receivedNotification.createdSource);
 
@@ -231,7 +231,7 @@ class App extends StatefulWidget {
   }
 
   /// Use this method to detect if the user dismissed a notification
-  static Future <void> onDismissedNotificationMethod(ReceivedAction receivedAction) async {
+  static Future <void> onDismissActionReceivedMethod(ReceivedAction receivedAction) async {
     String? dismissedSourceText = AssertUtils.toSimpleEnumString(
         receivedAction.dismissedLifeCycle);
 
@@ -242,7 +242,7 @@ class App extends StatefulWidget {
   }
 
   /// Use this method to detect when the user taps on a notification or action button
-  static Future <void> onActionNotificationMethod(ReceivedAction receivedAction) async {
+  static Future <void> onActionReceivedMethod(ReceivedAction receivedAction) async {
 
     String targetPage =
         receivedAction.channelKey == 'media_player' ?

@@ -100,13 +100,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     // Necessary to request the user permission to send notifications
     requestNotificationPermissions();
-
-    // Only after set at least one method, the notification's events are delivered
+    
+    // Only after at least the action method is set, the notification events are delivered
     AwesomeNotifications().setListeners(
-        onCreatedNotificationMethod:   App.onCreatedNotificationMethod,
-        onDisplayedNotificationMethod: App.onDisplayedNotificationMethod,
-        onActionNotificationMethod:    App.onActionNotificationMethod,
-        onDismissedNotificationMethod: App.onDismissedNotificationMethod
+        onActionReceivedMethod:        App.onActionReceivedMethod,
+        onNotificationCreatedMethod:   App.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod: App.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod: App.onDismissActionReceivedMethod
     );
 
     // this is not part of notification system, but of the media player simulator instead

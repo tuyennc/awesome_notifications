@@ -17,7 +17,7 @@ public class DartBackgroundService extends JobIntentService {
         long dartCallbackHandle = getDartCallbackDispatcher(this);
         if (dartCallbackHandle == 0L) {
             Log.w(TAG, "A background message could not be handled in Dart" +
-                            " because there is no onSilentData handler registered.");
+                            " because there is no onActionReceivedMethod handler registered.");
             return;
         }
 

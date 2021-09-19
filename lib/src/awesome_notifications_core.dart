@@ -514,15 +514,15 @@ class AwesomeNotifications {
   /// Defines the global or static methods that gonna receive the notification
   /// events. OBS: Only after set at least one method, the notification's events are delivered.
   ///
-  /// [onCreatedNotificationMethod] method that gets called when a new notification or schedule is created
-  /// [onDisplayedNotificationMethod] method that gets called when a new notification is displayed
-  /// [onActionNotificationMethod] method that receives the notifications action
-  /// [onDismissedNotificationMethod] method that receives the dismissed notifications
+  /// [onActionReceivedMethod] method that receives all the notification actions
+  /// [onNotificationCreatedMethod] method that gets called when a new notification or schedule is created on the system
+  /// [onNotificationDisplayedMethod] method that gets called when a new notification is displayed on status bar
+  /// [onDismissActionReceivedMethod] method that receives the notification dismiss actions
   Future<bool> setListeners({
-    required ActionHandler onActionNotificationMethod,
-    NotificationHandler? onCreatedNotificationMethod,
-    NotificationHandler? onDisplayedNotificationMethod,
-    ActionHandler? onDismissedNotificationMethod
+    required ActionHandler onActionReceivedMethod,
+    NotificationHandler? onNotificationCreatedMethod,
+    NotificationHandler? onNotificationDisplayedMethod,
+    ActionHandler? onDismissActionReceivedMethod
   }) async {
 
     if(_actionHandler != null){
@@ -531,7 +531,7 @@ class AwesomeNotifications {
     }
 
     final CallbackHandle? actionCallbackReference =
-      PluginUtilities.getCallbackHandle(onActionNotificationMethod);
+      PluginUtilities.getCallbackHandle(onActionReceivedMethod);
 
     bool result = await _channel.invokeMethod(CHANNEL_METHOD_SET_ACTION_HANDLE, {
       ACTION_HANDLE: actionCallbackReference?.toRawHandle()
@@ -542,10 +542,10 @@ class AwesomeNotifications {
       return false;
     }
 
-    _actionHandler = onActionNotificationMethod;
-    _dismissedHandler = onDismissedNotificationMethod;
-    _createdHandler = onCreatedNotificationMethod;
-    _displayedHandler = onDisplayedNotificationMethod;
+    _actionHandler = onActionReceivedMethod;
+    _dismissedHandler = onDismissActionReceivedMethod;
+    _createdHandler = onNotificationCreatedMethod;
+    _displayedHandler = onNotificationDisplayedMethod;
 
     _startEventListeners();
 
