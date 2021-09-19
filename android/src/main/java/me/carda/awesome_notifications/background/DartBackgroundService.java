@@ -14,6 +14,8 @@ public class DartBackgroundService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull final Intent intent) {
 
+        Log.d(TAG, "A new Dart background service has started");
+
         long dartCallbackHandle = getDartCallbackDispatcher(this);
         if (dartCallbackHandle == 0L) {
             Log.w(TAG, "A background message could not be handled in Dart" +
