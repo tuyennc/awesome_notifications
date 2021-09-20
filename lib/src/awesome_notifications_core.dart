@@ -490,10 +490,21 @@ class AwesomeNotifications {
     await _channel.invokeMethod(CHANNEL_METHOD_CANCEL_SCHEDULE, id);
   }
 
-  /// Dismiss all active notifications with the same channel key,
+  /// Dismiss all active notifications with the same channel key on status bar,
   /// without cancel the active respective schedules
-  Future<void>  dismissAllNotificationsByChannelKey(String channelKey) async {
-    await _channel.invokeMethod(CHANNEL_METHOD_DISMISS_NOTIFICATION_BY_CHANNEL_KEY, channelKey);
+  Future<void>  dismissNotificationsByChannelKey(String channelKey) async {
+    await _channel.invokeMethod(CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_CHANNEL_KEY, channelKey);
+  }
+
+  /// Cancel all active schedules with the same channel key,
+  /// without dismiss the respective notifications on status bar
+  Future<void>  cancelSchedulesByChannelKey(String channelKey) async {
+    await _channel.invokeMethod(CHANNEL_METHOD_CANCEL_SCHEDULES_BY_CHANNEL_KEY, channelKey);
+  }
+
+  /// Cancel and dismiss all notifications and schedules with the same channel key
+  Future<void>  cancelNotificationsByChannelKey(String channelKey) async {
+    await _channel.invokeMethod(CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_CHANNEL_KEY, channelKey);
   }
 
   /// Dismiss all active notifications, without cancel the active respective schedules

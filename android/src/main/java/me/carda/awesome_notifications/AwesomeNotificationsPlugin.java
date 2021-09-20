@@ -563,8 +563,16 @@ public class AwesomeNotificationsPlugin
                     channelMethodDismissNotification(call, result);
                     return;
 
-                case Definitions.CHANNEL_METHOD_DISMISS_NOTIFICATION_BY_CHANNEL_KEY:
-                    channelMethodDismissNotificationByChannelKey(call, result);
+                case Definitions.CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_CHANNEL_KEY:
+                    channelMethodDismissNotificationsByChannelKey(call, result);
+                    return;
+
+                case Definitions.CHANNEL_METHOD_CANCEL_SCHEDULES_BY_CHANNEL_KEY:
+                    channelMethodCancelSchedulesByChannelKey(call, result);
+                    return;
+
+                case Definitions.CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_CHANNEL_KEY:
+                    channelMethodCancelNotificationsByChannelKey(call, result);
                     return;
 
                 case Definitions.CHANNEL_METHOD_CANCEL_NOTIFICATION:
@@ -783,7 +791,7 @@ public class AwesomeNotificationsPlugin
         result.success(true);
     }
 
-    private void channelMethodDismissNotificationByChannelKey(@NonNull MethodCall call, Result result) throws Exception {
+    private void channelMethodDismissNotificationsByChannelKey(@NonNull MethodCall call, Result result) throws Exception {
 
         String channelKey = call.arguments();
         if(StringUtils.isNullOrEmpty(channelKey))
@@ -793,6 +801,35 @@ public class AwesomeNotificationsPlugin
 
         if(AwesomeNotificationsPlugin.debug)
             Log.d(TAG, "Notifications from channel "+channelKey+" dismissed");
+
+        result.success(true);
+    }
+
+    private void channelMethodCancelSchedulesByChannelKey(@NonNull MethodCall call, Result result) throws Exception {
+
+        String channelKey = call.arguments();
+        if(StringUtils.isNullOrEmpty(channelKey))
+            throw new AwesomeNotificationException("Invalid channel key");
+
+        NotificationScheduler.cancelSchedulesByChannelKey(applicationContext, channelKey);
+
+        if(AwesomeNotificationsPlugin.debug)
+            Log.d(TAG, "Scheduled Notifications from channel "+channelKey+" canceled");
+
+        result.success(true);
+    }
+
+    private void channelMethodCancelNotificationsByChannelKey(@NonNull MethodCall call, Result result) throws Exception {
+
+        String channelKey = call.arguments();
+        if(StringUtils.isNullOrEmpty(channelKey))
+            throw new AwesomeNotificationException("Invalid channel key");
+
+        NotificationSender.dismissNotificationsByChannelKey(applicationContext, channelKey);
+        NotificationScheduler.cancelSchedulesByChannelKey(applicationContext, channelKey);
+
+        if(AwesomeNotificationsPlugin.debug)
+            Log.d(TAG, "Notifications and schedules from channel "+channelKey+" canceled");
 
         result.success(true);
     }

@@ -37,6 +37,16 @@ public class ScheduleManager {
         }
     }
 
+    public static void cancelSchedulesByChannelKey(Context context, String channelKey) {
+        List<NotificationModel> listSchedules = shared.getAllObjects(context, Definitions.SHARED_SCHEDULED_NOTIFICATIONS);
+        if(listSchedules != null) {
+            for (NotificationModel notificationModel : listSchedules) {
+                if (notificationModel.content.channelKey.equals(channelKey))
+                    NotificationScheduler.cancelSchedule(context, notificationModel.content.id);
+            }
+        }
+    }
+
     public static void cancelSchedule(Context context, Integer id) {
         NotificationModel schedule = shared.get(context, Definitions.SHARED_SCHEDULED_NOTIFICATIONS, id.toString());
         if(schedule != null)

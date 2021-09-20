@@ -269,6 +269,11 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
         }
     }
 
+    public static void cancelSchedulesByChannelKey(Context context, String channelKey) {
+        ScheduleManager.cancelSchedulesByChannelKey(context, channelKey);
+        ScheduleManager.commitChanges(context);
+    }
+
     public static boolean cancelAllSchedules(Context context) {
         if(context != null){
             _removeAllFromAlarm(context);

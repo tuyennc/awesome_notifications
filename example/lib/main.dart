@@ -281,7 +281,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text('Dismiss all notifications from statusbar'),
           ),
           ElevatedButton(
-            onPressed: () => NotificationUtils.dismissAllNotificationsByChannelKey('simple_channel'),
+            onPressed: () => NotificationUtils.dismissNotificationsByChannelKey('simple_channel'),
             style: ElevatedButton.styleFrom(primary: Colors.red, textStyle: TextStyle(color: Colors.white)),
             child: Text('Dismiss all notifications with same channel key'),
           ),
@@ -569,8 +569,8 @@ class NotificationUtils {
     await AwesomeNotifications().dismissAllNotifications();
   }
 
-  static Future<void> dismissAllNotificationsByChannelKey(String channelKey) async {
-    await AwesomeNotifications().dismissAllNotificationsByChannelKey(channelKey);
+  static Future<void> dismissNotificationsByChannelKey(String channelKey) async {
+    await AwesomeNotifications().dismissNotificationsByChannelKey(channelKey);
   }
 
   static Future<void> cancelAllNotifications() async {
