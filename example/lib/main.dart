@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications/android_foreground_service.dart';
 
 void main() {
   AwesomeNotifications().initialize(
@@ -275,6 +276,19 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text('Create repeated scheduled notification'),
           ),
           SizedBox(height: 40),
+
+          /* ******************************************************************** */
+
+          ElevatedButton(
+              child: Text('Start foreground service'),
+              onPressed: () => NotificationUtils.startForegroundService()),
+          ElevatedButton(
+              child: Text('Stop foreground service'),
+              onPressed: () => NotificationUtils.stopForegroundService()),
+          SizedBox(height: 40),
+
+          /* ******************************************************************** */
+
           ElevatedButton(
             onPressed: () => NotificationUtils.dismissAllNotifications(),
             style: ElevatedButton.styleFrom(primary: Colors.red, textStyle: TextStyle(color: Colors.white)),
@@ -564,6 +578,29 @@ class NotificationUtils {
           )
       );
     }
+  }
+
+  static Future<void> startForegroundService() async {
+    AndroidForegroundService.startForeground(
+        content: NotificationContent(
+          id: 42,
+          body: 'Service is running!',
+          title: 'Android Foreground Service',
+          channelKey: 'simple_channel',
+          bigPicture: 'asset://assets/images/android-bg-worker.jpg',
+          notificationLayout: NotificationLayout.BigPicture,
+        ),
+        actionButtons: [
+          NotificationActionButton(
+              key: 'SHOW_SERVICE_DETAILS',
+              label: 'Show details'
+          )
+        ]
+    );
+  }
+
+  static Future<void> stopForegroundService() async {
+    AndroidForegroundService.stopForeground();
   }
 
   static Future<void> dismissAllNotifications() async {

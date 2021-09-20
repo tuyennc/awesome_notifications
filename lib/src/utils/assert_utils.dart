@@ -1,4 +1,4 @@
-import 'package:awesome_notifications/definitions.dart';
+import 'package:awesome_notifications/src/definitions.dart';
 import 'package:awesome_notifications/src/models/model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

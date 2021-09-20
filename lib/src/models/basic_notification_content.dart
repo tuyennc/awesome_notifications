@@ -5,7 +5,7 @@ import 'package:awesome_notifications/src/utils/bitmap_utils.dart';
 import 'package:awesome_notifications/src/utils/html_utils.dart';
 import 'package:flutter/material.dart';
 
-import '../../definitions.dart';
+import '../definitions.dart';
 
 class BaseNotificationContent extends Model {
 

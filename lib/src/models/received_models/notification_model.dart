@@ -1,4 +1,4 @@
-import 'package:awesome_notifications/definitions.dart';
+import 'package:awesome_notifications/src/definitions.dart';
 import 'package:awesome_notifications/src/models/model.dart';
 import 'package:awesome_notifications/src/models/notification_button.dart';
 import 'package:awesome_notifications/src/models/notification_calendar.dart';

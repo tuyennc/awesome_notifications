@@ -7,7 +7,7 @@ import 'package:awesome_notifications/src/enumerators/default_ringtone_type.dart
 import 'package:awesome_notifications/src/enumerators/group_alert_behaviour.dart';
 import 'package:awesome_notifications/src/enumerators/notification_importance.dart';
 
-import 'src/enumerators/notification_layout.dart';
+import 'enumerators/notification_layout.dart';
 
 const CHANNEL_FLUTTER_PLUGIN = 'awesome_notifications';
 const DART_REVERSE_CHANNEL = 'awesome_notifications_reverse';
@@ -24,6 +24,11 @@ const INITIALIZE_CHANNELS = 'initializeChannels';
 const NOTIFICATION_CONTENT = 'content';
 const NOTIFICATION_SCHEDULE = 'schedule';
 const NOTIFICATION_BUTTONS = 'actionButtons';
+
+const FOREGROUND_NOTIFICATION_DATA = "notificationData";
+const FOREGROUND_START_TYPE = "startType";
+const FOREGROUND_HAS_FOREGROUND = "hasForegroundServiceType";
+const FOREGROUND_SERVICE_TYPE = "foregroundServiceType";
 
 const APP_LIFECYCLE_FOREGROUND = 'FOREGROUND';
 const APP_LIFECYCLE_BACKGROUND = 'BACKGROUND';
@@ -85,6 +90,9 @@ const CHANNEL_METHOD_GET_LOCAL_TIMEZONE_IDENTIFIER =
 const CHANNEL_METHOD_ISOLATE_CALLBACK = 'isolateCallbackReference';
 const CHANNEL_METHOD_ISOLATE_SHUTDOWN = 'isolateShutdown';
 const CHANNEL_METHOD_DART_CALLBACK = 'dartCallbackReference';
+
+const CHANNEL_METHOD_START_FOREGROUND = 'startForeground';
+const CHANNEL_METHOD_STOP_FOREGROUND = 'stopForeground';
 
 const DRAWABLE_RESOURCE_REFERENCE = 'drawable';
 const DEFAULT_ICON = 'defaultIcon';

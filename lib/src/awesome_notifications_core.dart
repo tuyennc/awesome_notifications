@@ -17,7 +17,7 @@ import 'package:awesome_notifications/src/isolates/isolate_main.dart';
 //import 'dart:html' as html;
 //import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
-import 'package:awesome_notifications/definitions.dart';
+import 'package:awesome_notifications/src/definitions.dart';
 import 'package:awesome_notifications/src/enumerators/media_source.dart';
 import 'package:awesome_notifications/src/models/notification_button.dart';
 import 'package:awesome_notifications/src/models/notification_channel.dart';

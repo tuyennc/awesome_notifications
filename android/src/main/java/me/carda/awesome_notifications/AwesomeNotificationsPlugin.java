@@ -67,6 +67,7 @@ import me.carda.awesome_notifications.notifications.models.returnedData.Notifica
 import me.carda.awesome_notifications.notifications.NotificationSender;
 import me.carda.awesome_notifications.notifications.NotificationScheduler;
 
+import me.carda.awesome_notifications.services.ForegroundService;
 import me.carda.awesome_notifications.utils.BooleanUtils;
 import me.carda.awesome_notifications.utils.DateUtils;
 import me.carda.awesome_notifications.utils.JsonUtils;
@@ -595,6 +596,14 @@ public class AwesomeNotificationsPlugin
                     channelMethodCancelAllNotifications(call, result);
                     return;
 
+                case Definitions.CHANNEL_METHOD_START_FOREGROUND:
+                    channelMethodStartForeground(call, result);
+                    return;
+
+                case Definitions.CHANNEL_METHOD_STOP_FOREGROUND:
+                    channelMethodStopForeground(call, result);
+                    return;
+
                 default:
                     result.notImplemented();
             }
@@ -606,6 +615,35 @@ public class AwesomeNotificationsPlugin
             result.error(call.method, e.getMessage(), e);
             e.printStackTrace();
         }
+    }
+    private void channelMethodStartForeground(MethodCall call, Result result) throws Exception {
+
+        // We don't do any checks here if the notification channel belonging to the notification is disabled
+        // because for an foreground service, it doesn't matter
+        Map<String, Object> notificationData = call.<Map<String, Object>>argument(Definitions.FOREGROUND_NOTIFICATION_DATA);
+        Integer startType = call.<Integer>argument(Definitions.FOREGROUND_START_TYPE);
+        Boolean hasForegroundServiceType = call.<Boolean>argument(Definitions.FOREGROUND_HAS_FOREGROUND);
+        Integer foregroundServiceType = call.<Integer>argument(Definitions.FOREGROUND_SERVICE_TYPE);
+
+        if (notificationData != null && startType != null && hasForegroundServiceType != null && foregroundServiceType != null) {
+            ForegroundService.StartParameter parameter =
+                    new ForegroundService.StartParameter(notificationData, startType, hasForegroundServiceType, foregroundServiceType);
+            Intent intent = new Intent(applicationContext, ForegroundService.class);
+            intent.putExtra(ForegroundService.StartParameter.EXTRA, parameter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                applicationContext.startForegroundService(intent);
+            } else {
+                applicationContext.startService(intent);
+            }
+            result.success(null);
+        } else {
+            throw new IllegalArgumentException("An argument passed to startForeground is missing or invalid");
+        }
+    }
+
+    private void channelMethodStopForeground(MethodCall call, Result result) {
+        applicationContext.stopService(new Intent(applicationContext, ForegroundService.class));
+        result.success(null);
     }
 
     private void channelMethodGetDrawableData(@NonNull MethodCall call, Result result) throws Exception {

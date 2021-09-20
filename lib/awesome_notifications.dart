@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:awesome_notifications/src/models/received_models/received_action.dart';
 import 'package:awesome_notifications/src/models/received_models/received_notification.dart';
 
-export 'definitions.dart';
+export 'src/definitions.dart';
 export 'src/awesome_notifications_core.dart';
 
 export 'src/enumerators/group_alert_behaviour.dart';

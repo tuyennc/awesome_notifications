@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:awesome_notifications/android_foreground_service.dart';
 import 'package:awesome_notifications_example/common_widgets/badge_picker.dart';
 import 'package:awesome_notifications_example/common_widgets/shadow_top.dart';
 import 'package:awesome_notifications_example/main.dart';
@@ -744,6 +745,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     backgroundColor: Colors.red,
                     labelColor: Colors.white,
                     onPressed: cancelAllNotifications),
+
+                /* ******************************************************************** */
+
+                TextDivisor(title: 'Android Foreground Service'),
+                TextNote(
+                    'On any platform other then Android, these buttons do nothing.'),
+                SimpleButton('Start foreground service',
+                    onPressed: () => AndroidForegroundService.startForeground(
+                        content: NotificationContent(
+                          id: 42,
+                          body: 'Service is running!',
+                          title: 'Android Foreground Service',
+                          channelKey: 'basic_channel',
+                          bigPicture: 'asset://assets/images/android-bg-worker.jpg',
+                          notificationLayout: NotificationLayout.BigPicture,
+                        ),
+                        actionButtons: [
+                          NotificationActionButton(
+                              key: 'SHOW_SERVICE_DETAILS',
+                              label: 'Show details'
+                          )
+                        ])
+                ),
+                SimpleButton('Stop foreground service',
+                    onPressed: () => AndroidForegroundService.stopForeground()),
               ],
             )),
         ShadowTop(),

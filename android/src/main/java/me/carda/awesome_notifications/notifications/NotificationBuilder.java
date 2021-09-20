@@ -69,6 +69,7 @@ public class NotificationBuilder {
         return createNotification(context, notificationModel, false);
     }
 
+    @SuppressWarnings("unchecked")
     public static Notification createNotification(Context context, NotificationModel notificationModel, boolean isSummary) throws AwesomeNotificationException {
 
         Intent intent = buildNotificationIntentFromModel(
@@ -919,6 +920,7 @@ public class NotificationBuilder {
     }
 
     private static final ConcurrentHashMap<String, NotificationContentModel> messagingQueue = new ConcurrentHashMap<String, NotificationContentModel>();
+
     @SuppressWarnings("unchecked")
     private static Boolean setMessagingLayout(Context context, boolean isGrouping, NotificationContentModel contentModel, NotificationCompat.Builder builder) throws AwesomeNotificationException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

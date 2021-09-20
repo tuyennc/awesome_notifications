@@ -94,6 +94,14 @@ public interface Definitions {
     String CHANNEL_METHOD_MEDIA_BUTTON = "mediaButton";
     String CHANNEL_METHOD_SET_ACTION_HANDLE = "setActionHandle";
 
+    String CHANNEL_METHOD_START_FOREGROUND = "startForeground";
+    String CHANNEL_METHOD_STOP_FOREGROUND = "stopForeground";
+
+    String FOREGROUND_NOTIFICATION_DATA = "notificationData";
+    String FOREGROUND_START_TYPE = "startType";
+    String FOREGROUND_HAS_FOREGROUND = "hasForegroundServiceType";
+    String FOREGROUND_SERVICE_TYPE = "foregroundServiceType";
+
     String CHANNEL_METHOD_LIST_ALL_SCHEDULES = "listAllSchedules";
     String CHANNEL_FORCE_UPDATE = "forceUpdate";
 
