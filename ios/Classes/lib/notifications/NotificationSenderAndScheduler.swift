@@ -215,6 +215,33 @@ public class NotificationSenderAndScheduler {
         return true
     }
     
+    public static func dismissNotificationsByChannelKey(channelKey: String) -> Bool {
+        NotificationBuilder.dismissNotificationsByChannelKey(channelKey: channelKey)
+                
+        if(SwiftAwesomeNotificationsPlugin.debug){
+            Log.d(NotificationSenderAndScheduler.TAG, "Notifications from channel "+channelKey+" dismissed")
+        }
+        return true
+    }
+    
+    public static func cancelSchedulesByChannelKey(channelKey: String) -> Bool {
+        NotificationBuilder.cancelSchedulesByChannelKey(channelKey: channelKey)
+                
+        if(SwiftAwesomeNotificationsPlugin.debug){
+            Log.d(NotificationSenderAndScheduler.TAG, "Scheduled notifications from channel "+channelKey+" canceled")
+        }
+        return true
+    }
+    
+    public static func cancelNotificationsByChannelKey(channelKey: String) -> Bool {
+        NotificationBuilder.cancelNotificationsByChannelKey(channelKey: channelKey)
+                
+        if(SwiftAwesomeNotificationsPlugin.debug){
+            Log.d(NotificationSenderAndScheduler.TAG, "Notifications and schedules from channel "+channelKey+" canceled")
+        }
+        return true
+    }
+    
     public static func dismissAllNotifications() -> Bool {
         NotificationBuilder.dismissAllNotifications()
         

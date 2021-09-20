@@ -26,9 +26,10 @@ public enum Definitions {
     public static let  SILENT_HANDLE = "silentHandle"
     public static let  DART_BG_HANDLE = "dartBgHandle"
     
-    public static let  PUSH_NOTIFICATION_CONTENT = "content"
-    public static let  PUSH_NOTIFICATION_SCHEDULE = "schedule"
-    public static let  PUSH_NOTIFICATION_BUTTONS = "actionButtons"
+    public static let  NOTIFICATION_CONTENT = "content"
+    public static let  NOTIFICATION_SCHEDULE = "schedule"
+    public static let  NOTIFICATION_ACTION_BUTTONS = "actionButtons"
+    public static let  NOTIFICATION_RECEIVED_ACTION = "receivedAction"
 
     public static let  SHARED_DEFAULTS = "defaults"
     public static let  SHARED_MANAGER = "sharedManager"
@@ -82,6 +83,9 @@ public enum Definitions {
     public static let  CHANNEL_METHOD_DISMISS_NOTIFICATION = "dismissNotification"
     public static let  CHANNEL_METHOD_CANCEL_NOTIFICATION = "cancelNotification"
     public static let  CHANNEL_METHOD_CANCEL_SCHEDULE = "cancelSchedule"
+    public static let  CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_CHANNEL_KEY = "dismissNotificationsByChannelKey"
+    public static let  CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_CHANNEL_KEY = "cancelNotificationsByChannelKey"
+    public static let  CHANNEL_METHOD_CANCEL_SCHEDULES_BY_CHANNEL_KEY = "cancelSchedulesByChannelKey"
     public static let  CHANNEL_METHOD_CANCEL_ALL_SCHEDULES = "cancelAllSchedules"
     public static let  CHANNEL_METHOD_DISMISS_ALL_NOTIFICATIONS = "dismissAllNotifications"
     public static let  CHANNEL_METHOD_CANCEL_ALL_NOTIFICATIONS = "cancelAllNotifications"
@@ -90,6 +94,7 @@ public enum Definitions {
     public static let  CHANNEL_METHOD_NOTIFICATION_DISPLAYED = "notificationDisplayed"
     public static let  CHANNEL_METHOD_NOTIFICATION_DISMISSED = "notificationDismissed"
     public static let  CHANNEL_METHOD_RECEIVED_ACTION = "receivedAction"
+    public static let  CHANNEL_METHOD_SILENT_ACTION = "silentAction"
     
     public static let  CHANNEL_METHOD_GET_UTC_TIMEZONE_IDENTIFIER = "getUtcTimeZoneIdentifier"
     public static let  CHANNEL_METHOD_GET_LOCAL_TIMEZONE_IDENTIFIER = "getLocalTimeZoneIdentifier"
@@ -129,7 +134,6 @@ public enum Definitions {
     public static let  NOTIFICATION_JSON = "notificationJson"
     public static let  NOTIFICATION_ACTION_TYPE = "notificationActionType"
 
-    public static let  NOTIFICATION_ACTION_BUTTONS = "actionButtons"
     public static let  NOTIFICATION_BUTTON_KEY = "key"
     public static let  NOTIFICATION_BUTTON_ICON = "icon"
     public static let  NOTIFICATION_BUTTON_LABEL = "label"

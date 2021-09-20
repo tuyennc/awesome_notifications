@@ -345,6 +345,7 @@ class NotificationUtils {
               TextButton(
                 onPressed: () async {
                   isAllowed = await AwesomeNotifications().requestPermissionToSendNotifications();
+                  Navigator.pop(context);
                 },
                 child: Text(
                   'Allow',

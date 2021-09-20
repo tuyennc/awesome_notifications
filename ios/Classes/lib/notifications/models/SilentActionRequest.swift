@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class SilentDataRequest {
+public class SilentActionRequest {
     public let actionReceived: ActionReceived
     public let handler: () -> ()
     

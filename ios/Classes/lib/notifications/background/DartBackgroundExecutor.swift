@@ -4,18 +4,18 @@
 //
 //  Created by Rafael Setragni on 04/06/21.
 //
-
+import Flutter
 import Foundation
 
 public class DartBackgroundExecutor {
     private static let TAG:String = "DartBackgroundExecutor"
     
-    public let silentDataQueue:SynchronizedArray = SynchronizedArray<SilentDataRequest>()
+    public let silentDataQueue:SynchronizedArray = SynchronizedArray<SilentActionRequest>()
         
-    private var backgroundEngine:FlutterEngine?
-    private var backgroundChannel:FlutterMethodChannel?
+    private var backgroundEngine: FlutterEngine?
+    private var backgroundChannel: FlutterMethodChannel?
     private var flutterPluginRegistrantCallback: FlutterPluginRegistrantCallback?
-    static var registrar:FlutterPluginRegistrar?
+    static var registrar: FlutterPluginRegistrar?
     
     private var _isRunning = false
     public var isRunning:Bool {
@@ -33,40 +33,33 @@ public class DartBackgroundExecutor {
     var dartCallbackHandle:Int64 = 0
     var silentCallbackHandle:Int64 = 0
         
-    func run() {
-        _isRunning = true
-        
-        dartCallbackHandle = DefaultManager.getDartBgCallback()
-        silentCallbackHandle = DefaultManager.getActionCallback()
-        
-        if dartCallbackHandle == 0 {
-            Log.d(DartBackgroundExecutor.TAG, "There is no valid callback to handle dart channels.")
-            self.closeBackgroundIsolate()
-            return
+    func runBackgroundExecutor(
+        silentActionRequest: SilentActionRequest,
+        dartCallbackHandle:Int64,
+        silentCallbackHandle:Int64
+    ) {
+        addSilentActionRequest(silentActionRequest)
+       
+        if(!self._isRunning){
+            
+            self._isRunning = true
+            
+            self.silentCallbackHandle = silentCallbackHandle
+            self.dartCallbackHandle = dartCallbackHandle
+            
+            runBackgroundThread(
+                silentCallbackHandle: silentCallbackHandle,
+                dartCallbackHandle: dartCallbackHandle)
         }
-        
-        if silentCallbackHandle == 0 {
-            Log.d(DartBackgroundExecutor.TAG, "There is no valid callback to handle silent data.")
-            self.closeBackgroundIsolate()
-            return
-        }
-        
-        guard let dartCallbackInfo = FlutterCallbackCache.lookupCallbackInformation(self.dartCallbackHandle) else {
-            Log.d(DartBackgroundExecutor.TAG, "There is no valid callback info to handle dart channels.")
-            self.closeBackgroundIsolate()
-            return
-        }
-        
-        guard let silentCallbackInfo = FlutterCallbackCache.lookupCallbackInformation(self.silentCallbackHandle) else {
-            Log.d(DartBackgroundExecutor.TAG, "There is no valid callback info to handle silent data.")
-            self.closeBackgroundIsolate()
-            return
-        }
-        
-        runBackgroundThread(dartCallbackInfo: dartCallbackInfo, silentCallbackInfo: silentCallbackInfo)
     }
     
-    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult){
+    public func isNotRunning() -> Bool { return !_isRunning; }
+    
+    public func addSilentActionRequest(_ silentActionRequest:SilentActionRequest){
+        silentDataQueue.append(silentActionRequest)
+    }
+    
+    public func onMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult){
         
         if(call.method == Definitions.CHANNEL_METHOD_INITIALIZE){
             
@@ -87,20 +80,23 @@ public class DartBackgroundExecutor {
         }
     }
     
-    func initializeReverseMethodChannel(backgroundEngine: FlutterEngine){
-        
-        self.backgroundChannel = FlutterMethodChannel(
-            name: Definitions.CHANNEL_METHOD_DART_CALLBACK,
-            binaryMessenger: backgroundEngine.binaryMessenger
-        )
-        
-        self.backgroundChannel!.setMethodCallHandler(handle)
-    }
-    
     func runBackgroundThread(
-       dartCallbackInfo:FlutterCallbackInformation,
-       silentCallbackInfo:FlutterCallbackInformation
+        silentCallbackHandle:Int64,
+        dartCallbackHandle:Int64
     ) {
+        
+        guard let dartCallbackInfo = FlutterCallbackCache.lookupCallbackInformation(dartCallbackHandle) else {
+            Log.d(DartBackgroundExecutor.TAG, "There is no valid callback info to handle dart channels.")
+            self.closeBackgroundIsolate()
+            return
+        }
+        
+        guard let silentCallbackInfo = FlutterCallbackCache.lookupCallbackInformation(silentCallbackHandle) else {
+            Log.d(DartBackgroundExecutor.TAG, "There is no valid callback info to handle silent data.")
+            self.closeBackgroundIsolate()
+            return
+        }
+        
         if(self.backgroundEngine != nil){
             Log.d(DartBackgroundExecutor.TAG, "Background isolate already started.")
             self.closeBackgroundIsolate()
@@ -132,38 +128,35 @@ public class DartBackgroundExecutor {
         }
     }
     
+    func initializeReverseMethodChannel(backgroundEngine: FlutterEngine){
+        
+        self.backgroundChannel = FlutterMethodChannel(
+            name: Definitions.CHANNEL_METHOD_DART_CALLBACK,
+            binaryMessenger: backgroundEngine.binaryMessenger
+        )
+        
+        self.backgroundChannel!.setMethodCallHandler(onMethodCall)
+    }
+    
+    func closeBackgroundIsolate() {
+        _isRunning = false
+        
+        self.backgroundEngine?.destroyContext()
+        self.backgroundEngine = nil
+        
+        self.backgroundChannel = nil
+    }
+    
     func dischargeNextSilentExecution(){
-        if (silentDataQueue.count > 0){
-            let silentDataRequest:SilentDataRequest = silentDataQueue.first()!
+        if let silentDataRequest:SilentActionRequest = silentDataQueue.first {
+            silentDataQueue.remove(at: 0)
             self.executeDartCallbackInBackgroundIsolate(silentDataRequest)
         }
         else {
             closeBackgroundIsolate()
         }
     }
-    
-    func executeDartCallbackInBackgroundIsolate(_ silentDataRequest:SilentDataRequest){
-        
-        if self.backgroundEngine == nil {
-            Log.i(DartBackgroundExecutor.TAG, "A background message could not be handle since" +
-                    "dart callback handler has not been registered")
-        }
-        
-        let silentData = silentDataRequest.actionReceived.toMap()
-        
-        backgroundChannel?.invokeMethod(
-            Definitions.CHANNEL_METHOD_SILENCED_CALLBACK,
-            arguments: [
-                Definitions.ACTION_HANDLE: silentCallbackHandle,
-                Definitions.CHANNEL_METHOD_RECEIVED_ACTION: silentData
-            ],
-            result: { flutterResult in
-                silentDataRequest.handler()
-                self.finishDartBackgroundExecution()
-            }
-        )
-    }
-    
+
     func finishDartBackgroundExecution(){
         if (silentDataQueue.count == 0) {
             Log.i(DartBackgroundExecutor.TAG, "All silent data fetched.")
@@ -175,12 +168,25 @@ public class DartBackgroundExecutor {
         }
     }
     
-    func closeBackgroundIsolate() {
-        _isRunning = false
+    func executeDartCallbackInBackgroundIsolate(_ silentDataRequest:SilentActionRequest){
         
-        self.backgroundEngine?.destroyContext()
-        self.backgroundEngine = nil
+        if self.backgroundEngine == nil {
+            Log.i(DartBackgroundExecutor.TAG, "A background message could not be handle since" +
+                    "dart callback handler has not been registered")
+        }
         
-        self.backgroundChannel = nil
+        let silentData = silentDataRequest.actionReceived.toMap()
+        
+        backgroundChannel?.invokeMethod(
+            Definitions.CHANNEL_METHOD_SILENCED_CALLBACK,
+            arguments: [
+                Definitions.ACTION_HANDLE: self.silentCallbackHandle,
+                Definitions.CHANNEL_METHOD_RECEIVED_ACTION: silentData
+            ],
+            result: { flutterResult in
+                silentDataRequest.handler()
+                self.finishDartBackgroundExecution()
+            }
+        )
     }
 }

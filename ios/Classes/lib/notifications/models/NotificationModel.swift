@@ -17,13 +17,13 @@ public class NotificationModel : AbstractModel {
     
     public func fromMap(arguments: [String : Any?]?) -> AbstractModel? {
         
-        self.content = extractNotificationContent(Definitions.PUSH_NOTIFICATION_CONTENT, arguments)
+        self.content = extractNotificationContent(Definitions.NOTIFICATION_CONTENT, arguments)
         
         // required
         if(self.content == nil){ return nil }
         
-        self.schedule = extractNotificationSchedule(Definitions.PUSH_NOTIFICATION_SCHEDULE, arguments)
-        self.actionButtons = extractNotificationButtons(Definitions.PUSH_NOTIFICATION_BUTTONS, arguments)
+        self.schedule = extractNotificationSchedule(Definitions.NOTIFICATION_SCHEDULE, arguments)
+        self.actionButtons = extractNotificationButtons(Definitions.NOTIFICATION_ACTION_BUTTONS, arguments)
         
         return self
     }

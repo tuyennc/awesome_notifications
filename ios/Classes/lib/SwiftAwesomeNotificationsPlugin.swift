@@ -114,16 +114,16 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         else {
             arguments = content.userInfo as! [String : Any?]
             
-            if(arguments[Definitions.PUSH_NOTIFICATION_CONTENT] is String){
-                arguments[Definitions.PUSH_NOTIFICATION_CONTENT] = JsonUtils.fromJson(arguments[Definitions.PUSH_NOTIFICATION_CONTENT] as? String)
+            if(arguments[Definitions.NOTIFICATION_CONTENT] is String){
+                arguments[Definitions.NOTIFICATION_CONTENT] = JsonUtils.fromJson(arguments[Definitions.NOTIFICATION_CONTENT] as? String)
             }
             
-            if(arguments[Definitions.PUSH_NOTIFICATION_BUTTONS] is String){
-                arguments[Definitions.PUSH_NOTIFICATION_BUTTONS] = JsonUtils.fromJson(arguments[Definitions.PUSH_NOTIFICATION_BUTTONS] as? String)
+            if(arguments[Definitions.NOTIFICATION_ACTION_BUTTONS] is String){
+                arguments[Definitions.NOTIFICATION_ACTION_BUTTONS] = JsonUtils.fromJson(arguments[Definitions.NOTIFICATION_ACTION_BUTTONS] as? String)
             }
             
-            if(arguments[Definitions.PUSH_NOTIFICATION_SCHEDULE] is String){
-                arguments[Definitions.PUSH_NOTIFICATION_SCHEDULE] = JsonUtils.fromJson(arguments[Definitions.PUSH_NOTIFICATION_SCHEDULE] as? String)
+            if(arguments[Definitions.NOTIFICATION_SCHEDULE] is String){
+                arguments[Definitions.NOTIFICATION_SCHEDULE] = JsonUtils.fromJson(arguments[Definitions.NOTIFICATION_SCHEDULE] as? String)
             }
         }
         
@@ -270,7 +270,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     actionReceived!.notificationActionType == .SilentBackgroundAction
                 )
             ){
-                DartBackgroundService.enqueueSilentDataProcessing(actionReceived: actionReceived!, handler: completionHandler)
+                DartBackgroundService.executeAction(actionReceived: actionReceived!, handler: completionHandler)
                 return
             }
             
@@ -279,7 +279,25 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 if(SwiftAwesomeNotificationsPlugin.debug){
 					Log.d(SwiftAwesomeNotificationsPlugin.TAG, "Notification action received");
 				}
-                flutterChannel?.invokeMethod(Definitions.CHANNEL_METHOD_RECEIVED_ACTION, arguments: actionReceived?.toMap())
+                
+                if [
+                    NotificationActionType.SilentAction,
+                    NotificationActionType.SilentBackgroundAction
+                ]
+                .contains(actionReceived!.notificationActionType) {
+                    let actionHandle:Int64 = DefaultManager.getActionCallback()
+                    flutterChannel?.invokeMethod(
+                        Definitions.CHANNEL_METHOD_SILENT_ACTION,
+                        arguments: [
+                            Definitions.ACTION_HANDLE: actionHandle,
+                            Definitions.NOTIFICATION_RECEIVED_ACTION: actionReceived!.toMap()
+                        ])
+                }
+                else {
+                    flutterChannel?.invokeMethod(
+                        Definitions.CHANNEL_METHOD_RECEIVED_ACTION,
+                        arguments: actionReceived?.toMap())
+                }
             }
             else {
 
@@ -601,6 +619,18 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     try channelMethodCancelNotification(call: call, result: result)
                     return
                     
+                case Definitions.CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_CHANNEL_KEY:
+                    try channelMethodDismissNotificationsByChannelKey(call: call, result: result)
+                    return
+                    
+                case Definitions.CHANNEL_METHOD_CANCEL_SCHEDULES_BY_CHANNEL_KEY:
+                    try channelMethodCancelSchedulesByChannelKey(call: call, result: result)
+                    return
+                    
+                case Definitions.CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_CHANNEL_KEY:
+                    try channelMethodCancelNotificationsByChannelKey(call: call, result: result)
+                    return
+                    
                 case Definitions.CHANNEL_METHOD_DISMISS_ALL_NOTIFICATIONS:
                     try channelMethodDismissAllNotifications(call: call, result: result)
                     return
@@ -656,7 +686,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let timezone:String =
             (platformParameters[Definitions.NOTIFICATION_SCHEDULE_TIMEZONE] as? String) ?? DateUtils.utcTimeZone.identifier
         
-		guard let scheduleData:[String : Any?] = platformParameters[Definitions.PUSH_NOTIFICATION_SCHEDULE] as? [String : Any?]
+		guard let scheduleData:[String : Any?] = platformParameters[Definitions.NOTIFICATION_SCHEDULE] as? [String : Any?]
 		else { result(nil); return }
         
         var scheduleModel:NotificationScheduleModel?
@@ -925,7 +955,7 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
         result(nil)
     }
-    
+
     private func channelMethodDismissNotification(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
         guard let notificationId:Int = call.arguments as? Int else {
             result(false); return
@@ -963,6 +993,51 @@ public class SwiftAwesomeNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         
         if #available(iOS 10.0, *) {
             result(NotificationSenderAndScheduler.cancelNotification(id: notificationId))
+            return
+        } else {
+            // Fallback on earlier versions
+        }
+        
+        result(false)
+    }
+
+    private func channelMethodDismissNotificationsByChannelKey(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
+        guard let channelKey:String = call.arguments as? String else {
+            result(false); return
+        }
+        
+        if #available(iOS 10.0, *) {
+            result(NotificationSenderAndScheduler.dismissNotificationsByChannelKey(channelKey: channelKey))
+            return
+        } else {
+            // Fallback on earlier versions
+        }
+        
+        result(false)
+    }
+
+    private func channelMethodCancelSchedulesByChannelKey(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
+        guard let channelKey:String = call.arguments as? String else {
+            result(false); return
+        }
+        
+        if #available(iOS 10.0, *) {
+            result(NotificationSenderAndScheduler.cancelSchedulesByChannelKey(channelKey: channelKey))
+            return
+        } else {
+            // Fallback on earlier versions
+        }
+        
+        result(false)
+    }
+
+    private func channelMethodCancelNotificationsByChannelKey(call: FlutterMethodCall, result: @escaping FlutterResult) throws {
+        guard let channelKey:String = call.arguments as? String else {
+            result(false); return
+        }
+        
+        if #available(iOS 10.0, *) {
+            result(NotificationSenderAndScheduler.cancelNotificationsByChannelKey(channelKey: channelKey))
             return
         } else {
             // Fallback on earlier versions

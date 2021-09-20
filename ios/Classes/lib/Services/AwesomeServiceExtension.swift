@@ -34,7 +34,7 @@ open class AwesomeServiceExtension: UNNotificationServiceExtension {
                     image = options["image"] as? String
                 }
                 
-                if content.userInfo[Definitions.PUSH_NOTIFICATION_CONTENT] == nil {
+                if content.userInfo[Definitions.NOTIFICATION_CONTENT] == nil {
                     
                     notificationModel = NotificationModel()
                     notificationModel!.content = NotificationContentModel()
@@ -57,9 +57,9 @@ open class AwesomeServiceExtension: UNNotificationServiceExtension {
                     
                     var mapData:[String:Any?] = [:]
                     
-                    mapData[Definitions.PUSH_NOTIFICATION_CONTENT]  = JsonUtils.fromJson(content.userInfo[Definitions.PUSH_NOTIFICATION_CONTENT] as? String)
-                    mapData[Definitions.PUSH_NOTIFICATION_SCHEDULE] = JsonUtils.fromJson(content.userInfo[Definitions.PUSH_NOTIFICATION_SCHEDULE] as? String)
-                    mapData[Definitions.PUSH_NOTIFICATION_BUTTONS]  = JsonUtils.fromJsonArr(content.userInfo[Definitions.PUSH_NOTIFICATION_BUTTONS] as? String)
+                    mapData[Definitions.NOTIFICATION_CONTENT]  = JsonUtils.fromJson(content.userInfo[Definitions.NOTIFICATION_CONTENT] as? String)
+                    mapData[Definitions.NOTIFICATION_SCHEDULE] = JsonUtils.fromJson(content.userInfo[Definitions.NOTIFICATION_SCHEDULE] as? String)
+                    mapData[Definitions.NOTIFICATION_ACTION_BUTTONS]  = JsonUtils.fromJsonArr(content.userInfo[Definitions.NOTIFICATION_ACTION_BUTTONS] as? String)
                     
                     notificationModel = NotificationModel().fromMap(arguments: mapData) as? NotificationModel
                     

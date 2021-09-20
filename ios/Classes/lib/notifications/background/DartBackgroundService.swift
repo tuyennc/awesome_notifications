@@ -18,17 +18,37 @@ class DartBackgroundService {
 
     private init() {}
     
-    public static func enqueueSilentDataProcessing(
+    public static func executeAction(
         actionReceived:ActionReceived,
         handler: @escaping () -> ()
     ){
-        DartBackgroundExecutor.shared.silentDataQueue.add(SilentDataRequest(
-            actionReceived: actionReceived, handler: handler
-        ))
+        Log.d(TAG, "A new Dart background service has started")
         
-        if !(DartBackgroundExecutor.shared.isRunning) {
-            Log.i(TAG, "Dart background service has started")
-            DartBackgroundExecutor.shared.run()
+        let silentActionRequest:SilentActionRequest = SilentActionRequest(
+            actionReceived: actionReceived,
+            handler: handler
+        )
+        
+        let dartCallbackHandle: Int64 = DefaultManager.getDartBgCallback()
+        let silentCallbackHandle: Int64 = DefaultManager.getActionCallback()
+        
+        if dartCallbackHandle == 0 {
+            Log.d(DartBackgroundService.TAG,
+                  "A background message could not be handled in Dart because there is no valid onActionReceivedMethod handler register")
+            return
         }
+        
+        if silentCallbackHandle == 0 {
+            Log.d(DartBackgroundService.TAG,
+                  "A background message could not be handled in Dart because there is no valid dart background handler register"
+            )
+            return
+        }
+        
+        DartBackgroundExecutor.shared.runBackgroundExecutor(
+            silentActionRequest: silentActionRequest,
+            dartCallbackHandle: dartCallbackHandle,
+            silentCallbackHandle: silentCallbackHandle
+        )
     }
 }

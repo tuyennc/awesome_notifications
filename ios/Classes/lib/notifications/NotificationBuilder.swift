@@ -160,18 +160,38 @@ public class NotificationBuilder {
         
         switch actionKey {
         
+            case UNNotificationDefaultActionIdentifier.description:
+                actionReceived.actionKey = nil
+                actionReceived.actionInput = nil
+                actionReceived.actionLifeCycle = SwiftAwesomeNotificationsPlugin.appLifeCycle
+                actionReceived.actionDate = DateUtils.getUTCTextDate()
+                actionReceived.dismissedLifeCycle = nil
+                actionReceived.dismissedDate = nil
+        
             case UNNotificationDismissActionIdentifier.description:
                 actionReceived.actionKey = nil
                 actionReceived.actionInput = nil
+                actionReceived.actionLifeCycle = nil
+                actionReceived.actionDate = nil
                 actionReceived.dismissedLifeCycle = SwiftAwesomeNotificationsPlugin.appLifeCycle
                 actionReceived.dismissedDate = DateUtils.getUTCTextDate()
                 
             default:
-                let defaultIOSAction = UNNotificationDefaultActionIdentifier.description
-                actionReceived.actionKey = actionKey == defaultIOSAction ? nil : actionKey
+                actionReceived.actionKey = actionKey
                 actionReceived.actionInput = userText
                 actionReceived.actionLifeCycle = SwiftAwesomeNotificationsPlugin.appLifeCycle
                 actionReceived.actionDate = DateUtils.getUTCTextDate()
+                actionReceived.dismissedLifeCycle = nil
+                actionReceived.dismissedDate = nil
+                actionReceived.notificationActionType = .BringToForeground
+                
+                for button:NotificationButtonModel in notificationModel.actionButtons! {
+                    if button.key == actionKey {
+                        actionReceived.notificationActionType = button.notificationActionType
+                        actionReceived.autoDismissible = button.autoDismissible
+                        break
+                    }
+                }
         }
         
         if(StringUtils.isNullOrEmpty(actionReceived.displayedDate)){
@@ -296,8 +316,10 @@ public class NotificationBuilder {
         
         let pushData = notificationModel.toMap()
         let jsonData = JsonUtils.toJson(pushData)
-        content.userInfo[Definitions.NOTIFICATION_JSON] = jsonData
+        
         content.userInfo[Definitions.NOTIFICATION_ID] = notificationModel.content!.id!
+        content.userInfo[Definitions.NOTIFICATION_JSON] = jsonData
+        content.userInfo[Definitions.NOTIFICATION_CHANNEL_KEY] = notificationModel.content!.channelKey!
     }
 
     private static func setTitle(notificationModel:NotificationModel, channel:NotificationChannelModel, content:UNMutableNotificationContent){
@@ -603,7 +625,11 @@ public class NotificationBuilder {
                 return
                 
             case .Messaging:
-                setMessagingLayout(notificationModel: notificationModel, content: content)
+                setMessagingLayout(notificationModel: notificationModel, content: content, isGrouping: false)
+                return
+                
+            case .MessagingGroup:
+                setMessagingLayout(notificationModel: notificationModel, content: content, isGrouping: true)
                 return
                         
             case .ProgressBar:
@@ -691,8 +717,10 @@ public class NotificationBuilder {
         content.categoryIdentifier = "Inbox"
     }
     
-    private static func setMessagingLayout(notificationModel:NotificationModel, content:UNMutableNotificationContent) {
+    private static func setMessagingLayout(notificationModel:NotificationModel, content:UNMutableNotificationContent, isGrouping:Bool) {
         content.categoryIdentifier = "Messaging"
+        
+        content.threadIdentifier = (isGrouping ? "MessagingGR." : "Messaging.")+notificationModel.content!.channelKey!
     }
     
     private static func setDefaultLayout(notificationModel:NotificationModel, content:UNMutableNotificationContent) {
@@ -704,6 +732,38 @@ public class NotificationBuilder {
             
         let center = UNUserNotificationCenter.current()
         center.removeDeliveredNotifications(withIdentifiers: [referenceKey])
+    }
+    
+    public static func dismissNotificationsByChannelKey(channelKey: String){
+        
+        let center = UNUserNotificationCenter.current()
+        center.getDeliveredNotifications(completionHandler: { (notificationRequest) in
+            for notification in notificationRequest {
+                if channelKey == notification.request.content.userInfo[Definitions.NOTIFICATION_CHANNEL_KEY] as? String {
+                    center.removeDeliveredNotifications(withIdentifiers: [notification.request.identifier])
+                }
+            }
+        })
+    }
+    
+    public static func cancelSchedulesByChannelKey(channelKey: String){
+        
+        let center = UNUserNotificationCenter.current()
+        center.getPendingNotificationRequests(completionHandler: { (notificationRequest) in
+            for notification in notificationRequest {
+                if channelKey == notification.content.userInfo[Definitions.NOTIFICATION_CHANNEL_KEY] as? String {
+                    if let id:String = notification.content.userInfo[Definitions.NOTIFICATION_ID] as? String {
+                        center.removePendingNotificationRequests(withIdentifiers: [id])
+                    }
+                }
+            }
+        })
+    }
+    
+    public static func cancelNotificationsByChannelKey(channelKey: String){
+        
+        dismissNotificationsByChannelKey(channelKey: channelKey)
+        cancelSchedulesByChannelKey(channelKey: channelKey)
     }
     
     public static func cancelScheduledNotification(id:Int){
