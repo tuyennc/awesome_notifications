@@ -2,8 +2,15 @@
 # Awesome Notifications - Flutter
 
 ![](https://raw.githubusercontent.com/rafaelsetragni/awesome_notifications/master/example/assets/readme/awesome-notifications.jpg)
+<div>
 
+[![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](#) [![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)](#)
+[![Discord](https://img.shields.io/discord/888523488376279050.svg?style=for-the-badge&colorA=7289da&label=Chat%20on%20Discord)](https://discord.gg/HxBAPYYV) [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](#)
 
+[![pub package](https://img.shields.io/pub/v/awesome_notifications.svg)](https://pub.dev/packages/awesome_notifications)
+[![Likes](https://badges.bar/awesome_notifications/likes)](https://pub.dev/packages/awesome_notifications/score)
+[![popularity](https://badges.bar/awesome_notifications/popularity)](https://pub.dev/packages/awesome_notifications/score)
+[![pub points](https://badges.bar/awesome_notifications/pub%20points)](https://pub.dev/packages/awesome_notifications/score)
 
 ### Features
 
@@ -75,8 +82,6 @@ And all notifications sent while the app was killed are registered and delivered
 
 This way, your Application will receive **all notifications at Flutter level code**.
 
-<br>
-
 ## How to show Local Notifications
 
 <br>
@@ -129,7 +134,7 @@ AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
 AwesomeNotifications().actionStream.listen(
     (receivedNotification){
 
-        Navigator.of(context).pushName(context,
+        Navigator.of(context).pushNamed(
             '/NotificationPage',
             arguments: { id: receivedNotification.id } // your page params. I recommend to you to pass all *receivedNotification* object
         );
@@ -333,10 +338,10 @@ To show any images on notification, at any place, you need to include the respec
 
 Images can be defined using 4 prefix types:
 
-- Asset: images access through Flutter asset method. <br>&nbsp;&nbsp;&nbsp;&nbsp;**Example**: `asset://path/to/image-asset.png`
-- Network: images access through internet connection. <br>&nbsp;&nbsp;&nbsp;&nbsp;**Example**: `http(s)://url.com/to/image-asset.png`
-- File: images access through files stored on device. <br>&nbsp;&nbsp;&nbsp;&nbsp;**Example**: `file://path/to/image-asset.png`
-- Resource: images access through drawable native resources. On Android, those files are stored inside [project]/android/app/src/main/drawabe folder. <br>&nbsp;&nbsp;&nbsp;&nbsp;**Example**: `resource://drawable/res_image-asset.png`
+- Asset: images access through Flutter asset method. **Example**: asset://path/to/image-asset.png
+- Network: images access through internet connection. **Example**: http(s)://url.com/to/image-asset.png
+- File: images access through files stored on device. **Example**: file://path/to/image-asset.png
+- Resource: images access through drawable native resources. On Android, those files are stored inside [project]/android/app/src/main/drawabe folder. **Example**: resource://drawable/res_image-asset.png
 
 OBS: Unfortunately, icons and sounds can be only resource media types.
 <br>
@@ -369,9 +374,8 @@ Notifications action buttons could be classified in 4 types:
 
 - Default: after user taps, the notification bar is closed and an action event is fired.
 - InputField: after user taps, a input text field is displayed to capture input by the user.
-- DisabledAction: after user taps, the notification bar is closed, but the respective action event is fired.
+- DisabledAction: after user taps, the notification bar is closed, but the respective action event is not fired.
 - KeepOnTop: after user taps, the notification bar is not closed, but an action event is fired.
-- AutoDismissible: after user taps, the notification is dismissed from status bar and none action event is fired, except `dismissedStream`.
 
 <br>
 
@@ -380,9 +384,8 @@ Notifications action buttons could be classified in 4 types:
 | -----------------: | ----------------- | ----------------- | ----------------------- |
 | **Default**        | keeps the app in foreground | brings the app to foreground | brings the app to foreground |
 | **InputField**     | keeps the app in foreground | brings the app to foreground | brings the app to foreground |
-| **DisabledAction** | keeps the app in foreground | brings the app to foreground  | brings the app to foreground |
+| **DisabledAction** | keeps the app in foreground | keeps the app in background  | keeps the app terminated |
 | **KeepOnTop**      | keeps the app in foreground | keeps the app in background  | keeps the app terminated |
-| **AutoDismissible**| keeps the app in foreground | keeps the app in background  | keeps the app terminated |
 
 <br>
 
@@ -422,7 +425,7 @@ Here are some practical examples of how to create a notification scheduled:
 ```Dart
   String localTimeZone = await AwesomeNotifications().getLocalTimeZoneIdentifier();
   String utcTimeZone = await AwesomeNotifications().getLocalTimeZoneIdentifier();
-  
+
   await AwesomeNotifications().createNotification(
       content: NotificationContent(
           id: id,
@@ -446,7 +449,7 @@ await AwesomeNotifications().createNotification(
   schedule: NotificationInterval(
       interval: 5,
       timeZone: localTimeZone
-  );  
+  );
 ```
 
 ```Dart
@@ -516,9 +519,6 @@ OBS: not all emojis work with all platforms. Please, test the specific emoji bef
 ## How to send Push Notifications using Firebase Cloud Messaging plugin (FCM)
 
 To send a notification using Awesome Notifications and FCM Services, you need to send a POST request to the address https://fcm.googleapis.com/fcm/send.
-
-Also, on our example app, you can find the class `FirebaseUtils` with all basic features you need to user `firebase_messaging` with `awesome_notifications`.
-
 Due to limitations on Android and iOS, you should send a empty **notification** field and use only the **data** field to send your data, as bellow:
 
 OBS: `actionButtons` and `schedule` are **optional**
@@ -527,36 +527,27 @@ OBS 2: ensure to read all the documentation inside [FlutterFire Overview Documen
 <br>
 OBS 3: data only messages are classed as "low priority". Devices can throttle and ignore these messages if your application is in the background, terminated, or a variety of other conditions such as low battery or currently high CPU usage. To help improve delivery, you can bump the priority of messages. Note; this does still not guarantee delivery. More info [here](https://firebase.flutter.dev/docs/messaging/usage/#low-priority-messages)
 <br>
-OBS 4: Again, the background data only message method of the `firebase_messaging` plug-in runs in the background mode (which falls under iOS background execution rules) that can suspend all of your background executions for an indefinite period of time, for various reasons. Unfortunately, this is a known behavior of iOS and there is nothing to do about it. 15 minutes of delay is the smaller period of time possible between each execution. So, consider that the background method of `firebase_messaging` may not be executed at all or even run entirely out of the expected time.
+OBS 4: Again, the background message method of the `firebase_messaging` plug-in runs in the background mode (which falls under iOS background execution rules) that can suspend all of your background executions for an indefinite period of time, for various reasons. Unfortunately, this is a known behavior of iOS and there is nothing to do about it. 15 minutes of delay is the smaller period of time possible between each execution. So, consider that the background method of `firebase_messaging` may not be executed at all or even run entirely out of the expected time.
 <br>
 
 ```json
 {
     "to" : "[YOUR APP TOKEN]",
-    "mutable-content": true,
+    "mutable_content" : true,
     "content_available": true,
     "priority": "high",
-    "notification": {
-        "title": "Huston! The eagle has landed!",
-        "body": "A small step for a man, but a giant leap to Flutter's community!",
-        "sound": "default",
-        "image": "https://www.dw.com/image/49519617_303.jpg"
-    },
     "data" : {
         "content": {
             "id": 100,
-            "channelKey": "basic_channel",
-            "title": "Huston! The eagle has landed!",
+            "channelKey": "big_picture",
+            "title": "Huston!\nThe eagle has landed!",
             "body": "A small step for a man, but a giant leap to Flutter's community!",
             "notificationLayout": "BigPicture",
             "largeIcon": "https://media.fstatic.com/kdNpUx4VBicwDuRBnhBrNmVsaKU=/full-fit-in/290x478/media/artists/avatar/2013/08/neil-i-armstrong_a39978.jpeg",
             "bigPicture": "https://www.dw.com/image/49519617_303.jpg",
             "showWhen": true,
             "autoCancel": true,
-            "privacy": "Private",
-            "payload": {
-                "secret": "Awesome Notifications Rocks!"
-            }
+            "privacy": "Private"
         },
         "actionButtons": [
             {
@@ -724,6 +715,26 @@ Main methods to manipulate a notification channel:
 
 ## Common Known Issues
 
+**Issue:** awesome_notifications is not working on release mode on Android with custom sound or icon.
+
+**Fix:** You need to protect your android resource files against minification and obfuscation. You can
+achieve it by two ways:
+
+1 - Please include the prefix "res_" in your native resource file names. The use of the tag `shrinkResources false` inside build.gradle or the command `flutter build apk --no-shrink` is not recommended. To know more about it, please visit [Shrink, obfuscate, and optimize your app](https://developer.android.com/studio/build/shrink-code)
+
+2 - Create a keep.xml file and add the following content:
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/*,@raw/slow_spring_board" />
+```
+
+To know more about it, please visit [Customize which resources to keep](https://developer.android.com/studio/build/shrink-code#keep-resources)
+
+
+##
+
 **Issue:** The name 'DateUtils' is defined in the libraries 'package:awesome_notifications/src/utils/date_utils.dart (via package:awesome_notifications/awesome_notifications.dart)' and 'package:flutter/src/material/date.dart (via package:flutter/material.dart)'.
 
 **Fix:** Use a prefix while importing or hide one of the DateUtils declarations:
@@ -801,4 +812,3 @@ If the icon of the notification is not set or not valid, the notification will a
 
 ### Behaviour on platforms other than Android
 On any platform other then Android, all methods in this plugin are no-ops (they do nothing when called), so you don't need to do a platform check before calling them.
-
