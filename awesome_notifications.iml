@@ -60,6 +60,7 @@
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/awesome_notifications/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/awesome_notifications/.pub" />
     </content>
+    <orderEntry type="jdk" jdkName="Android API 30 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Flutter Plugins" level="project" />
     <orderEntry type="library" name="Dart SDK" level="project" />
