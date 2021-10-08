@@ -35,6 +35,7 @@ class NotificationContent extends BaseNotificationContent {
       {
       required int id,
       required channelKey,
+      String? groupKey,
       String? title,
       String? body,
       String? summary,
@@ -66,6 +67,7 @@ class NotificationContent extends BaseNotificationContent {
             channelKey: channelKey,
             title: title,
             body: body,
+            groupKey: groupKey,
             summary: summary,
             showWhen: showWhen,
             payload: payload,

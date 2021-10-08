@@ -65,72 +65,83 @@ public class NotificationBuilder {
 
     public static String TAG = "NotificationBuilder";
 
-    public static Notification createNotification(Context context, NotificationModel notificationModel) throws AwesomeNotificationException {
-        return createNotification(context, notificationModel, false);
+    public static Notification createNotification(Context context, Intent originalIntent, NotificationModel notificationModel) throws AwesomeNotificationException {
+        return createNotification(context, originalIntent, notificationModel, false);
     }
 
     @SuppressWarnings("unchecked")
-    public static Notification createNotification(Context context, NotificationModel notificationModel, boolean isSummary) throws AwesomeNotificationException {
+    public static Notification createNotification(Context context, Intent originalIntent, NotificationModel notificationModel, boolean isSummary) throws AwesomeNotificationException {
+
+        NotificationChannelModel channelModel = ChannelManager.getChannelByKey(context, notificationModel.content.channelKey);
+        if(channelModel == null)
+            throw new AwesomeNotificationException("Channel '"+ notificationModel.content.channelKey +"' does not exist or is disabled");
+
+        notificationModel.content.groupKey = getGroupKey(notificationModel.content, channelModel);
 
         Intent intent = buildNotificationIntentFromModel(
             context,
             Definitions.SELECT_NOTIFICATION,
-                notificationModel
+            originalIntent,
+            notificationModel,
+            channelModel
         );
 
         Intent deleteIntent = buildNotificationIntentFromModel(
             context,
             Definitions.DISMISSED_NOTIFICATION,
-                notificationModel,
+            null,
+            notificationModel,
+            channelModel,
             DismissedNotificationReceiver.class
         );
 
-        PendingIntent pendingIntent =
-            notificationModel.content.notificationActionType == NotificationActionType.BringToForeground ?
-                PendingIntent.getActivity(
-                        context,
-                        notificationModel.content.id,
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                ) :
-                PendingIntent.getBroadcast(
-                        context,
-                        notificationModel.content.id,
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+        PendingIntent pendingIntent = notificationModel.content.notificationActionType == NotificationActionType.BringToForeground ?
+            PendingIntent.getActivity(
+                context,
+                notificationModel.content.id,
+                intent,
+                Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M /*Android 6*/ ?
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT :
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            ) :
+            PendingIntent.getBroadcast(
+                context,
+                notificationModel.content.id,
+                intent,
+                Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M /*Android 6*/ ?
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT :
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
 
         PendingIntent pendingDeleteIntent = PendingIntent.getBroadcast(
             context,
             notificationModel.content.id,
             deleteIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M /*Android 6*/ ?
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT :
+                PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = getNotificationBuilderFromModel(context, notificationModel, pendingIntent, pendingDeleteIntent, isSummary);
+        Notification finalNotification = getNotificationBuilderFromModel(context, originalIntent, notificationModel, pendingIntent, pendingDeleteIntent, isSummary);
 
-        Notification finalNotification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        finalNotification.extras.putInt(
+                Definitions.NOTIFICATION_ID,
+                notificationModel.content.id);
 
-            finalNotification.extras.putInt(
-                    Definitions.NOTIFICATION_ID,
-                    notificationModel.content.id);
+        finalNotification.extras.putString(
+                Definitions.NOTIFICATION_CHANNEL_KEY,
+                StringUtils.digestString(notificationModel.content.channelKey));
 
-            finalNotification.extras.putString(
-                    Definitions.NOTIFICATION_CHANNEL_KEY,
-                    StringUtils.digestString(notificationModel.content.channelKey));
+        finalNotification.extras.putString(
+                Definitions.NOTIFICATION_LAYOUT,
+                StringUtils.digestString(notificationModel.content.notificationLayout.toString()));
 
-            finalNotification.extras.putString(
-                    Definitions.NOTIFICATION_LAYOUT,
-                    StringUtils.digestString(notificationModel.content.notificationLayout.toString()));
-
-            if(!ListUtils.isNullOrEmpty(notificationModel.content.messages)) {
-                Map<String, Object> contentData = notificationModel.content.toMap();
-                List<Map> contentMessageData = (List<Map>) contentData.get(Definitions.NOTIFICATION_MESSAGES);
-                finalNotification.extras.putSerializable(
-                        Definitions.NOTIFICATION_MESSAGES,
-                        (Serializable) contentMessageData);
-            }
+        if(!ListUtils.isNullOrEmpty(notificationModel.content.messages)) {
+            Map<String, Object> contentData = notificationModel.content.toMap();
+            List<Map> contentMessageData = (List<Map>) contentData.get(Definitions.NOTIFICATION_MESSAGES);
+            finalNotification.extras.putSerializable(
+                    Definitions.NOTIFICATION_MESSAGES,
+                    (Serializable) contentMessageData);
         }
 
         return finalNotification;
@@ -151,33 +162,95 @@ public class NotificationBuilder {
         }
     }
 
-    public static Intent buildNotificationIntentFromModel(Context context, String actionReference, NotificationModel notificationModel){
-        Class<?> targetClass = getTargetClass(context, notificationModel.content.notificationActionType);
-        return buildNotificationIntentFromModel(context, actionReference, notificationModel, notificationModel.content.notificationActionType.toString(), targetClass);
+    public static Intent buildNotificationIntentFromModel(
+        Context context,
+        String actionReference,
+        Intent originalIntent,
+        NotificationModel notificationModel,
+        NotificationChannelModel channel
+    ){
+        return buildNotificationIntentFromModel(
+            context, actionReference,
+            originalIntent,
+            notificationModel,
+            channel,
+            notificationModel.content.notificationActionType);
     }
 
-    public static Intent buildNotificationIntentFromModel(Context context, String actionReference, NotificationModel notificationModel, String notificationActionType){
-        Class<?> targetClass = getTargetClass(context, notificationModel.content.notificationActionType);
-        return buildNotificationIntentFromModel(context, actionReference, notificationModel, notificationActionType, targetClass);
+    public static Intent buildNotificationIntentFromModel(
+            Context context,
+            String actionReference,
+            Intent originalIntent,
+            NotificationModel notificationModel,
+            NotificationChannelModel channel,
+            Class<?> targetClass
+    ){
+        return buildNotificationIntentFromModel(
+                context,
+                actionReference,
+                originalIntent,
+                notificationModel,
+                channel,
+                notificationModel.content.notificationActionType, targetClass);
     }
 
-    public static Intent buildNotificationIntentFromModel(Context context, String actionReference, NotificationModel notificationModel, Class<?> targetClass){
-        return buildNotificationIntentFromModel(context, actionReference, notificationModel, notificationModel.content.notificationActionType.toString(), targetClass) ;
+    public static Intent buildNotificationIntentFromModel(
+            Context context,
+            String actionReference,
+            Intent originalIntent,
+            NotificationModel notificationModel,
+            NotificationChannelModel channel,
+            NotificationActionType actionType
+    ){
+        Class<?> targetClass = getTargetClass(context, actionType);
+        return buildNotificationIntentFromModel(
+                context,
+                actionReference,
+                originalIntent,
+                notificationModel,
+                channel,
+                actionType,
+                targetClass);
     }
 
-    public static Intent buildNotificationIntentFromModel(Context context, String actionReference, NotificationModel notificationModel, String notificationActionType, Class<?> targetClass){
-        Intent intent = new Intent(context, targetClass);
+    public static Intent buildNotificationIntentFromModel(
+        Context context,
+        String actionReference,
+        Intent originalIntent,
+        NotificationModel notificationModel,
+        NotificationChannelModel channel,
+        NotificationActionType actionType,
+        Class<?> targetClass
+    ){
+        Intent intent = targetClass == null ? new Intent() : new Intent(context, targetClass);
+
+        // Preserves analytics extras
+        if(originalIntent != null)
+            intent.putExtras(originalIntent.getExtras());
 
         intent.setAction(actionReference);
 
+        Bundle extras = intent.getExtras();
+        if(extras == null)
+            extras = new Bundle();
+
         String jsonData = notificationModel.toJson();
-        intent.putExtra(Definitions.NOTIFICATION_JSON, jsonData);
-        intent.putExtra(Definitions.NOTIFICATION_ID, notificationModel.content.id);
-        intent.putExtra(Definitions.NOTIFICATION_CHANNEL_KEY, notificationModel.content.channelKey);
-        intent.putExtra(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, notificationModel.content.autoDismissible);
-        intent.putExtra(Definitions.NOTIFICATION_ACTION_TYPE, notificationActionType);
+        extras.putString(Definitions.NOTIFICATION_JSON, jsonData);
+
+        updateTrackingExtras(notificationModel, channel, actionType, extras);
+        intent.putExtras(extras);
 
         return intent;
+    }
+
+    private static void updateTrackingExtras(NotificationModel notificationModel, NotificationChannelModel channel, NotificationActionType actionType, Bundle extras) {
+        String groupKey = getGroupKey(notificationModel.content, channel);
+
+        extras.putInt(Definitions.NOTIFICATION_ID, notificationModel.content.id);
+        extras.putString(Definitions.NOTIFICATION_CHANNEL_KEY, StringUtils.digestString(notificationModel.content.channelKey));
+        extras.putString(Definitions.NOTIFICATION_GROUP_KEY, StringUtils.digestString(groupKey));
+        extras.putBoolean(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, notificationModel.content.autoDismissible);
+        extras.putString(Definitions.NOTIFICATION_ACTION_TYPE, actionType.toString());
     }
 
     public static NotificationModel buildNotificationModelFromIntent(Intent intent){
@@ -232,7 +305,7 @@ public class NotificationBuilder {
                         actionModel.actionInput = intent.getStringExtra(Definitions.NOTIFICATION_INPUT_TEXT);
                     intent.putExtra(Definitions.NOTIFICATION_INPUT_TEXT, actionModel.actionInput);
 
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P /*Android 9*/) {
                         try {
                             notificationModel.remoteHistory = actionModel.actionInput;
                             notificationModel.content.isRefreshNotification = true;
@@ -255,7 +328,7 @@ public class NotificationBuilder {
 
     public static void finalizeNotificationIntent(Context context, NotificationModel notificationModel, Intent intent){
 
-        Integer notificationId = intent.getIntExtra(Definitions.NOTIFICATION_ID, -1);
+        int notificationId = intent.getIntExtra(Definitions.NOTIFICATION_ID, -1);
 
         boolean shouldDismiss = intent.getBooleanExtra(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, notificationId >= 0);
 
@@ -298,14 +371,13 @@ public class NotificationBuilder {
         return null;
     }
 
-    public static List<Notification> getAllAndroidActiveNotifications(Context context, String channelKey){
+    public static List<Notification> getAllAndroidActiveNotificationsByChannelKey(Context context, String channelKey){
         List<Notification> notifications = new ArrayList<>();
-        if(context != null && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
+        if(context != null && !StringUtils.isNullOrEmpty(channelKey) && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
 
             NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             StatusBarNotification[] currentActiveNotifications = manager.getActiveNotifications();
 
-            boolean hasKeyFilter = !StringUtils.isNullOrEmpty(channelKey);
             String hashedKey = StringUtils.digestString(channelKey);
 
             if(currentActiveNotifications != null){
@@ -313,15 +385,36 @@ public class NotificationBuilder {
 
                     Notification notification = activeNotification.getNotification();
 
-                    if (hasKeyFilter) {
-                        String notificationChannelKey = notification.extras
-                                .getString(Definitions.NOTIFICATION_CHANNEL_KEY);
+                    String notificationChannelKey = notification.extras
+                            .getString(Definitions.NOTIFICATION_CHANNEL_KEY);
 
-                        if(notificationChannelKey.equals(hashedKey)){
-                            notifications.add(notification);
-                        }
+                    if(notificationChannelKey != null && notificationChannelKey.equals(hashedKey)){
+                        notifications.add(notification);
                     }
-                    else {
+                }
+            }
+        }
+        return notifications;
+    }
+
+    public static List<Notification> getAllAndroidActiveNotificationsByGroupKey(Context context, String groupKey){
+        List<Notification> notifications = new ArrayList<>();
+        if(context != null && !StringUtils.isNullOrEmpty(groupKey) && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
+
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            StatusBarNotification[] currentActiveNotifications = manager.getActiveNotifications();
+
+            String hashedKey = StringUtils.digestString(groupKey);
+
+            if(currentActiveNotifications != null){
+                for (StatusBarNotification activeNotification : currentActiveNotifications) {
+
+                    Notification notification = activeNotification.getNotification();
+
+                    String notificationGroupKey = notification.extras
+                            .getString(Definitions.NOTIFICATION_GROUP_KEY);
+
+                    if(notificationGroupKey != null && notificationGroupKey.equals(hashedKey)){
                         notifications.add(notification);
                     }
                 }
@@ -338,7 +431,7 @@ public class NotificationBuilder {
         return null;
     }
 
-    private static NotificationCompat.Builder getNotificationBuilderFromModel(Context context, NotificationModel notificationModel, PendingIntent pendingIntent, PendingIntent deleteIntent, boolean isSummary) throws AwesomeNotificationException {
+    private static Notification getNotificationBuilderFromModel(Context context, Intent originalIntent, NotificationModel notificationModel, PendingIntent pendingIntent, PendingIntent deleteIntent, boolean isSummary) throws AwesomeNotificationException {
 
         NotificationChannelModel channel = ChannelManager.getChannelByKey(context, notificationModel.content.channelKey);
 
@@ -346,7 +439,7 @@ public class NotificationBuilder {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationModel.content.channelKey);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O /*Android 8*/){
             NotificationChannel androidChannel = ChannelManager.getAndroidChannel(context, channel);
             if(androidChannel == null){
                 throw new AwesomeNotificationException("The notification channel '"+channel.channelKey+"' does not exist or is disabled");
@@ -364,9 +457,9 @@ public class NotificationBuilder {
         setVisibility(context, notificationModel, channel, builder);
         setShowWhen(notificationModel, builder);
 
-        setLayout(context, notificationModel, builder);
+        setLayout(context, notificationModel, channel, builder);
 
-        createActionButtons(context, notificationModel, builder);
+        createActionButtons(context, originalIntent, notificationModel, channel, builder);
 
         setTitle(notificationModel, channel, builder);
         setBody(notificationModel, builder);
@@ -393,7 +486,12 @@ public class NotificationBuilder {
             builder.setDeleteIntent(deleteIntent);
         }
 
-        return builder;
+        Notification androidNotification = builder.build();
+        if(androidNotification.extras == null)
+            androidNotification.extras = new Bundle();
+        updateTrackingExtras(notificationModel, channel, notificationModel.content.notificationActionType, androidNotification.extras);
+
+        return androidNotification;
     }
 
     private static void setShowWhen(NotificationModel notificationModel, NotificationCompat.Builder builder) {
@@ -498,15 +596,11 @@ public class NotificationBuilder {
     }
 
     private static void setVisibility(Context context, NotificationModel notificationModel, NotificationChannelModel channelModel, NotificationCompat.Builder builder) {
+        Integer visibilityIndex;
+        visibilityIndex = IntegerUtils.extractInteger(notificationModel.content.privacy, channelModel.defaultPrivacy.ordinal());
+        visibilityIndex = IntegerUtils.extractInteger(visibilityIndex, NotificationPrivacy.Public);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-
-            Integer visibilityIndex;
-            visibilityIndex = IntegerUtils.extractInteger(notificationModel.content.privacy, channelModel.defaultPrivacy.ordinal());
-            visibilityIndex = IntegerUtils.extractInteger(visibilityIndex, NotificationPrivacy.Public);
-
-            builder.setVisibility(visibilityIndex - 1);
-        }
+        builder.setVisibility(visibilityIndex - 1);
     }
 
     private static void setLayoutColor(Context context, NotificationModel notificationModel, NotificationChannelModel channelModel, NotificationCompat.Builder builder) {
@@ -583,20 +677,19 @@ public class NotificationBuilder {
     }
 
     @NonNull
-    public static void createActionButtons(Context context, NotificationModel notificationModel, NotificationCompat.Builder builder) {
+    public static void createActionButtons(Context context, Intent originalIntent, NotificationModel notificationModel, NotificationChannelModel channel, NotificationCompat.Builder builder) {
 
         if(ListUtils.isNullOrEmpty(notificationModel.actionButtons)) return;
 
         for(NotificationButtonModel buttonProperties : notificationModel.actionButtons) {
 
-            Class<?> targetClass = getTargetClass(context, buttonProperties.notificationActionType);
-
             Intent actionIntent = buildNotificationIntentFromModel(
                 context,
                 Definitions.NOTIFICATION_BUTTON_ACTION_PREFIX + "_" + buttonProperties.key,
+                originalIntent,
                 notificationModel,
-                buttonProperties.notificationActionType.toString(),
-                targetClass
+                channel,
+                buttonProperties.notificationActionType
             );
 
             actionIntent.putExtra(Definitions.NOTIFICATION_BUTTON_KEY, buttonProperties.key);
@@ -707,8 +800,19 @@ public class NotificationBuilder {
 
     private static void setGrouping(Context context, NotificationModel notificationModel, NotificationChannelModel channelModel, NotificationCompat.Builder builder) {
 
-        if (!StringUtils.isNullOrEmpty(channelModel.groupKey)) {
-            builder.setGroup(channelModel.groupKey);
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
+            if( // Grouping key is reserved to arrange messaging and messaging group layouts
+                notificationModel.content.notificationLayout == NotificationLayout.Messaging ||
+                notificationModel.content.notificationLayout == NotificationLayout.MessagingGroup
+            ){
+                return;
+            }
+        }
+
+        String groupKey = getGroupKey(notificationModel.content, channelModel);
+
+        if (!StringUtils.isNullOrEmpty(groupKey)) {
+            builder.setGroup(groupKey);
 
             if(notificationModel.groupSummary) {
                 builder.setGroupSummary(true);
@@ -721,7 +825,7 @@ public class NotificationBuilder {
                     StatusBarNotification[] currentActiveNotifications = manager.getActiveNotifications();
 
                     for (StatusBarNotification activeNotification : currentActiveNotifications) {
-                        if (activeNotification.getGroupKey().contains("g:"+channelModel.groupKey)) {
+                        if (activeNotification.getGroupKey().contains("g:"+groupKey)) {
                             grouped = false;
                             break;
                         }
@@ -748,7 +852,7 @@ public class NotificationBuilder {
         }
     }
 
-    private static void setLayout(Context context, NotificationModel notificationModel, NotificationCompat.Builder builder) throws AwesomeNotificationException {
+    private static void setLayout(Context context, NotificationModel notificationModel, NotificationChannelModel channelModel, NotificationCompat.Builder builder) throws AwesomeNotificationException {
 
         switch (notificationModel.content.notificationLayout) {
 
@@ -765,11 +869,11 @@ public class NotificationBuilder {
                 break;
 
             case Messaging:
-                if(setMessagingLayout(context, false, notificationModel.content, builder)) return;
+                if(setMessagingLayout(context, false, notificationModel.content, channelModel, builder)) return;
                 break;
 
             case MessagingGroup:
-                if(setMessagingLayout(context, true, notificationModel.content, builder)) return;
+                if(setMessagingLayout(context, true, notificationModel.content, channelModel, builder)) return;
                 break;
 
             case MediaPlayer:
@@ -895,6 +999,9 @@ public class NotificationBuilder {
     }
 
     private static Thread builderLockControl;
+    public static boolean builderIsLocked(){
+        return builderLockControl != null;
+    }
     public static void builderUnlockWait(){
         builderLockControl = null;
     }
@@ -919,27 +1026,34 @@ public class NotificationBuilder {
         return retries > 0;
     }
 
+    public static String getGroupKey(NotificationContentModel contentModel, NotificationChannelModel channelModel){
+        return !StringUtils.isNullOrEmpty(contentModel.groupKey) ?
+                contentModel.groupKey : channelModel.groupKey;
+    }
+
     private static final ConcurrentHashMap<String, NotificationContentModel> messagingQueue = new ConcurrentHashMap<String, NotificationContentModel>();
 
     @SuppressWarnings("unchecked")
-    private static Boolean setMessagingLayout(Context context, boolean isGrouping, NotificationContentModel contentModel, NotificationCompat.Builder builder) throws AwesomeNotificationException {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+    private static Boolean setMessagingLayout(Context context, boolean isGrouping, NotificationContentModel contentModel, NotificationChannelModel channelModel, NotificationCompat.Builder builder) throws AwesomeNotificationException {
+        String groupKey = getGroupKey(contentModel, channelModel);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N /*Android 7*/) {
 
             Notification currentNotification = null;
             if(!contentModel.isRefreshNotification){
-                String messageQueueKey = contentModel.channelKey + (isGrouping ? ".Gr" : "");
+                String messageQueueKey = groupKey + (isGrouping ? ".Gr" : "");
 
-                List<Notification> notifications = getAllAndroidActiveNotifications(context, contentModel.channelKey);
+                List<Notification> notifications = getAllAndroidActiveNotificationsByGroupKey(context, groupKey);
 
                 int messagingNotificationId = -1;
-                String digestedChannelKey = StringUtils.digestString(contentModel.channelKey);
+                String digestedGroupKey = StringUtils.digestString(groupKey);
                 String digestedLayout = StringUtils.digestString(NotificationLayout.Messaging.toString());
 
                 for (Notification notification : notifications) {
                     String layout = notification.extras.getString(Definitions.NOTIFICATION_LAYOUT);
                     if(digestedLayout.equals(layout)){
-                        String channelKey = notification.extras.getString(Definitions.NOTIFICATION_CHANNEL_KEY);
-                        if(digestedChannelKey.equals(channelKey)){
+                        String extraGroupKey = notification.extras.getString(Definitions.NOTIFICATION_GROUP_KEY);
+                        if(digestedGroupKey.equals(extraGroupKey)){
                             currentNotification = notification;
                             messagingNotificationId = notification.extras.getInt(
                                     Definitions.NOTIFICATION_ID);
@@ -990,7 +1104,7 @@ public class NotificationBuilder {
                 new NotificationCompat.MessagingStyle(contentModel.summary);
 
             for(NotificationMessageModel message : contentModel.messages) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P /*Android 9*/) {
 
                     Person.Builder personBuilder =  new Person.Builder()
                             .setName(message.title);
@@ -999,7 +1113,8 @@ public class NotificationBuilder {
                         Bitmap largeIcon = BitmapUtils.getBitmapFromSource(
                                 context,
                                 contentModel.largeIcon);
-                        personBuilder.setIcon(
+                        if(largeIcon != null)
+                            personBuilder.setIcon(
                                 IconCompat.createWithBitmap(largeIcon));
                     }
 
@@ -1014,7 +1129,7 @@ public class NotificationBuilder {
             }
 
             if (
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P /*Android 9*/ &&
                 !StringUtils.isNullOrEmpty(contentModel.summary)
             ){
                 messagingStyle.setConversationTitle(contentModel.summary);
@@ -1024,9 +1139,8 @@ public class NotificationBuilder {
             builder.setStyle((NotificationCompat.Style) messagingStyle);
         }
         else {
-            NotificationChannelModel channelModel = ChannelManager.getChannelByKey(context, contentModel.channelKey);
-            if(StringUtils.isNullOrEmpty(channelModel.groupKey)){
-                builder.setGroup("Messaging."+contentModel.channelKey);
+            if(StringUtils.isNullOrEmpty(groupKey)){
+                builder.setGroup("Messaging."+groupKey);
             }
         }
 
@@ -1060,8 +1174,8 @@ public class NotificationBuilder {
         );
 
         if(!StringUtils.isNullOrEmpty(contentModel.summary)){
-            CharSequence progressSumary = HtmlUtils.fromHtml(contentModel.summary);
-            builder.setSubText(progressSumary);
+            CharSequence progressSummary = HtmlUtils.fromHtml(contentModel.summary);
+            builder.setSubText(progressSummary);
         }
     }
 

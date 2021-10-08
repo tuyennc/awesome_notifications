@@ -20,12 +20,21 @@ void main() {
           defaultColor: MyApp.mainColor
       ),
       NotificationChannel(
-          channelKey: 'jhonny_group',
-          channelName: 'Jhonny chat group',
+          channelKey: 'chats',
+          channelName: 'Chat groups',
           channelDescription: 'This is a simple example channel of a chat group',
           channelShowBadge: true,
           importance: NotificationImportance.Max,
           defaultColor: MyApp.mainColor
+      ),
+      NotificationChannel(
+          channelKey: 'foreground_service',
+          channelName: 'Background Service',
+          channelDescription: 'This channel is used to execute foreground services',
+          importance: NotificationImportance.High,
+          locked: true,
+          playSound: false,
+          defaultPrivacy: NotificationPrivacy.Public
       ),
       NotificationChannel(
           channelKey: 'background_channel',
@@ -105,11 +114,13 @@ class MyApp extends StatelessWidget {
       case NotificationActionType.SilentAction: // Runs on main thread
 
         if(
-          receivedAction.channelKey == 'jhonny_group' &&
+          receivedAction.channelKey == 'chats' &&
+          !(receivedAction.groupKey?.isEmpty ?? true) &&
           receivedAction.actionKey == 'REPLY'
         ){
             await NotificationUtils.createMessagingNotification(
-              channelKey: 'jhonny_group',
+              channelKey: 'chats',
+              groupKey: receivedAction.groupKey!,
               chatName: 'Jhonny\'s Group',
               username: 'You',
               largeIcon: 'asset://assets/images/remix-disc.jpg',
@@ -243,14 +254,16 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () =>
               _messageIncrement++ % 4 < 2 ?
                 NotificationUtils.createMessagingNotification(
-                    channelKey: 'jhonny_group',
+                    channelKey: 'chats',
+                    groupKey: 'jhonny_group',
                     chatName: 'Jhonny\'s Group',
                     username: 'Jhonny',
                     largeIcon: 'asset://assets/images/80s-disc.jpg',
                     message: 'Jhonny\'s message $_messageIncrement',
                 ):
                 NotificationUtils.createMessagingNotification(
-                    channelKey: 'jhonny_group',
+                    channelKey: 'chats',
+                    groupKey: 'jhonny_group',
                     chatName: 'Michael\'s Group',
                     username: 'Michael',
                   largeIcon: 'asset://assets/images/dj-disc.jpg',
@@ -298,6 +311,11 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () => NotificationUtils.dismissNotificationsByChannelKey('simple_channel'),
             style: ElevatedButton.styleFrom(primary: Colors.red, textStyle: TextStyle(color: Colors.white)),
             child: Text('Dismiss all notifications with same channel key'),
+          ),
+          ElevatedButton(
+            onPressed: () => NotificationUtils.dismissNotificationsByGroupKey('jhonny_group'),
+            style: ElevatedButton.styleFrom(primary: Colors.red, textStyle: TextStyle(color: Colors.white)),
+            child: Text('Dismiss all notifications with same group key'),
           ),
           ElevatedButton(
             onPressed: () => NotificationUtils.cancelAllNotifications(),
@@ -397,6 +415,7 @@ class NotificationUtils {
 
   static Future<void> createMessagingNotification({
     required String channelKey,
+    required String groupKey,
     required String chatName,
     required String username,
     required String message,
@@ -409,6 +428,7 @@ class NotificationUtils {
           content:
           NotificationContent(
               id: createUniqueID(AwesomeNotifications.maxID),
+              groupKey: groupKey,
               channelKey: channelKey,
               summary: chatName,
               title: username,
@@ -586,7 +606,7 @@ class NotificationUtils {
           id: 42,
           body: 'Service is running!',
           title: 'Android Foreground Service',
-          channelKey: 'simple_channel',
+          channelKey: 'foreground_service',
           bigPicture: 'asset://assets/images/android-bg-worker.jpg',
           notificationLayout: NotificationLayout.BigPicture,
         ),
@@ -609,6 +629,10 @@ class NotificationUtils {
 
   static Future<void> dismissNotificationsByChannelKey(String channelKey) async {
     await AwesomeNotifications().dismissNotificationsByChannelKey(channelKey);
+  }
+
+  static Future<void> dismissNotificationsByGroupKey(String groupKey) async {
+    await AwesomeNotifications().dismissNotificationsByGroupKey(groupKey);
   }
 
   static Future<void> cancelAllNotifications() async {

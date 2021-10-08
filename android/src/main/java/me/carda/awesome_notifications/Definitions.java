@@ -13,10 +13,6 @@ import me.carda.awesome_notifications.notifications.enumerators.NotificationImpo
 
 public interface Definitions {
 
-    String BROADCAST_FCM_TOKEN = "me.carda.awesome_notifications.services.firebase.TOKEN";
-    String EXTRA_BROADCAST_FCM_TOKEN = "token";
-    String EXTRA_ANDROID_MEDIA_BUTTON = "android.intent.action.MEDIA_BUTTON";
-
     String DART_REVERSE_CHANNEL = "awesome_notifications_reverse";
 
     String MEDIA_VALID_NETWORK = "^https?:\\/\\/";//(www)?(\\.?[a-zA-Z0-9@:%.\\-_\\+~#=]{2,256}\\/?)+(\\?\\S+)$
@@ -81,6 +77,9 @@ public interface Definitions {
     String CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_CHANNEL_KEY = "dismissNotificationsByChannelKey";
     String CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_CHANNEL_KEY = "cancelNotificationsByChannelKey";
     String CHANNEL_METHOD_CANCEL_SCHEDULES_BY_CHANNEL_KEY = "cancelSchedulesByChannelKey";
+    String CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_GROUP_KEY = "dismissNotificationsByGroupKey";
+    String CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_GROUP_KEY = "cancelNotificationsByGroupKey";
+    String CHANNEL_METHOD_CANCEL_SCHEDULES_BY_GROUP_KEY = "cancelSchedulesByGroupKey";
     String CHANNEL_METHOD_DISMISS_ALL_NOTIFICATIONS = "dismissAllNotifications";
     String CHANNEL_METHOD_CANCEL_ALL_SCHEDULES = "cancelAllSchedules";
     String CHANNEL_METHOD_CANCEL_ALL_NOTIFICATIONS = "cancelAllNotifications";
@@ -105,9 +104,9 @@ public interface Definitions {
     String CHANNEL_METHOD_LIST_ALL_SCHEDULES = "listAllSchedules";
     String CHANNEL_FORCE_UPDATE = "forceUpdate";
 
-    String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
-    String DISMISSED_NOTIFICATION = "DISMISSED_NOTIFICATION";
-    String NOTIFICATION_BUTTON_ACTION_PREFIX = "BUTTON_PREFIX";
+    String SELECT_NOTIFICATION = "SLCT_NTF";
+    String DISMISSED_NOTIFICATION = "DSMISD_NTF";
+    String NOTIFICATION_BUTTON_ACTION_PREFIX = "BTN_PRX";
 
     String SHARED_PREFERENCES_CHANNEL_MANAGER = "channel_manager";
 

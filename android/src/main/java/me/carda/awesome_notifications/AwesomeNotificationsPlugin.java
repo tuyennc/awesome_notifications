@@ -118,9 +118,7 @@ public class AwesomeNotificationsPlugin
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
         AttachAwesomeNotificationsPlugin(
-            //applicationContext != null ? applicationContext :
                 flutterPluginBinding.getApplicationContext(),
-            //pluginChannel != null ? pluginChannel :
                 new MethodChannel(
                     flutterPluginBinding.getBinaryMessenger(),
                     Definitions.CHANNEL_FLUTTER_PLUGIN
@@ -576,6 +574,18 @@ public class AwesomeNotificationsPlugin
                     channelMethodCancelNotificationsByChannelKey(call, result);
                     return;
 
+                case Definitions.CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_GROUP_KEY:
+                    channelMethodDismissNotificationsByGroupKey(call, result);
+                    return;
+
+                case Definitions.CHANNEL_METHOD_CANCEL_SCHEDULES_BY_GROUP_KEY:
+                    channelMethodCancelSchedulesByGroupKey(call, result);
+                    return;
+
+                case Definitions.CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_GROUP_KEY:
+                    channelMethodCancelNotificationsByGroupKey(call, result);
+                    return;
+
                 case Definitions.CHANNEL_METHOD_CANCEL_NOTIFICATION:
                     channelMethodCancelNotification(call, result);
                     return;
@@ -625,16 +635,23 @@ public class AwesomeNotificationsPlugin
         Boolean hasForegroundServiceType = call.<Boolean>argument(Definitions.FOREGROUND_HAS_FOREGROUND);
         Integer foregroundServiceType = call.<Integer>argument(Definitions.FOREGROUND_SERVICE_TYPE);
 
-        if (notificationData != null && startType != null && hasForegroundServiceType != null && foregroundServiceType != null) {
+        if (
+            notificationData != null &&
+            startType != null &&
+            hasForegroundServiceType != null &&
+            foregroundServiceType != null
+        ) {
             ForegroundService.StartParameter parameter =
                     new ForegroundService.StartParameter(notificationData, startType, hasForegroundServiceType, foregroundServiceType);
             Intent intent = new Intent(applicationContext, ForegroundService.class);
             intent.putExtra(ForegroundService.StartParameter.EXTRA, parameter);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O /*Android 8*/) {
                 applicationContext.startForegroundService(intent);
             } else {
                 applicationContext.startService(intent);
             }
+
             result.success(null);
         } else {
             throw new IllegalArgumentException("An argument passed to startForeground is missing or invalid");
@@ -872,6 +889,49 @@ public class AwesomeNotificationsPlugin
         result.success(true);
     }
 
+    private void channelMethodDismissNotificationsByGroupKey(@NonNull MethodCall call, Result result) throws Exception {
+
+        String groupKey = call.arguments();
+        if(StringUtils.isNullOrEmpty(groupKey))
+            throw new AwesomeNotificationException("Invalid group key");
+
+        NotificationSender.dismissNotificationsByGroupKey(applicationContext, groupKey);
+
+        if(AwesomeNotificationsPlugin.debug)
+            Log.d(TAG, "Notifications from group "+groupKey+" dismissed");
+
+        result.success(true);
+    }
+
+    private void channelMethodCancelSchedulesByGroupKey(@NonNull MethodCall call, Result result) throws Exception {
+
+        String groupKey = call.arguments();
+        if(StringUtils.isNullOrEmpty(groupKey))
+            throw new AwesomeNotificationException("Invalid group key");
+
+        NotificationScheduler.cancelSchedulesByGroupKey(applicationContext, groupKey);
+
+        if(AwesomeNotificationsPlugin.debug)
+            Log.d(TAG, "Scheduled Notifications from group "+groupKey+" canceled");
+
+        result.success(true);
+    }
+
+    private void channelMethodCancelNotificationsByGroupKey(@NonNull MethodCall call, Result result) throws Exception {
+
+        String groupKey = call.arguments();
+        if(StringUtils.isNullOrEmpty(groupKey))
+            throw new AwesomeNotificationException("Invalid group key");
+
+        NotificationSender.dismissNotificationsByGroupKey(applicationContext, groupKey);
+        NotificationScheduler.cancelSchedulesByGroupKey(applicationContext, groupKey);
+
+        if(AwesomeNotificationsPlugin.debug)
+            Log.d(TAG, "Notifications and schedules from group "+groupKey+" canceled");
+
+        result.success(true);
+    }
+
     private void channelMethodCancelNotification(@NonNull MethodCall call, Result result) throws Exception {
 
         Integer notificationId = call.arguments();
@@ -929,26 +989,25 @@ public class AwesomeNotificationsPlugin
 
     private void showNotificationConfigPage(){
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        final Intent intent = new Intent();
 
-            final Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O /*Android 8*/) {
+            intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, applicationContext.getPackageName());
+        } else
+        // Android 5 (LOLLIPOP) is now the minimum required
+        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)*/{
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            intent.putExtra("app_package", applicationContext.getPackageName());
+            intent.putExtra("app_uid", applicationContext.getApplicationInfo().uid);
+        } /*else {
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            intent.setData(Uri.parse("package:" + applicationContext.getPackageName()));
+        }*/
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, applicationContext.getPackageName());
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                intent.putExtra("app_package", applicationContext.getPackageName());
-                intent.putExtra("app_uid", applicationContext.getApplicationInfo().uid);
-            } else {
-                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                intent.setData(Uri.parse("package:" + applicationContext.getPackageName()));
-            }
-
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            applicationContext.startActivity(intent);
-        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        applicationContext.startActivity(intent);
     }
 
     private void channelRequestNotification(@NonNull MethodCall call, Result result) throws Exception {
@@ -965,18 +1024,12 @@ public class AwesomeNotificationsPlugin
             return;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        // Necessary to return the call only after the app goes to foreground on next time
+        pendingAuthorizationReturn = result;
+        hasGoneToAuthorizationPage = true;
+        lastChannelKeyRequested = channelKey;
 
-            // Necessary to return the call only after the app goes to foreground on next time
-            pendingAuthorizationReturn = result;
-            hasGoneToAuthorizationPage = true;
-            lastChannelKeyRequested = channelKey;
-
-            showNotificationConfigPage();
-        }
-        else {
-            channelIsNotificationAllowed(call, result);
-        }
+        showNotificationConfigPage();
     }
 
     private void channelMethodCreateNotification(@NonNull MethodCall call, Result result) throws Exception {
@@ -1018,7 +1071,7 @@ public class AwesomeNotificationsPlugin
 
     public static Boolean isNotificationEnabled(Context context, String channelKey){
         boolean isGloballyEnable = NotificationManagerCompat.from(context).areNotificationsEnabled();
-        if (isGloballyEnable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (isGloballyEnable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O /*Android 8*/) {
             if(!StringUtils.isNullOrEmpty(channelKey)) {
                 return isChannelEnabled(context, channelKey);
             }
@@ -1039,7 +1092,7 @@ public class AwesomeNotificationsPlugin
             return false;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O /*Android 8*/) {
             NotificationChannel androidChannel = ChannelManager.getAndroidChannel(context, channelModel);
             return (androidChannel != null && androidChannel.getImportance() != NotificationManager.IMPORTANCE_NONE);
         }

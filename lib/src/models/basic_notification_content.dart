@@ -11,6 +11,7 @@ class BaseNotificationContent extends Model {
 
   int? id;
   String? channelKey;
+  String? groupKey;
   String? title;
   String? body;
   String? summary;
@@ -32,10 +33,10 @@ class BaseNotificationContent extends Model {
   Color? backgroundColor;
   NotificationPrivacy? privacy;
 
-  BaseNotificationContent(
-      {
+  BaseNotificationContent({
       this.id,
       this.channelKey,
+      this.groupKey,
       this.title,
       this.body,
       this.summary,
@@ -47,13 +48,16 @@ class BaseNotificationContent extends Model {
       this.defaultColor,
       this.backgroundColor,
       this.payload,
-      this.soundSource});
+      this.soundSource
+  });
 
   @override
   BaseNotificationContent? fromMap(Map<String, dynamic> mapData) {
     this.id = AssertUtils.extractValue<int>(mapData, NOTIFICATION_ID);
     this.channelKey =
         AssertUtils.extractValue<String>(mapData, NOTIFICATION_CHANNEL_KEY);
+    this.groupKey =
+        AssertUtils.extractValue<String>(mapData, NOTIFICATION_GROUP_KEY);
     this.title = AssertUtils.extractValue<String>(mapData, NOTIFICATION_TITLE);
     this.body = AssertUtils.extractValue<String>(mapData, NOTIFICATION_BODY);
     this.summary =
@@ -91,6 +95,7 @@ class BaseNotificationContent extends Model {
     return {
       NOTIFICATION_ID: id,
       NOTIFICATION_CHANNEL_KEY: channelKey,
+      NOTIFICATION_GROUP_KEY: groupKey,
       NOTIFICATION_TITLE: title,
       NOTIFICATION_BODY: body,
       NOTIFICATION_SUMMARY: summary,

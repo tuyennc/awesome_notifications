@@ -1,5 +1,6 @@
 package me.carda.awesome_notifications.services;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
@@ -19,11 +20,8 @@ import me.carda.awesome_notifications.notifications.NotificationBuilder;
 
 public class ForegroundService extends Service {
 
-    private final NotificationBuilder builder;
-
     public ForegroundService() {
         super();
-        this.builder = new NotificationBuilder();
     }
 
     @Override
@@ -35,15 +33,20 @@ public class ForegroundService extends Service {
         Notification notification;
 
         try {
-            notification = builder.createNotification(this, pushNotification);
+            notification = NotificationBuilder.createNotification(this, intent, pushNotification);
         } catch (AwesomeNotificationException e) {
             throw new RuntimeException(e);
         }
-        if (parameter.hasForegroundServiceType && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+        if (
+            parameter.hasForegroundServiceType &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q /*Android 10*/
+        ) {
             startForeground(notificationId, notification, parameter.foregroundServiceType);
         } else {
             startForeground(notificationId, notification);
         }
+
         return parameter.startMode;
     }
 

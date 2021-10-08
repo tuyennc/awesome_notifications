@@ -178,17 +178,12 @@ public class NotificationChannelModel extends Model {
         Map<String, Object> returnedObject = new HashMap<>();
 
         returnedObject.put(Definitions.NOTIFICATION_ICON_RESOURCE_ID, this.iconResourceId);
-
         returnedObject.put(Definitions.NOTIFICATION_ICON, this.icon);
-
         returnedObject.put(Definitions.NOTIFICATION_DEFAULT_COLOR, this.defaultColor);
+        returnedObject.put(Definitions.NOTIFICATION_CHANNEL_KEY, this.channelKey);
+        returnedObject.put(Definitions.NOTIFICATION_CHANNEL_NAME, this.channelName);
+        returnedObject.put(Definitions.NOTIFICATION_CHANNEL_DESCRIPTION, this.channelDescription);
 
-        if(this.channelKey != null)
-            returnedObject.put(Definitions.NOTIFICATION_CHANNEL_KEY, this.channelKey);
-        if(this.channelName != null)
-            returnedObject.put(Definitions.NOTIFICATION_CHANNEL_NAME, this.channelName);
-        if(this.channelDescription != null)
-            returnedObject.put(Definitions.NOTIFICATION_CHANNEL_DESCRIPTION, this.channelDescription);
         if(this.channelShowBadge != null)
             returnedObject.put(Definitions.NOTIFICATION_CHANNEL_SHOW_BADGE, this.channelShowBadge);
 

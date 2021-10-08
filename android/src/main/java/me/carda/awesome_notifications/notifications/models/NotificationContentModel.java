@@ -38,6 +38,7 @@ public class NotificationContentModel extends Model {
     public Boolean showWhen;
     public List<NotificationMessageModel> messages;
     public Map<String, String> payload;
+    public String groupKey;
     public String icon;
     public String largeIcon;
     public Boolean locked;
@@ -94,6 +95,8 @@ public class NotificationContentModel extends Model {
                 NotificationSource.class, NotificationSource.values());
 
         channelKey = getValueOrDefault(arguments, Definitions.NOTIFICATION_CHANNEL_KEY, String.class);
+        groupKey = getValueOrDefault(arguments, Definitions.NOTIFICATION_GROUP_KEY, String.class);
+
         color = getValueOrDefault(arguments, Definitions.NOTIFICATION_COLOR, Long.class);
         backgroundColor = getValueOrDefault(arguments, Definitions.NOTIFICATION_BACKGROUND_COLOR, Long.class);
 
@@ -176,6 +179,8 @@ public class NotificationContentModel extends Model {
         returnedObject.put(Definitions.NOTIFICATION_DISPLAYED_DATE, this.displayedDate);
         returnedObject.put(Definitions.NOTIFICATION_CREATED_DATE, this.createdDate);
 
+        returnedObject.put(Definitions.NOTIFICATION_CHANNEL_KEY, this.channelKey);
+
         if(this.autoDismissible != null)
             returnedObject.put(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, this.autoDismissible);
 
@@ -202,8 +207,8 @@ public class NotificationContentModel extends Model {
         if(this.progress != null)
             returnedObject.put(Definitions.NOTIFICATION_PROGRESS, this.progress);
 
-        if(this.channelKey != null)
-            returnedObject.put(Definitions.NOTIFICATION_CHANNEL_KEY, this.channelKey);
+        if(this.groupKey != null)
+            returnedObject.put(Definitions.NOTIFICATION_GROUP_KEY, this.groupKey);
 
         if(this.privacy != null)
             returnedObject.put(Definitions.NOTIFICATION_PRIVACY, this.privacy.toString());

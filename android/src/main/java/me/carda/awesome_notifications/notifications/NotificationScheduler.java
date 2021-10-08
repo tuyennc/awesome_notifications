@@ -192,7 +192,7 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
 
                 if(scheduled){
                     ScheduleManager.saveSchedule(context, notificationModel);
-                    NotificationGateKeeper.broadcastNotificationCreated(
+                    NotificationBroadcaster.broadcastNotificationCreated(
                             context,
                             new NotificationReceived(notificationModel.content)
                     );
@@ -271,6 +271,11 @@ public class NotificationScheduler extends AsyncTask<String, Void, Calendar> {
 
     public static void cancelSchedulesByChannelKey(Context context, String channelKey) {
         ScheduleManager.cancelSchedulesByChannelKey(context, channelKey);
+        ScheduleManager.commitChanges(context);
+    }
+
+    public static void cancelSchedulesByGroupKey(Context context, String groupKey) {
+        ScheduleManager.cancelSchedulesByGroupKey(context, groupKey);
         ScheduleManager.commitChanges(context);
     }
 

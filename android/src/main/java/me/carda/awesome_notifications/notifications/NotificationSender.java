@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
@@ -36,6 +37,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
     private NotificationSource createdSource;
     private NotificationLifeCycle appLifeCycle;
     private NotificationModel notificationModel;
+    private Intent originalIntent;
 
     private Boolean created = false;
     private Boolean displayed = false;
@@ -53,9 +55,24 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
     }
 
     public static void send(
+            Context context,
+            NotificationSource createdSource,
+            NotificationModel notificationModel
+    ) throws AwesomeNotificationException {
+
+        NotificationSender.send(
+            context,
+            createdSource,
+            notificationModel,
+            null
+        );
+    }
+
+    public static void send(
         Context context,
         NotificationSource createdSource,
-        NotificationModel notificationModel
+        NotificationModel notificationModel,
+        Intent originalIntent
     ) throws AwesomeNotificationException {
 
         if (notificationModel == null ){
@@ -76,7 +93,8 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
             context,
             appLifeCycle,
             createdSource,
-                notificationModel
+            notificationModel,
+            originalIntent
         ).execute();
     }
 
@@ -84,12 +102,14 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
             Context context,
             NotificationLifeCycle appLifeCycle,
             NotificationSource createdSource,
-            NotificationModel notificationModel
+            NotificationModel notificationModel,
+            Intent originalIntent
     ){
         this.context = context;
         this.createdSource = createdSource;
         this.appLifeCycle = appLifeCycle;
         this.notificationModel = notificationModel;
+        this.originalIntent = originalIntent;
     }
 
     /// AsyncTask METHODS BEGIN *********************************
@@ -157,7 +177,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
             if(created){
                 CreatedManager.saveCreated(context, receivedNotification);
                 CreatedManager.commitChanges(context);
-                NotificationGateKeeper.broadcastNotificationCreated(
+                NotificationBroadcaster.broadcastNotificationCreated(
                         context,
                         receivedNotification
                 );
@@ -166,7 +186,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
             if(displayed){
                 DisplayedManager.saveDisplayed(context, receivedNotification);
                 DisplayedManager.commitChanges(context);
-                NotificationGateKeeper.broadcastNotificationDisplayed(
+                NotificationBroadcaster.broadcastNotificationDisplayed(
                     context,
                     receivedNotification
                 );
@@ -185,7 +205,6 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
         return  pushSummary;
     }
 
-    private boolean executionLocked = false;
     public NotificationModel showNotification(Context context, NotificationModel notificationModel) {
 
         try {
@@ -197,22 +216,15 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
                 (lifeCycle == NotificationLifeCycle.Foreground && notificationModel.content.displayOnForeground) ||
                 (lifeCycle == NotificationLifeCycle.Background && notificationModel.content.displayOnBackground)
             ){
-//                if(notificationModel.content.notificationLayout == NotificationLayout.Messaging){
-//                    if(!NotificationBuilder.builderLockWait()){
-//                        throw new AwesomeNotificationException("MessagingLayout was not available to use");
-//                    }
-//                    executionLocked = true;
-//                }
+                Notification notification = NotificationBuilder.createNotification(context, originalIntent, notificationModel);
 
-                Notification notification = NotificationBuilder.createNotification(context, notificationModel);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M /*Android 6*/) {
                     NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
                     if(notificationModel.groupSummary){
-                        NotificationModel pushSummary = _buildSummaryGroupNotification(notificationModel);
-                        Notification summaryNotification = NotificationBuilder.createNotification(context, pushSummary, true);
-                        notificationManager.notify(pushSummary.content.id, summaryNotification);
+                        NotificationModel notificationPushSummary = _buildSummaryGroupNotification(notificationModel);
+                        Notification summaryNotification = NotificationBuilder.createNotification(context, null, notificationPushSummary, true);
+                        notificationManager.notify(notificationPushSummary.content.id, summaryNotification);
                     }
 
                     notificationManager.notify(notificationModel.content.id, notification);
@@ -222,8 +234,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
                     notificationManagerCompat.notify(notificationModel.content.id.toString(), notificationModel.content.id, notification);
                 }
 
-                if(executionLocked){
-                    executionLocked = false;
+                if(NotificationBuilder.builderIsLocked()){
                     NotificationBuilder.builderUnlockWait();
                 }
             }
@@ -233,8 +244,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
         } catch (Exception e) {
             e.printStackTrace();
 
-            if(executionLocked){
-                executionLocked = false;
+            if(NotificationBuilder.builderIsLocked()){
                 NotificationBuilder.builderUnlockWait();
             }
         }
@@ -244,7 +254,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
     public static void dismissNotification(Context context, Integer id) {
         if(context != null){
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O /*Android 8*/) {
                 NotificationManagerCompat notificationManager = NotificationBuilder.getAndroidNotificationManager(context);
 
                 // Necessary to remove the first notification marked as group description;
@@ -262,19 +272,26 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
     }
 
     public static void dismissNotificationsByChannelKey(Context context, String channelKey) {
-        List<Notification> notificationList = NotificationBuilder.getAllAndroidActiveNotifications(context, channelKey);
+        List<Notification> notificationList = NotificationBuilder.getAllAndroidActiveNotificationsByChannelKey(context, channelKey);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            for(Notification notification : notificationList){
-                int id = notification.extras.getInt(Definitions.NOTIFICATION_ID);
-                NotificationSender.dismissNotification(context, id);
-            }
+        for(Notification notification : notificationList){
+            int id = notification.extras.getInt(Definitions.NOTIFICATION_ID);
+            NotificationSender.dismissNotification(context, id);
+        }
+    }
+
+    public static void dismissNotificationsByGroupKey(Context context, String groupKey) {
+        List<Notification> notificationList = NotificationBuilder.getAllAndroidActiveNotificationsByGroupKey(context, groupKey);
+
+        for(Notification notification : notificationList){
+            int id = notification.extras.getInt(Definitions.NOTIFICATION_ID);
+            NotificationSender.dismissNotification(context, id);
         }
     }
 
     public static boolean dismissAllNotifications(Context context) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O /*Android 8*/) {
             NotificationManagerCompat notificationManager = NotificationBuilder.getAndroidNotificationManager(context);
             notificationManager.cancelAll();
         }
@@ -298,7 +315,7 @@ public class NotificationSender extends AsyncTask<String, Void, NotificationRece
 
             try {
 
-                NotificationGateKeeper.broadcastNotificationDismissed(
+                NotificationBroadcaster.broadcastNotificationDismissed(
                     context,
                     actionReceived
                 );

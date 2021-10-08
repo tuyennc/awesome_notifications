@@ -20,13 +20,15 @@
 
     <application>
 
-        <receiver android:name=".notifications.broadcastReceivers.DismissedNotificationReceiver">
+        <receiver android:name=".notifications.broadcastReceivers.DismissedNotificationReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="DISMISSED_NOTIFICATION" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".notifications.broadcastReceivers.SilentActionReceiver">
+        <receiver android:name=".notifications.broadcastReceivers.SilentActionReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="broadcast.awesome_notifications.KEEP_ON_TOP" />
             </intent-filter>

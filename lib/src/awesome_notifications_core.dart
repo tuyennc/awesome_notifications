@@ -507,6 +507,23 @@ class AwesomeNotifications {
     await _channel.invokeMethod(CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_CHANNEL_KEY, channelKey);
   }
 
+  /// Dismiss all active notifications with the same group key on status bar,
+  /// without cancel the active respective schedules
+  Future<void>  dismissNotificationsByGroupKey(String groupKey) async {
+    await _channel.invokeMethod(CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_GROUP_KEY, groupKey);
+  }
+
+  /// Cancel all active schedules with the same group key,
+  /// without dismiss the respective notifications on status bar
+  Future<void>  cancelSchedulesByGroupKey(String groupKey) async {
+    await _channel.invokeMethod(CHANNEL_METHOD_CANCEL_SCHEDULES_BY_GROUP_KEY, groupKey);
+  }
+
+  /// Cancel and dismiss all notifications and schedules with the same group key
+  Future<void>  cancelNotificationsByGroupKey(String groupKey) async {
+    await _channel.invokeMethod(CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_GROUP_KEY, groupKey);
+  }
+
   /// Dismiss all active notifications, without cancel the active respective schedules
   Future<void> dismissAllNotifications() async {
     await _channel.invokeMethod(CHANNEL_METHOD_DISMISS_ALL_NOTIFICATIONS);

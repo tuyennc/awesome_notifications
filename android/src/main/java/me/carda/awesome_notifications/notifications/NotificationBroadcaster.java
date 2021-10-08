@@ -3,25 +3,26 @@ package me.carda.awesome_notifications.notifications;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.core.app.JobIntentService;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.io.Serializable;
 import java.util.Map;
 
-import androidx.core.app.JobIntentService;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.Definitions;
-import me.carda.awesome_notifications.background.DartBackgroundExecutor;
+import me.carda.awesome_notifications.AwesomeNotificationsPlugin;
 import me.carda.awesome_notifications.background.DartBackgroundService;
-import me.carda.awesome_notifications.notifications.enumerators.NotificationActionType;
-import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
-import me.carda.awesome_notifications.notifications.managers.DismissedManager;
 import me.carda.awesome_notifications.notifications.models.NotificationModel;
+import me.carda.awesome_notifications.notifications.models.NotificationChannelModel;
 import me.carda.awesome_notifications.notifications.models.returnedData.ActionReceived;
 import me.carda.awesome_notifications.notifications.models.returnedData.NotificationReceived;
+import me.carda.awesome_notifications.notifications.managers.ChannelManager;
+import me.carda.awesome_notifications.notifications.managers.DismissedManager;
+import me.carda.awesome_notifications.notifications.enumerators.NotificationLifeCycle;
 
-public class NotificationGateKeeper {
+public class NotificationBroadcaster {
 
-    private static final String TAG = "BroadcastSender";
+    private static final String TAG = "NotificationBroadcaster";
 
     public static Boolean broadcastNotificationCreated(Context context, NotificationReceived notificationReceived){
 
@@ -141,11 +142,15 @@ public class NotificationGateKeeper {
                 break;
         }
 
+        NotificationChannelModel channelModel = ChannelManager.getChannelByKey(context, notificationModel.content.channelKey);
+
         Intent serviceIntent =
             NotificationBuilder.buildNotificationIntentFromModel(
                 context,
                 originalIntent.getAction(),
+                originalIntent,
                 notificationModel,
+                channelModel,
                 DartBackgroundService.class);
 
         serviceIntent.putExtras(originalIntent);

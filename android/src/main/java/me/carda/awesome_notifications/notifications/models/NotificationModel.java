@@ -131,7 +131,7 @@ public class NotificationModel extends Model {
 
     public void validate(Context context) throws AwesomeNotificationException {
         if(this.content == null)
-            throw new AwesomeNotificationException("Push Notification content cannot be null or empty");
+            throw new AwesomeNotificationException("Notification content cannot be null or empty");
 
         this.content.validate(context);
 

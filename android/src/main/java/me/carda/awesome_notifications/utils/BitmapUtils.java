@@ -131,7 +131,7 @@ public class BitmapUtils extends MediaUtils {
         InputStream inputStream = null;
         try {
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N /*Android 7*/) {
                 inputStream = context.getAssets().open("flutter_assets/" + bitmapPath);
             } else {
                 String assetLookupKey = FlutterMain.getLookupKeyForAsset(bitmapPath);

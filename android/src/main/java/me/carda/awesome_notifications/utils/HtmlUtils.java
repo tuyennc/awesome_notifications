@@ -17,7 +17,7 @@ public class HtmlUtils {
 
         html = adaptFlutterColorsToJava(html);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N /*Android 7*/) {
             return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
         } else {
             return Html.fromHtml(html);

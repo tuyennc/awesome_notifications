@@ -42,6 +42,7 @@ public class ActionReceived extends NotificationContentModel {
         this.locked = contentModel.locked;
 
         this.notificationActionType = contentModel.notificationActionType;
+        this.groupKey = contentModel.groupKey;
 
         this.notificationLayout = contentModel.notificationLayout;
 

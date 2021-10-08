@@ -5,7 +5,9 @@ import android.content.Context;
 import java.util.List;
 
 import me.carda.awesome_notifications.Definitions;
+import me.carda.awesome_notifications.notifications.NotificationBuilder;
 import me.carda.awesome_notifications.notifications.NotificationScheduler;
+import me.carda.awesome_notifications.notifications.models.NotificationChannelModel;
 import me.carda.awesome_notifications.notifications.models.NotificationModel;
 
 public class ScheduleManager {
@@ -42,6 +44,18 @@ public class ScheduleManager {
         if(listSchedules != null) {
             for (NotificationModel notificationModel : listSchedules) {
                 if (notificationModel.content.channelKey.equals(channelKey))
+                    NotificationScheduler.cancelSchedule(context, notificationModel.content.id);
+            }
+        }
+    }
+
+    public static void cancelSchedulesByGroupKey(Context context, String groupKey) {
+        List<NotificationModel> listSchedules = shared.getAllObjects(context, Definitions.SHARED_SCHEDULED_NOTIFICATIONS);
+        if(listSchedules != null) {
+            for (NotificationModel notificationModel : listSchedules) {
+                NotificationChannelModel channelModel = ChannelManager.getChannelByKey(context, notificationModel.content.channelKey);
+                String finalGroupKey = NotificationBuilder.getGroupKey(notificationModel.content, channelModel);
+                if (finalGroupKey != null && finalGroupKey.equals(groupKey))
                     NotificationScheduler.cancelSchedule(context, notificationModel.content.id);
             }
         }

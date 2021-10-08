@@ -5,6 +5,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
+import androidx.annotation.NonNull;
+
 public class StringUtils {
 
     public static Boolean isNullOrEmpty(String string){
@@ -19,15 +21,15 @@ public class StringUtils {
         return isNullOrEmpty(value) ? defaultValue : value;
     }
 
+    @NonNull
     public static String digestString(String reference){
+
+        if(reference == null)
+            return "";
 
         try {
             reference = reference.replaceAll("\\W+", "");
-
-            byte[] bytes = new byte[0];
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                bytes = reference.getBytes(StandardCharsets.UTF_8);
-            }
+            byte[] bytes = reference.getBytes(StandardCharsets.UTF_8);
 
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import me.carda.awesome_notifications.notifications.NotificationBuilder;
-import me.carda.awesome_notifications.notifications.NotificationGateKeeper;
+import me.carda.awesome_notifications.notifications.NotificationBroadcaster;
 import me.carda.awesome_notifications.notifications.models.NotificationModel;
 import me.carda.awesome_notifications.notifications.models.returnedData.ActionReceived;
 
@@ -25,7 +25,7 @@ public class KeepOnTopActionReceiver extends BroadcastReceiver {
         if (notificationModel != null) {
             try {
 
-                NotificationGateKeeper.SendBroadcastKeepOnTopAction(
+                NotificationBroadcaster.SendBroadcastKeepOnTopAction(
                         context,
                         actionReceived
                 );
