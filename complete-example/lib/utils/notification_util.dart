@@ -1103,6 +1103,7 @@ void updateNotificationMediaPlayer(int id, MediaModel? mediaNow) {
             label: 'Previous',
             enabled: MediaPlayerCentral.hasPreviousMedia,
             autoDismissible: false,
+            showInCompactView: false,
             notificationActionType: NotificationActionType.KeepOnTopAction
         ),
         MediaPlayerCentral.isPlaying
@@ -1111,6 +1112,7 @@ void updateNotificationMediaPlayer(int id, MediaModel? mediaNow) {
                 icon: 'resource://drawable/res_ic_pause',
                 label: 'Pause',
                 autoDismissible: false,
+                showInCompactView: true,
                 notificationActionType: NotificationActionType.KeepOnTopAction)
             : NotificationActionButton(
                 key: 'MEDIA_PLAY',
@@ -1118,6 +1120,7 @@ void updateNotificationMediaPlayer(int id, MediaModel? mediaNow) {
                     (MediaPlayerCentral.hasAnyMedia ? '' : '_disabled'),
                 label: 'Play',
                 autoDismissible: false,
+                showInCompactView: true,
                 enabled: MediaPlayerCentral.hasAnyMedia,
                 notificationActionType: NotificationActionType.KeepOnTopAction),
         NotificationActionButton(
@@ -1126,6 +1129,7 @@ void updateNotificationMediaPlayer(int id, MediaModel? mediaNow) {
                 (MediaPlayerCentral.hasNextMedia ? '' : '_disabled'),
             label: 'Previous',
             autoDismissible: false,
+            showInCompactView: true,
             enabled: MediaPlayerCentral.hasNextMedia,
             notificationActionType: NotificationActionType.KeepOnTopAction),
         NotificationActionButton(
@@ -1133,6 +1137,7 @@ void updateNotificationMediaPlayer(int id, MediaModel? mediaNow) {
             icon: 'resource://drawable/res_ic_close',
             label: 'Close',
             autoDismissible: true,
+            showInCompactView: true,
             notificationActionType: NotificationActionType.KeepOnTopAction)
       ]);
 }

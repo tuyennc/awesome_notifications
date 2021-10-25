@@ -59,6 +59,9 @@
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/awesome_notifications/build" />
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/awesome_notifications/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/awesome_notifications/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/complete-example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/complete-example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/complete-example/build" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Flutter Plugins" level="project" />

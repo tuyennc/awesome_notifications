@@ -20,9 +20,11 @@ public interface Definitions {
     String MEDIA_VALID_ASSET = "^asset?:\\/\\/";
     String MEDIA_VALID_RESOURCE = "^resource?:\\/\\/";
 
+    String BADGE_COUNT = "badgeCount";
     String INITIALIZE_DEBUG_MODE = "debug";
     String INITIALIZE_CHANNELS = "initializeChannels";
     String INITIALIZE_DEFAULT_ICON = "defaultIcon";
+    String INITIALIZE_REQUIRE_PERMISSION = "requirePermission";
 
     String BROADCAST_CREATED_NOTIFICATION   = "broadcast.awesome_notifications.CREATED_NOTIFICATION";
     String BROADCAST_DISPLAYED_NOTIFICATION = "broadcast.awesome_notifications.DISPLAYED_NOTIFICATION";
@@ -70,7 +72,10 @@ public interface Definitions {
     String CHANNEL_METHOD_GET_BADGE_COUNT = "getBadgeCount";
     String CHANNEL_METHOD_SET_BADGE_COUNT = "setBadgeCount";
     String CHANNEL_METHOD_GET_NEXT_DATE = "getNextDate";
+    String CHANNEL_METHOD_INCREMENT_BADGE_COUNT = "incBadgeCount";
+    String CHANNEL_METHOD_DECREMENT_BADGE_COUNT = "decBadgeCount";
     String CHANNEL_METHOD_RESET_BADGE = "resetBadge";
+
     String CHANNEL_METHOD_DISMISS_NOTIFICATION = "dismissNotification";
     String CHANNEL_METHOD_CANCEL_NOTIFICATION = "cancelNotification";
     String CHANNEL_METHOD_CANCEL_SCHEDULE = "cancelSchedule";
@@ -152,6 +157,7 @@ public interface Definitions {
     String NOTIFICATION_ACTION_INPUT = "actionInput";
     String NOTIFICATION_JSON = "notificationJson";
     String NOTIFICATION_ACTION_TYPE = "notificationActionType";
+    String NOTIFICATION_BADGE_KEY = "count_key_total";
 
     String NOTIFICATION_MESSAGES = "messages";
     String NOTIFICATION_BUTTON_KEY = "key";
@@ -167,6 +173,8 @@ public interface Definitions {
     String NOTIFICATION_CRONTAB_SCHEDULE = "crontabSchedule";
     String NOTIFICATION_PRECISE_SCHEDULES = "preciseSchedules";
     String NOTIFICATION_ENABLED = "enabled";
+
+    String NOTIFICATION_SHOW_IN_COMPACT_VIEW = "showInCompactView";
     String NOTIFICATION_LOCKED = "locked";
     String NOTIFICATION_DISPLAY_ON_FOREGROUND = "displayOnForeground";
     String NOTIFICATION_DISPLAY_ON_BACKGROUND = "displayOnBackground";
@@ -205,13 +213,14 @@ public interface Definitions {
     String NOTIFICATION_ALLOW_WHILE_IDLE = "allowWhileIdle";
 
     Map<String, Object> initialValues = new HashMap<String, Object>(){{
-        put(Definitions.NOTIFICATION_ID, -1);
         put(Definitions.NOTIFICATION_SCHEDULE_REPEATS, true);
+        put(Definitions.NOTIFICATION_ID, 0);
         put(Definitions.NOTIFICATION_IMPORTANCE, NotificationImportance.Default);
         put(Definitions.NOTIFICATION_LAYOUT, NotificationLayout.Default);
         put(Definitions.NOTIFICATION_GROUP_SORT, GroupSort.Desc);
         put(Definitions.NOTIFICATION_GROUP_ALERT_BEHAVIOR, GroupAlertBehaviour.All);
         put(Definitions.NOTIFICATION_DEFAULT_PRIVACY, NotificationPrivacy.Private);
+        //put(Definitions.NOTIFICATION_PRIVACY, NotificationPrivacy.Private);
         put(Definitions.NOTIFICATION_CHANNEL_KEY, "miscellaneous");
         put(Definitions.NOTIFICATION_CHANNEL_DESCRIPTION, "Notifications");
         put(Definitions.NOTIFICATION_CHANNEL_NAME, "Notifications");
@@ -239,5 +248,6 @@ public interface Definitions {
         put(Definitions.NOTIFICATION_TICKER, "ticker");
         put(Definitions.NOTIFICATION_ALLOW_WHILE_IDLE, false);
         put(Definitions.NOTIFICATION_ONLY_ALERT_ONCE, false);
+        put(Definitions.NOTIFICATION_SHOW_IN_COMPACT_VIEW, true);
     }};
 }

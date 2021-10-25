@@ -2,9 +2,9 @@ package me.carda.awesome_notifications.notifications.broadcastReceivers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.media.session.MediaButtonReceiver;
-import io.flutter.Log;
 
 public class AwesomeMediaButtonReceiver extends MediaButtonReceiver {
 

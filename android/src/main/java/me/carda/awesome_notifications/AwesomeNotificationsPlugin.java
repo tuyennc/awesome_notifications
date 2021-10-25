@@ -554,6 +554,14 @@ public class AwesomeNotificationsPlugin
                     channelMethodSetBadgeCounter(call, result);
                     return;
 
+                case Definitions.CHANNEL_METHOD_INCREMENT_BADGE_COUNT:
+                    channelMethodIncrementBadge(call, result);
+                    return;
+
+                case Definitions.CHANNEL_METHOD_DECREMENT_BADGE_COUNT:
+                    channelMethodDecrementBadge(call, result);
+                    return;
+
                 case Definitions.CHANNEL_METHOD_RESET_BADGE:
                     channelMethodResetBadge(call, result);
                     return;
@@ -782,8 +790,7 @@ public class AwesomeNotificationsPlugin
     }
 
     private void channelMethodGetBadgeCounter(@NonNull MethodCall call, Result result) throws Exception {
-        String channelKey = call.arguments();
-        Integer badgeCount = NotificationBuilder.getGlobalBadgeCounter(applicationContext, channelKey);
+        Integer badgeCount = NotificationBuilder.getGlobalBadgeCounter(applicationContext);
 
         // Android resets badges automatically when all notifications are cleared
         result.success(badgeCount);
@@ -791,22 +798,29 @@ public class AwesomeNotificationsPlugin
 
     private void channelMethodSetBadgeCounter(@NonNull MethodCall call, Result result) throws Exception {
         @SuppressWarnings("unchecked")
-        Map<String, Object> data = MapUtils.extractArgument(call.arguments(), Map.class).orNull();
-        Integer count = (Integer) data.get(Definitions.NOTIFICATION_CHANNEL_SHOW_BADGE);
-        String channelKey = (String) data.get(NOTIFICATION_CHANNEL_KEY);
+        Integer count = MapUtils.extractArgument(call.arguments(), Integer.class).orNull();
 
         if(count == null || count < 0)
-            throw new AwesomeNotificationException("Invalid Badge");
+            throw new AwesomeNotificationException("Invalid badge value");
 
         // Android resets badges automatically when all notifications are cleared
-        NotificationBuilder.setGlobalBadgeCounter(applicationContext, channelKey, count);
+        NotificationBuilder.setGlobalBadgeCounter(applicationContext, count);
         result.success(true);
     }
 
     private void channelMethodResetBadge(@NonNull MethodCall call, @NonNull Result result) throws Exception {
-        String channelKey = call.arguments();
-        NotificationBuilder.resetGlobalBadgeCounter(applicationContext, channelKey);
+        NotificationBuilder.resetGlobalBadgeCounter(applicationContext);
         result.success(null);
+    }
+
+    private void channelMethodIncrementBadge(MethodCall call, Result result) throws Exception {
+        Integer badgeCount = NotificationBuilder.incrementGlobalBadgeCounter(applicationContext);
+        result.success(badgeCount);
+    }
+
+    private void channelMethodDecrementBadge(MethodCall call, Result result) throws Exception {
+        Integer badgeCount = NotificationBuilder.decrementGlobalBadgeCounter(applicationContext);
+        result.success(badgeCount);
     }
 
     private void channelMethodCancelSchedule(@NonNull MethodCall call, Result result) throws Exception {

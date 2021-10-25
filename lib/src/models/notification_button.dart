@@ -29,7 +29,7 @@ class NotificationActionButton extends Model {
   set autoCancel(bool? value) => autoDismissible = value;
 
   bool? autoDismissible;
-
+  bool? showInCompactView;
   bool? requireInputText;
 
   NotificationActionType? notificationActionType;
@@ -41,6 +41,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = true,
     this.requireInputText = false,
+    this.showInCompactView = true,
     this.notificationActionType = NotificationActionType.BringToForeground,
   });
 
@@ -51,6 +52,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = true,
     this.requireInputText = false,
+    this.showInCompactView = true,
     this.notificationActionType = NotificationActionType.BringToForeground,
   });
 
@@ -61,6 +63,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = true,
     this.requireInputText = false,
+    this.showInCompactView = true,
     this.notificationActionType = NotificationActionType.SilentAction,
   });
 
@@ -71,6 +74,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = true,
     this.requireInputText = false,
+    this.showInCompactView = true,
     this.notificationActionType = NotificationActionType.SilentBackgroundAction,
   });
 
@@ -81,6 +85,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = false,
     this.requireInputText = false,
+    this.showInCompactView = true,
     this.notificationActionType = NotificationActionType.DisabledAction,
   });
 
@@ -91,6 +96,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = false,
     this.requireInputText = false,
+    this.showInCompactView = true,
     this.notificationActionType = NotificationActionType.KeepOnTopAction,
   });
 
@@ -102,6 +108,7 @@ class NotificationActionButton extends Model {
     this.enabled = true,
     this.autoDismissible = true,
     this.requireInputText = true,
+    this.showInCompactView = true,
   });
 
   @override
@@ -113,6 +120,7 @@ class NotificationActionButton extends Model {
 
     enabled = AssertUtils.extractValue(dataMap, NOTIFICATION_ENABLED);
     autoDismissible = AssertUtils.extractValue(dataMap, NOTIFICATION_AUTO_DISMISSIBLE);
+    showInCompactView = AssertUtils.extractValue(dataMap, NOTIFICATION_SHOW_IN_COMPACT_VIEW);
     requireInputText = AssertUtils.extractValue(dataMap, NOTIFICATION_REQUIRE_INPUT_TEXT);
     notificationActionType = AssertUtils.extractEnum(
         dataMap, NOTIFICATION_ACTION_TYPE, NotificationActionType.values);
@@ -129,6 +137,7 @@ class NotificationActionButton extends Model {
       NOTIFICATION_ENABLED: enabled,
       NOTIFICATION_AUTO_DISMISSIBLE: autoDismissible,
       NOTIFICATION_REQUIRE_INPUT_TEXT: requireInputText,
+      NOTIFICATION_SHOW_IN_COMPACT_VIEW: showInCompactView,
       NOTIFICATION_ACTION_TYPE: AssertUtils.toSimpleEnumString(notificationActionType)
     };
   }
@@ -137,6 +146,7 @@ class NotificationActionButton extends Model {
   void validate() {
     assert(!AssertUtils.isNullOrEmptyOrInvalid(key, String));
     assert(!AssertUtils.isNullOrEmptyOrInvalid(label, String));
+    assert(!AssertUtils.isNullOrEmptyOrInvalid(showInCompactView, bool));
 
     // For action buttons, it's only allowed resource media types
     assert(StringUtils.isNullOrEmpty(icon) ||

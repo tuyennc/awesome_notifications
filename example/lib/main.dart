@@ -293,6 +293,50 @@ class _MyHomePageState extends State<MyHomePage> {
           /* ******************************************************************** */
 
           ElevatedButton(
+              child: Text('Read the badge counter'),
+              onPressed: () async {
+                int amount = await NotificationUtils.readBadgeCounter();
+                Fluttertoast.showToast(
+                    msg: 'Badge count: $amount',
+                    toastLength: Toast.LENGTH_SHORT,
+                    backgroundColor: Colors.red,
+                    gravity: ToastGravity.BOTTOM
+                );
+              }
+          ),
+          ElevatedButton(
+              child: Text('Increment the badge counter'),
+              onPressed: () async {
+                int amount = await NotificationUtils.incrementBadgeCounter();
+                Fluttertoast.showToast(
+                    msg: 'Badge count: $amount',
+                    toastLength: Toast.LENGTH_SHORT,
+                    backgroundColor: Colors.red,
+                    gravity: ToastGravity.BOTTOM
+                );
+              }
+          ),
+          ElevatedButton(
+              child: Text('Decrement the badge counter'),
+              onPressed: () async {
+                int amount = await NotificationUtils.decrementBadgeCounter();
+                Fluttertoast.showToast(
+                    msg: 'Badge count: $amount',
+                    toastLength: Toast.LENGTH_SHORT,
+                    backgroundColor: Colors.red,
+                    gravity: ToastGravity.BOTTOM
+                );
+              }
+          ),
+          ElevatedButton(
+              child: Text('Reset the badge counter'),
+              onPressed: () => NotificationUtils.resetBadgeCounter()
+          ),
+          SizedBox(height: 40),
+
+          /* ******************************************************************** */
+
+          ElevatedButton(
               child: Text('Start foreground service'),
               onPressed: () => NotificationUtils.startForegroundService()),
           ElevatedButton(
@@ -411,6 +455,22 @@ class NotificationUtils {
               body: 'This is a simple notification'
           )
       );
+  }
+
+  static Future<void> resetBadgeCounter(){
+    return AwesomeNotifications().resetGlobalBadge();
+  }
+
+  static Future<int> readBadgeCounter(){
+    return AwesomeNotifications().getGlobalBadgeCounter();
+  }
+
+  static Future<int> incrementBadgeCounter(){
+    return AwesomeNotifications().incrementGlobalBadgeCounter();
+  }
+
+  static Future<int> decrementBadgeCounter(){
+    return AwesomeNotifications().decrementGlobalBadgeCounter();
   }
 
   static Future<void> createMessagingNotification({

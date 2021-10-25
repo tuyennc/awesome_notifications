@@ -1,3 +1,18 @@
+## [0.0.6+12]
+* Added showInCompactView property for MediaPlayer buttons
+* Added support to multiple subscriptions on created, displayed, action and dissmissed stream
+* Removed channel key from Android Badge methods, because the segregation in channel keys was never used (now is all global)
+* Added increment and decrement badge methods (more performatic)
+## [0.0.6+11]
+* Fix Android reschedules on startup process (issue #285)
+* Improved Android channels to manage another package channels and convert then to the new standard, using channelKey as hashKey produced from digest channel content
+## [0.0.6+10]
+* Added foreground services for Android
+* Fixed android reference for guava package
+## [0.0.6+9]
+* Fixed null reference for main class inside NotificationBuilder.java
+## [0.0.6+8]
+* Fixed null reference for main class
 ## [0.0.6+7]
 * Documentation improved
 * Push notifications from example app updated

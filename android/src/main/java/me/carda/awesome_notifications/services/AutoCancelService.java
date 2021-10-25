@@ -3,7 +3,7 @@ package me.carda.awesome_notifications.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import io.flutter.Log;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 

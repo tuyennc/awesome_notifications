@@ -68,6 +68,8 @@ const CHANNEL_METHOD_LIST_ALL_SCHEDULES = 'listAllSchedules';
 
 const CHANNEL_METHOD_GET_BADGE_COUNT = 'getBadgeCount';
 const CHANNEL_METHOD_SET_BADGE_COUNT = 'setBadgeCount';
+const CHANNEL_METHOD_INCREMENT_BADGE_COUNT = 'incBadgeCount';
+const CHANNEL_METHOD_DECREMENT_BADGE_COUNT = 'decBadgeCount';
 const CHANNEL_METHOD_RESET_BADGE = 'resetBadge';
 
 const CHANNEL_METHOD_SET_ACTION_HANDLE = 'setActionHandle';
@@ -167,6 +169,7 @@ const NOTIFICATION_BUTTON_TYPE = 'buttonType';
 const NOTIFICATION_ENABLED = "enabled";
 const NOTIFICATION_AUTO_DISMISSIBLE = 'autoDismissible';
 const NOTIFICATION_REQUIRE_INPUT_TEXT = 'requireInputText';
+const NOTIFICATION_SHOW_IN_COMPACT_VIEW = 'showInCompactView';
 
 const NOTIFICATION_ACTION_KEY = 'actionKey';
 const NOTIFICATION_ACTION_INPUT = 'actionInput';
@@ -256,6 +259,7 @@ class Definitions {
     NOTIFICATION_LOCKED: false,
     NOTIFICATION_TICKER: "ticker",
     NOTIFICATION_ALLOW_WHILE_IDLE: false,
-    NOTIFICATION_ONLY_ALERT_ONCE: false
+    NOTIFICATION_ONLY_ALERT_ONCE: false,
+    NOTIFICATION_SHOW_IN_COMPACT_VIEW: true
   };
 }

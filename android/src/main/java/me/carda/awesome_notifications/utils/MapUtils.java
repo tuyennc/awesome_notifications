@@ -1,6 +1,6 @@
 package me.carda.awesome_notifications.utils;
 
-import io.flutter.Log;
+import android.util.Log;
 
 import com.google.common.base.Optional;
 import com.google.common.primitives.Doubles;

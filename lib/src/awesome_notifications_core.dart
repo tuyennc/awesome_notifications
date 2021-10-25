@@ -32,6 +32,7 @@ import 'package:awesome_notifications/src/utils/date_utils.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 class AwesomeNotifications {
+  static String? rootNativePath;
 
   static String utcTimeZoneIdentifier = "UTC";
   static String localTimeZoneIdentifier = "UTC";
@@ -135,6 +136,7 @@ class AwesomeNotifications {
 
   factory AwesomeNotifications() => _instance;
 
+  @visibleForTesting
   AwesomeNotifications._private(MethodChannel channel) : _channel = channel;
 
   static final AwesomeNotifications _instance =
@@ -203,7 +205,8 @@ class AwesomeNotifications {
   String _silentBGActionTypeKey = AssertUtils.toSimpleEnumString(NotificationActionType.SilentBackgroundAction)!;
 
   Future<dynamic> _handleMethod(MethodCall call) async {
-    Map<String, dynamic> arguments = (call.arguments as Map).cast<String, dynamic>();
+    Map<String, dynamic> arguments =
+        (call.arguments as Map).cast<String, dynamic>();
 
     switch (call.method) {
 
@@ -310,15 +313,15 @@ class AwesomeNotifications {
   Future<NotificationModel?> extractNotificationFromJsonData(
       Map<String, dynamic> mapData) async {
     try {
-      if (mapData[NOTIFICATION_CONTENT].runtimeType == String)
+      if (mapData[NOTIFICATION_CONTENT] is String)
         mapData[NOTIFICATION_CONTENT] =
             json.decode(mapData[NOTIFICATION_CONTENT]);
 
-      if (mapData[NOTIFICATION_SCHEDULE].runtimeType == String)
+      if (mapData[NOTIFICATION_SCHEDULE] is String)
         mapData[NOTIFICATION_SCHEDULE] =
             json.decode(mapData[NOTIFICATION_SCHEDULE]);
 
-      if (mapData[NOTIFICATION_BUTTONS].runtimeType == String)
+      if (mapData[NOTIFICATION_BUTTONS] is String)
         mapData[NOTIFICATION_BUTTONS] =
             json.decode(mapData[NOTIFICATION_BUTTONS]);
 
@@ -413,21 +416,29 @@ class AwesomeNotifications {
     return wasRemoved;
   }
 
-  /// Get badge counter (on Android is 0 or 1)
-  Future<void> setGlobalBadgeCounter(int? amount) async {
-    if (amount == null) {
-      return;
-    }
-    Map<String, dynamic> data = {
-      NOTIFICATION_CHANNEL_SHOW_BADGE: amount
-    };
-    await _channel.invokeMethod(CHANNEL_METHOD_SET_BADGE_COUNT, data);
-  }
-
-  /// Get badge counter (on iOS the amount is global)
+  /// Get badge counter
   Future<int> getGlobalBadgeCounter() async {
     final int badgeCount =
-        await _channel.invokeMethod(CHANNEL_METHOD_GET_BADGE_COUNT);
+    await _channel.invokeMethod(CHANNEL_METHOD_GET_BADGE_COUNT);
+    return badgeCount;
+  }
+
+  /// Set the badge counter to any value
+  Future<void> setGlobalBadgeCounter(int amount) async {
+    await _channel.invokeMethod(CHANNEL_METHOD_SET_BADGE_COUNT, amount);
+    }
+
+  /// Increment the badge counter
+  Future<int> incrementGlobalBadgeCounter() async {
+    final int badgeCount =
+        await _channel.invokeMethod(CHANNEL_METHOD_INCREMENT_BADGE_COUNT);
+    return badgeCount;
+  }
+
+  /// Decrement the badge counter
+  Future<int> decrementGlobalBadgeCounter() async {
+    final int badgeCount =
+        await _channel.invokeMethod(CHANNEL_METHOD_DECREMENT_BADGE_COUNT);
     return badgeCount;
   }
 

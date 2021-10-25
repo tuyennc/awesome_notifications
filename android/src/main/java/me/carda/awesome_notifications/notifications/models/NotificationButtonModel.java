@@ -18,6 +18,7 @@ public class NotificationButtonModel extends Model {
     public Boolean enabled;
     public Boolean autoDismissible;
     public Boolean requireInputText;
+    public Boolean showInCompactView;
     public NotificationActionType notificationActionType;
 
     public NotificationButtonModel(){}
@@ -35,6 +36,7 @@ public class NotificationButtonModel extends Model {
 
         notificationActionType = getEnumValueOrDefault(arguments, Definitions.NOTIFICATION_ACTION_TYPE,
                 NotificationActionType.class, NotificationActionType.values());
+        showInCompactView = getValueOrDefault(arguments, Definitions.NOTIFICATION_SHOW_IN_COMPACT_VIEW, Boolean.class);
 
         return this;
     }
@@ -53,6 +55,7 @@ public class NotificationButtonModel extends Model {
 
         returnedObject.put(Definitions.NOTIFICATION_ACTION_TYPE,
             this.notificationActionType != null ? this.notificationActionType.toString() : NotificationActionType.BringToForeground.toString());
+        returnedObject.put(Definitions.NOTIFICATION_SHOW_IN_COMPACT_VIEW, showInCompactView);
 
         return returnedObject;
     }

@@ -16,13 +16,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.service.notification.StatusBarNotification;
 
-import com.github.arturogutierrez.BadgesNotSupportedException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.annotation.NonNull;
@@ -59,7 +59,9 @@ import me.carda.awesome_notifications.utils.ListUtils;
 import me.carda.awesome_notifications.utils.StringUtils;
 
 //badges
-import com.github.arturogutierrez.Badges;
+import me.leolin.shortcutbadger.ShortcutBadger;
+
+import static me.carda.awesome_notifications.Definitions.NOTIFICATION_BADGE_KEY;
 
 public class NotificationBuilder {
 
@@ -557,7 +559,7 @@ public class NotificationBuilder {
 
     private static void setBadge(Context context, NotificationChannelModel channelModel, NotificationCompat.Builder builder){
         if(BooleanUtils.getValue(channelModel.channelShowBadge)){
-            incrementGlobalBadgeCounter(context, channelModel);
+            incrementGlobalBadgeCounter(context);
             builder.setNumber(1);
         }
     }
@@ -621,48 +623,50 @@ public class NotificationBuilder {
         }
     }
 
-    public static String getBadgeKey(Context context, String channelKey){
-        return "count_key"+(channelKey == null ? "_total" : channelKey);
-    }
-
-    public static int getGlobalBadgeCounter(Context context, String channelKey){
+    public static int getGlobalBadgeCounter(Context context){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         // Read previous value. If not found, use 0 as default value.
-        return prefs.getInt(getBadgeKey(context, channelKey), 0);
+        return prefs.getInt(Definitions.BADGE_COUNT, 0);
     }
 
-    public static void setGlobalBadgeCounter(Context context, String channelKey, int count){
+    public static void setGlobalBadgeCounter(Context context, int count){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
 
-        try {
-
-            editor.putInt(getBadgeKey(context, channelKey), count);
-            Badges.setBadge(context, count);
-
-        } catch (BadgesNotSupportedException ignored) {
-        }
+        editor.putInt(Definitions.BADGE_COUNT, count);
+        ShortcutBadger.applyCount(context, count);
 
         editor.apply();
     }
 
-    public static void resetGlobalBadgeCounter(Context context, String channelKey){
-        setGlobalBadgeCounter(context, channelKey, 0 );
+    public static void resetGlobalBadgeCounter(Context context){
+        setGlobalBadgeCounter(context, 0 );
     }
 
-    public static int incrementGlobalBadgeCounter(Context context, NotificationChannelModel channelModel){
+    public static int incrementGlobalBadgeCounter(Context context) {
 
-        int totalAmount = getGlobalBadgeCounter(context, null);
-        setGlobalBadgeCounter(context, null, ++totalAmount);
-
+        int totalAmount = getGlobalBadgeCounter(context);
+        setGlobalBadgeCounter(context, ++totalAmount);
         return totalAmount;
     }
 
+    public static int decrementGlobalBadgeCounter(Context context) {
+
+        int totalAmount = Math.max(getGlobalBadgeCounter(context)-1, 0);
+        setGlobalBadgeCounter(context, totalAmount);
+        return totalAmount;
+    }
+
+    // https://github.com/rafaelsetragni/awesome_notifications/issues/191
     public static Class getNotificationTargetActivityClass(Context context) {
+
         String packageName = context.getPackageName();
         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        String className = launchIntent.getComponent().getClassName();
+        String className =
+                launchIntent == null ?
+                        AwesomeNotificationsPlugin.getMainTargetClassName() :
+                        launchIntent.getComponent().getClassName();
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
@@ -693,6 +697,7 @@ public class NotificationBuilder {
             );
 
             actionIntent.putExtra(Definitions.NOTIFICATION_BUTTON_KEY, buttonProperties.key);
+            actionIntent.putExtra(Definitions.NOTIFICATION_SHOW_IN_COMPACT_VIEW, buttonProperties.showInCompactView);
             actionIntent.putExtra(Definitions.NOTIFICATION_ENABLED, buttonProperties.enabled);
             actionIntent.putExtra(Definitions.NOTIFICATION_AUTO_DISMISSIBLE, buttonProperties.autoDismissible);
             actionIntent.putExtra(Definitions.NOTIFICATION_ACTION_TYPE, buttonProperties.notificationActionType.toString());
@@ -877,7 +882,7 @@ public class NotificationBuilder {
                 break;
 
             case MediaPlayer:
-                if(setMediaPlayerLayout(context, notificationModel.content, builder)) return;
+                if(setMediaPlayerLayout(context, notificationModel.content, notificationModel.actionButtons, builder)) return;
                 break;
 
             case ProgressBar:
@@ -1147,11 +1152,18 @@ public class NotificationBuilder {
         return true;
     }
 
-    private static Boolean setMediaPlayerLayout(Context context, NotificationContentModel contentModel, NotificationCompat.Builder builder) {
+    private static Boolean setMediaPlayerLayout(Context context, NotificationContentModel contentModel, List<NotificationButtonModel> actionButtons, NotificationCompat.Builder builder) {
+        
+        ArrayList<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < actionButtons.size(); i++) {
+            NotificationButtonModel b = actionButtons.get(i);
+            if (b.showInCompactView) indexes.add(i);
+        }
 
+        int[] showInCompactView = toIntArray(indexes);
         builder.setStyle(
             new androidx.media.app.NotificationCompat.MediaStyle()
-                .setShowActionsInCompactView(1,2,3)
+                        .setShowActionsInCompactView(showInCompactView)
                 .setShowCancelButton(true)
                 .setMediaSession(AwesomeNotificationsPlugin.mediaSession.getSessionToken())
         );
@@ -1181,6 +1193,17 @@ public class NotificationBuilder {
 
     public static NotificationManagerCompat getAndroidNotificationManager(Context context) {
         return NotificationManagerCompat.from(context);
+    }
+
+    private static int[] toIntArray(ArrayList<Integer> list) {
+        if (list == null || list.size() <= 0) return new int[0];
+
+        int[] result = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            result[i] = list.get(i);
+        }
+
+        return result;
     }
 
 }

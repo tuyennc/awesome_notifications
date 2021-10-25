@@ -75,17 +75,23 @@ public enum Definitions {
     public static let  CHANNEL_METHOD_SHOW_NOTIFICATION_PAGE = "showNotificationPage"
     public static let  CHANNEL_METHOD_IS_NOTIFICATION_ALLOWED = "isNotificationAllowed"
     public static let  CHANNEL_METHOD_REQUEST_NOTIFICATIONS = "requestNotifications"
-    
+
     public static let  CHANNEL_METHOD_GET_BADGE_COUNT = "getBadgeCount"
     public static let  CHANNEL_METHOD_SET_BADGE_COUNT = "setBadgeCount"
     public static let  CHANNEL_METHOD_GET_NEXT_DATE = "getNextDate"
+    public static let  CHANNEL_METHOD_INCREMENT_BADGE_COUNT = "incBadgeCount"
+    public static let  CHANNEL_METHOD_DECREMENT_BADGE_COUNT = "decBadgeCount"
     public static let  CHANNEL_METHOD_RESET_BADGE = "resetBadge"
+
     public static let  CHANNEL_METHOD_DISMISS_NOTIFICATION = "dismissNotification"
     public static let  CHANNEL_METHOD_CANCEL_NOTIFICATION = "cancelNotification"
     public static let  CHANNEL_METHOD_CANCEL_SCHEDULE = "cancelSchedule"
     public static let  CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_CHANNEL_KEY = "dismissNotificationsByChannelKey"
     public static let  CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_CHANNEL_KEY = "cancelNotificationsByChannelKey"
     public static let  CHANNEL_METHOD_CANCEL_SCHEDULES_BY_CHANNEL_KEY = "cancelSchedulesByChannelKey"
+    public static let  CHANNEL_METHOD_DISMISS_NOTIFICATIONS_BY_GROUP_KEY = "dismissNotificationsByGroupKey"
+    public static let  CHANNEL_METHOD_CANCEL_NOTIFICATIONS_BY_GROUP_KEY = "cancelNotificationsByGroupKey"
+    public static let  CHANNEL_METHOD_CANCEL_SCHEDULES_BY_GROUP_KEY = "cancelSchedulesByGroupKey"
     public static let  CHANNEL_METHOD_CANCEL_ALL_SCHEDULES = "cancelAllSchedules"
     public static let  CHANNEL_METHOD_DISMISS_ALL_NOTIFICATIONS = "dismissAllNotifications"
     public static let  CHANNEL_METHOD_CANCEL_ALL_NOTIFICATIONS = "cancelAllNotifications"
@@ -101,6 +107,7 @@ public enum Definitions {
     
     public static let  CHANNEL_METHOD_LIST_ALL_SCHEDULES = "listAllSchedules"
 
+    public static let  BADGE_COUNT = "badgeCount"
     public static let  DEFAULT_ICON = "defaultIcon"
     public static let  SELECT_NOTIFICATION = "SELECT_NOTIFICATION"
     public static let  NOTIFICATION_BUTTON_ACTION_PREFIX = "ACTION_NOTIFICATION"

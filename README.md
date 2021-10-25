@@ -5,7 +5,7 @@
 <div>
 
 [![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](#) [![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)](#)
-[![Discord](https://img.shields.io/discord/888523488376279050.svg?style=for-the-badge&colorA=7289da&label=Chat%20on%20Discord)](https://discord.gg/HxBAPYYV) [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](#)
+[![Discord](https://img.shields.io/discord/888523488376279050.svg?style=for-the-badge&colorA=7289da&label=Chat%20on%20Discord)](https://discord.gg/MP3sEXPTnx) [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](#)
 
 [![pub package](https://img.shields.io/pub/v/awesome_notifications.svg)](https://pub.dev/packages/awesome_notifications)
 [![Likes](https://badges.bar/awesome_notifications/likes)](https://pub.dev/packages/awesome_notifications/score)
@@ -672,6 +672,7 @@ Main methods to manipulate a notification channel:
 | icon 		    |   *YES   | Icon to be displayed inside the button                                        | String                | must be a resource image |                         |
 | enabled 	    |     NO   | On Android, deactivates the button. On iOS, the button disappear              | bool                  | true or false            | true                    |
 | autoCancel    |     NO   | Notification should auto cancel when gets tapped by the user                  | bool                  | true or false            | true                    |
+| showInCompactView    |     NO   | For MediaPlayer notifications on Android, sets the button as visible in compact view | bool                  | true or false            | true                    |
 | buttonType 	|     NO   | Button action response type                                                   | Enumerator            | ActionButtonType         | Default                 |
 
 <br>
@@ -717,8 +718,7 @@ Main methods to manipulate a notification channel:
 
 **Issue:** awesome_notifications is not working on release mode on Android with custom sound or icon.
 
-**Fix:** You need to protect your android resource files against minification and obfuscation. You can
-achieve it by two ways:
+**Fix:** You need to protect your Android resource files from being minimized and obfuscated. You can achieve this in two ways:
 
 1 - Please include the prefix "res_" in your native resource file names. The use of the tag `shrinkResources false` inside build.gradle or the command `flutter build apk --no-shrink` is not recommended. To know more about it, please visit [Shrink, obfuscate, and optimize your app](https://developer.android.com/studio/build/shrink-code)
 
