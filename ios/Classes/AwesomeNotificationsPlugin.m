@@ -11,7 +11,8 @@
 @implementation AwesomeNotificationsPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftAwesomeNotificationsPlugin registerWithRegistrar:registrar];
+  // FIXME: temporary disable this plugin in iOS for avoid conflict with flutter_local_notification which work on iOS
+  // [SwiftAwesomeNotificationsPlugin registerWithRegistrar:registrar];
 }
 
 @end
